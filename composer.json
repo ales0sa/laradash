@@ -1,0 +1,33 @@
+{
+    "name": "aporteweb/dashboard",
+    "authors": [
+        {
+            "name": "Alfonzo Diez",
+            "email": "alfonzodiez@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "barryvdh/laravel-dompdf": "^0.9.0",
+        "doctrine/dbal": "^3.0",
+        "mateusjunges/laravel-acl": "^2.4",
+        "mcamara/laravel-localization": "^1.6",
+        "diglactic/laravel-breadcrumbs": "^6.0"
+        
+    },
+    "autoload": {
+        "files": [
+            "src/Helper.php"
+        ],
+        "psr-4": {
+            "AporteWeb\\Dashboard\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AporteWeb\\Dashboard\\DashboardServiceProvider"
+            ]
+        }
+    }
+}
