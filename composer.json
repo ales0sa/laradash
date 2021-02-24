@@ -1,9 +1,9 @@
 {
-    "name": "aporteweb/dashboard",
+    "name": "ales0sa/laradash",
     "authors": [
         {
-            "name": "Alfonzo Diez",
-            "email": "alfonzodiez@gmail.com"
+            "name": "xLab",
+            "email": "info@xlab.dev"
         }
     ],
     "minimum-stability": "stable",
