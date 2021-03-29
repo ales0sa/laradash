@@ -39,10 +39,16 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
         $menu = array();
         $dirPath = __crudFolder();
         $files = \File::allFiles($dirPath);
+
+
         foreach ($files as $fileKey => $file) {
           $content = json_decode(file_get_contents($file->getPathname()));
-          //dd($content->table);
-          if($content->table->menu_show == 1){
+          //dd($content);
+          if($content->table->menu_show == 1 && $content->table->singlepage == true){ 
+
+            $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.'/1/edit'];
+
+          }else{
             $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename ];
           }
 
@@ -50,7 +56,6 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
 
         return($menu);
 
-        //return $content;//redirect()->route('home');
     }
 
 }

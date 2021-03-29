@@ -4,6 +4,8 @@
 
 
     <div class="row">
+        <ConfirmDialog></ConfirmDialog>
+
 <Toast position="top-right" />
 
 
@@ -21,26 +23,29 @@
 
         <div class="p-col-12" v-if="loaded == 1">
 
-
+<!-------
 
 <SelectButton v-model="selectedlang" :options="languages" dataKey="value" >
     <template #option="slotProps">
         <span :class="'flag flag-' + slotProps.option.flag.toLowerCase()" />
 
     </template>
-</SelectButton>
+</SelectButton> -------->
 
 
             <div class="card">
                 <div class="card-header">
-                   <h5> {{ table.name[selectedlang.value] }} </h5>
+                   <h5> {{ table.name[selectedlang.value] }}  </h5>
                 </div>
                 <div class="card-body pb-0">
+
                     <div class="p-fluid p-grid p-formgrid">
-                        <InputLayout :relations="relations" :value="content[input.columnname+'_en']" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @input="addFile" :lang="selectedlang.value" v-if="selectedlang.value == 'en'"></InputLayout>
-                        <InputLayout :relations="relations" :value="content[input.columnname+'_pt']" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @input="addFile" :lang="selectedlang.value"  v-if="selectedlang.value == 'pt'"></InputLayout>
-                        <InputLayout :relations="relations" :value="content[input.columnname]" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @input="addFile" :lang="selectedlang.value" v-if="selectedlang.value == 'es'"></InputLayout>
-                        
+
+
+
+                        <InputLayout :relations="relations" :value="content[input.columnname]" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @input="addFile" :lang="selectedlang.value">
+                        </InputLayout>
+
                     </div>
                 </div>
             </div>
@@ -55,11 +60,13 @@
 <script>
   //  import draggable from 'vuedraggable'
     import InputLayout from './InputLayout'
-    import Swal from 'sweetalert2'
+
+    import ConfirmDialog from 'primevue/confirmdialog';
     import Toast from 'primevue/toast';
     import CrudService from './../../service/CrudService';
     import Message from 'primevue/message';
     import axios from 'axios'
+
     var publicPATH = document.head.querySelector('meta[name="public-path"]').content;
     export default {
 
@@ -81,7 +88,7 @@
                 default: ''
             }
         },
-        components: {
+        components:  { ConfirmDialog,
             InputLayout,
             Message
         },
@@ -120,7 +127,7 @@
                 }
                 
                 this.CrudService.getTable(url).then((response) => {
-                    console.log(response)
+
                     this.languages = response.languages
                     this.tablename = response.tablename
                     this.table     = response.table
@@ -128,31 +135,26 @@
 
 
 
-                    this.relations = response.relations
+                    this.relations = response.relations 
                     this.inputs.forEach(input => {
 
-
+                        
                         this.content[input.columnname] = {
                             value: input.default,
                             errors: []
                         }
-                        this.content[input.columnname+'_en'] = {
-                            value: input.default,
-                            errors: []
-                        }
-                        this.content[input.columnname+'_pt'] = {
-                            value: input.default,
-                            errors: []
-                        }
+
+
                     });
 
-                    if(response.content) {
-                        this.inputs.forEach(input => {
-                            this.content[input.columnname].value = response.content[input.columnname]
-                            this.content[input.columnname+'_en'].value = response.content[input.columnname+'_en']
-                            this.content[input.columnname+'_pt'].value = response.content[input.columnname+'_pt']
-                        });
-                    }
+
+                if(response.content) {
+                    this.inputs.forEach(input => {
+                        this.content[input.columnname].value = response.content[input.columnname]
+
+
+                    });
+                }
                     this.loaded = 1
                 });
             });
@@ -172,20 +174,24 @@
                 console.log(this.file)
             },
             sendForm() {
-                Swal.fire({
-                    title: 'Enviar',
-                    icon: 'question',
-                    // width: 600,
-                    html: '<div style="text-align: center;">'+'¿Esta seguro de enviar el formulario?'+'</div>',
-                    showCancelButton: true,
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Rechazar',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.value) {
+
+                console.log('sendForm')
+
+                this.$confirm.require({
+                    message: 'Seguro?',
+                    header: 'Guardar registro',
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        //callback to execute when user confirms the action
                         this.postForm()
+
+                    },
+                    reject: () => {
+                        //callback to execute when user rejects the action
                     }
-                })
+                });
+
+
             },
             postForm() {
                 let formData = new FormData()
@@ -200,8 +206,8 @@
                 this.inputs.forEach(input => {
                     //console.log(this.content[input.columnname].value)
                     formData.append(input.columnname, this.content[input.columnname].value);
-                    formData.append(input.columnname+'_en', this.content[input.columnname+'_en'].value);
-                    formData.append(input.columnname+'_pt', this.content[input.columnname+'_pt'].value);
+                    //formData.append(input.columnname+'_en', this.content[input.columnname+'_en'].value);
+                    //formData.append(input.columnname+'_pt', this.content[input.columnname+'_pt'].value);
                 });
 
                 let edcheck = ''
@@ -214,12 +220,13 @@
                     setTimeout(() => {
                         //this.loaded = 1
                          this.$router.back();
+                         this.loaded = 1
                     }, 1000);
                 }).catch((error) => {
                     if (error.response.data.message == 'CSRF token mismatch.') {
                         csrf.refresh()
                         .then(() => {
-                            this.enviarPresupuesto()
+                            console.log('csrf problem')
                         })
                         .catch((err) => {
                             if (err.message == 'Unauthenticated.') {
@@ -261,7 +268,20 @@
         }
     }
 </script>
-<style lang="css" scoped>
+<style lang="css">
+.truncated {
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  padding: 20px;
+  font-size: 1.3rem;
+  margin: 0;
+  background: white;
+  resize: horizontal;
+}
+
 .form-label {
     margin-bottom: .5rem;
     font-weight: bold;

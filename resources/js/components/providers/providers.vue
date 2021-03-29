@@ -6,6 +6,7 @@
 
 
         <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
+        :loading="loading"
         class="p-datatable-gridlines"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" >
 
@@ -20,10 +21,8 @@
                 </div>
 
 
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search" />
                     <InputText v-model="filters['global']" placeholder="Buscar..." />
-                </span>
+
 
                                 <span class="">
                                     <router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}"> 
@@ -38,9 +37,9 @@
        </template>
 
 
-        <Column bodyClass="truncate"  v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" sortable>
+        <Column bodyClass=""  v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" sortable>
 
-                <template #filter >
+                <template #filter>
 
 
                     <div  v-if="col.type == 'text'" >
@@ -53,9 +52,9 @@
                     </div>
 
                     <div  v-if="col.type == 'select' && col.options">                     
-                    <select class="form-control" >
+                    <select v-model="filters[col.field]" style="width:100%;">
                         <option></option>
-                        <option  v-for="opt of col.options" > {{opt.text}} </option>
+                        <option  v-for="opt of col.options" :value="opt.key" > {{opt.text}} </option>
                     </select>
 
 
@@ -66,30 +65,90 @@
 
 
                 <template  #body="slotProps" v-if="col.type == 'textarea'">
-                    <div style="display: block ruby;text-overflow: ellipsis;overflow: hidden;">
-                        <span v-html="slotProps.data[col.field]" />
+                    <div class="truncate" style="display: block ruby;text-overflow: ellipsis;overflow: hidden;">
+                        <span class="" v-html="slotProps.data[col.field]" />
                     </div>
                 </template>
                 <template #body="slotProps" v-else-if="col.type == 'file'">
 
 
                         <img :src="slotProps.data.file.replace('public/','storage/')"  class="product-image"  />
-                       <!--- <Button label="Ver" icon="pi pi-file" class="p-button-secondary"  @click="openPlane(slotProps.data.file)" /> --->
+
+                        <!---
+                        <Button label="Ver" icon="pi pi-file" class="p-button-secondary"  @click="openPlane(slotProps.data.file)" />  --->
 
                 </template>
+                <template #body="slotProps" v-else-if="col.type == 'boolean'">
+
+                  
+                        <InputSwitch :value="Boolean(Number(slotProps.data[col.field]))"  :disabled="true"/>
+
+           <!---              <span v-if="slotProps.data[col.field] === 1">
+                            <i class="pi pi-check"></i>
+                        </span>
+                        <span v-else> 
+                            <i class="pi pi-times"></i> 
+                        </span>
+--->
+
+                </template>
+                <template #body="slotProps" v-else-if="col.type == 'checkbox'">
+
+                <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
+
+                    <Chip class="p-ml-1 p-mb-1"
+                      :label="rels[col.tabledata][item]" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+
+                </span>
+                <span v-else-if="col.valueoriginselector == 'values' "> 
+
+                      <Chip class="p-ml-1 p-mb-1"
+                      :label="getKeyByValue(col.options,item)" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+                </span>
+
+                </template>
+
+
+                
+                <template #body="slotProps" v-else-if="col.type == 'radio'">
+
+                        {{ getKeyByValue(col.options,slotProps.data[col.field]) }}
+
+                </template>
+
                 <template #body="slotProps" v-else-if="col.type == 'select'">
                     
-                    <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
-                        {{ rels[col.tabledata][slotProps.data[col.field]] }}
-                    </span>
-                    <span v-else-if="col.valueoriginselector == 'values' "> 
-                       
-                        {{ col.options[slotProps.data[col.field] - 1].text }}
-                    </span>
-                  <!---    {{ col.field }}
-                    {{ this.rels[col.field][slotProps.data[col.field]] }}
-                   <span>{{ this.rels[col.field] }}</span>
-                    {{ slotProps.data[col.field + '_name']  }} --->
+
+                    <div v-if="col.multiple == true">
+                            
+                        <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
+
+                    <Chip class="p-ml-1 p-mb-1"
+                      :label="rels[col.tabledata][item]" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+
+                        </span>
+                        <span v-else-if="col.valueoriginselector == 'values' "> 
+
+                    <Chip class="p-ml-1 p-mb-1"
+                      :label="getKeyByValue(col.options,item)" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+
+                        </span>
+
+
+
+                    </div>
+                    <div v-else>
+                        <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
+
+                            {{ rels[col.tabledata][slotProps.data[col.field]] }}
+
+                        </span>
+                        <span v-else-if="col.valueoriginselector == 'values' "> 
+
+                            {{ getKeyByValue(col.options,slotProps.data[col.field]) }}
+
+                        </span>
+                    </div>
                 </template>
                 
         </Column>
@@ -119,6 +178,7 @@ import axios from 'axios'
         data() {
             return {
                 columns: [],
+                loading: true,
                 data: [],
                 inputs:  [],
                 rels:  [],
@@ -141,9 +201,22 @@ import axios from 'axios'
                for (var index = 0; index < this.inputs.length; index++) {
                     //console.log(index)
                     if(this.inputs[index]['visible'] == 1 || this.inputs[index]['visible'] == "1" ){
-                        this.columns.push({ field: this.inputs[index]['columnname'], header: this.inputs[index]['label']['es'],  type: this.inputs[index]['type'],  options: this.inputs[index]['options'], tabledata: this.inputs[index]['tabledata'], 
-                            valueoriginselector: this.inputs[index]['valueoriginselector']  });
+                        this.columns.push({ 
+
+                            field: this.inputs[index]['columnname'],
+                            header: this.inputs[index]['label']['es'],
+                            type: this.inputs[index]['type'],
+                            options: this.inputs[index]['options'],
+                            tabledata: this.inputs[index]['tabledata'],
+                            multiple: this.inputs[index]['multiple'],  
+                            valueoriginselector: this.inputs[index]['valueoriginselector']
+
+                            });
+
+
+ 
                     }
+                    
                 }
 
 
@@ -166,11 +239,41 @@ import axios from 'axios'
 
     },
     methods:{
-                openPlane(file) {   
-          window.open("/storage/"+file.replace('public/','storage/'), "_blank");    
-      },
+        splitMe(string){
+            if(string){
+                return string.split(',')
+            }else{
+                return [];
+            }
+        },
+        checkSplit(value){
+            if(value){
+                console.log(value)
+                return true
+            }
+            
 
+        },
+        openPlane(file) {   
+          window.open("/storage/"+file.replace('public/','storage/'), "_blank");    
+        },
+        getKeyByValue(object, value) { 
+
+
+            
+            if(!value || value == null || value == '' || value == ""){
+                 return ''
+            
+            }else{
+
+            let text = object.filter(function (op) { return op.key == String(value) });
+            return text[0].text
+            }
+            
+
+        },
         load(){
+            this.loading = true
             this.data = [];
             this.inputs = [];
             this.columns = [];
@@ -178,19 +281,26 @@ import axios from 'axios'
 
 
             this.tablename = this.$route.params.table
+
+            setTimeout(() => {
+
             this.CrudService.getTable(this.tablename).then(data => { 
                 this.title = data.table.name.es
                 this.inputs = data.inputs
                 this.rels   = data.relations
+                this.data = data.data
+                this.loading = false;
              });
 
-           // console.log(this.rels)
-            this.CrudService.getTable(this.tablename).then(data => this.data = data.data);
+             }, 100);
 
+           // console.log(this.rels)
+            //this.CrudService.getTable(this.tablename).then(data => this.data = data.data);
+            //this.loading = false;
         },
         edit(item) {
 
-            console.log('edit')
+            //console.log('edit')
             this.$router.push({ name: 'ced', params: { id: item }});
         },
         del(item) {
@@ -201,8 +311,8 @@ import axios from 'axios'
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     //callback to execute when user confirms the action
+
                 axios.get('/adm/crud/' + this.tablename + '/' + item + '/delete').then((response) => {
-                    this.loaded = 3
                     setTimeout(() => {
                         //this.loaded = 1
                         this.load()
@@ -228,16 +338,19 @@ import axios from 'axios'
 }
 </script>
 <style>
-    .truncate .span{
+
+.truncate span{
     display: block ruby;
-  width: 250px;
+  width: 100%;
   height: 120px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .product-image {
-    width: 100px;
+    width: 150px;
+    padding: 10px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
 }
+
 </style>
