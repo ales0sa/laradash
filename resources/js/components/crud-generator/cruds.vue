@@ -60,7 +60,10 @@
                             
                                 this.data2.push({ value: this.data[index], header: this.data[index] });
 
-                            }
+                        }
+
+                        EventBus.$emit('reloadMenu');
+                        
                     }
 
 

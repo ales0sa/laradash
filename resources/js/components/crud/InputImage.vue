@@ -3,31 +3,33 @@
 <div class="p-fileupload p-fileupload-advanced p-component">
 
         <FileUpload name="demo[]" 
-                    chooseLabel="Seleccionar archivo"
+                    :chooseLabel="chooseLabel"
                     :showUploadButton="false"
+
                     :showCancelButton="false"
                     accept="image/*" :maxFileSize="1000000"  :customUpload="true" @uploader="myUploader" :auto="true"
+
         
         >
 
       <template #empty>
 
             
-            <div class="" v-if="value">
+            <div class="" v-if="file">
                 <div class="p-fileupload-row">
                     <div>
-                        <img role="presentation" :alt="value" :src="value.replace('public/','storage/')" :width="previewWidth" />
+                        <img role="presentation" :alt="file" :src="file.replace('public/','storage/')" :width="previewWidth" />
                     </div>
                     <div> </div>
                     
                     <div>
-                      <Button icon="pi pi-times" class="p-button-rounded p-button-danger" style="width: 35px; height: 35px;"/>
+                      <Button icon="pi pi-times" class="p-button-rounded p-button-danger" style="width: 35px; height: 35px;" @click="remove()" v-if="$route.params.id >= 1 && input.nullable == 1"/>
 
                     </div>
                 </div>
             </div>
 
-          <p v-if="!value"> Arrastre los archivos aquí.</p>
+          <p v-if="!file"> Arrastre los archivos aquí.</p>
       </template>
 
         </FileUpload>
@@ -35,7 +37,7 @@
 </template>
 
 <script>
-
+    import axios from 'axios'
     
     export default {
         props: {
@@ -70,13 +72,56 @@
 
         },
         methods: {
-        myUploader(event) {
 
-            this.$emit('input', event.files);
+          remove(){
+
+
+            this.$confirm.require({
+                message: 'Seguro ?',
+                header: 'Eliminar foto',
+                icon: 'pi pi-exclamation-triangle',
+                acceptClass: 'p-button-danger',
+                acceptLabel: 'Sí',
+                accept: () => {
+                    //callback to execute when user confirms the action
+
+                axios.get('/adm/crud/' + this.$route.params.table + '/' + this.$route.params.id + '/clean/' + this.input.columnname).then((response) => {
+                    setTimeout(() => {
+                        this.file = null
+                        //this.load()
+                        this.loaded = 1
+                    }, 1000);
+                }).catch((error) => {
+
+                    console.log(error)
+
+                });
+
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+
+
+            
+          },
+        myUploader(event) {
+              console.log(event)
+            this.$emit('myUploader', event);
         }
 
         },
         computed: {
+          chooseLabel(){
+
+            if(this.file == "" || this.file == null){
+
+              return 'Seleccionar imagen'
+            }else{
+              return 'Cambiar imagen'
+            }
+          }
         }
     }
 

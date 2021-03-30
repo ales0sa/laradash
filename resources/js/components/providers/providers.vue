@@ -72,7 +72,7 @@
                 <template #body="slotProps" v-else-if="col.type == 'file'">
 
 
-                        <img :src="slotProps.data.file.replace('public/','storage/')"  class="product-image"  />
+                        <img :src="slotProps.data.file.replace('public/','storage/')"  class="product-image"  v-if="slotProps.data.file"/>
 
                         <!---
                         <Button label="Ver" icon="pi pi-file" class="p-button-secondary"  @click="openPlane(slotProps.data.file)" />  --->
@@ -156,7 +156,7 @@
         <Column v-if="columns.length >= 1">
         <template #body="slotProps">
             <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" @click="edit(slotProps.data.id)" />
-            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="del(slotProps.data.id)" />
+            <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="del(slotProps.data.id)" />
         </template>
     </Column>
 
@@ -309,6 +309,8 @@ import axios from 'axios'
                 message: 'Seguro quieres eliminar esto?',
                 header: 'Eliminar',
                 icon: 'pi pi-exclamation-triangle',
+                acceptClass: 'p-button-danger',
+                acceptLabel: 'Sí',
                 accept: () => {
                     //callback to execute when user confirms the action
 
@@ -339,6 +341,10 @@ import axios from 'axios'
 </script>
 <style>
 
+.p-inputtext {
+    width: -webkit-fill-available;
+}
+
 .truncate span{
     display: block ruby;
   width: 100%;
@@ -348,7 +354,8 @@ import axios from 'axios'
   text-overflow: ellipsis;
 }
 .product-image {
-    width: 150px;
+    width: 100%;
+
     padding: 10px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
 }

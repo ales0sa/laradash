@@ -83,16 +83,27 @@
         }
 
         ul {
-            background-color: $menuitemActiveBgColor;
+            background-color: $menuitemSubActiveBgColor;
 
             li {
-                button {
-                    color: $menuitemColor;
 
-                    &:hover {
-                        color: $menuitemHoverColor;
-                    }
+
+
+            a {
+                color: $menuitemColor;
+
+                &.router-link-active button {
+                    color: $menuitemActiveRouteColor;
+                    background-color: $menuitemBgHoverColor;
                 }
+
+                &:hover button{
+                    color: $menuitemHoverColor;
+                    background-color: $menuitemBgHoverColor;
+                }
+            }
+
+
             }
         }
     }
@@ -118,6 +129,14 @@
                     &:hover {
                         color: $menuitemDarkHoverColor;
                     }
+
+                    &.active-menuitem {
+                        > a {
+                        background-color: $menuitemActiveBgColor;
+                        color: $menuitemActiveColor;
+                    }
+                }
+
                 }
             }
         }

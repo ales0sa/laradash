@@ -61,6 +61,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
             Route::get ('/{tablename}/create', 'CrudController@create')->name('.create');
             Route::post('/{tablename}/{id?}', 'CrudController@store')->name('.store');
             Route::get ('/{tablename}/{id}/edit', 'CrudController@edit')->name('.edit');
+            Route::get ('/{tablename}/{id}/clean/{col}', 'CrudController@clean')->name('.clean');
             //
             Route::get ('/{tablename}/{id}/delete', 'CrudController@destroy')->name('.destroy');
             Route::get ('/{tablename}/trash', 'CrudController@trash')->name('.trash');

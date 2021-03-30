@@ -657,6 +657,9 @@
                 if (input.type == 'multimedia_file') {
                     params.push('listable', 'validate', 'label', 'nullable')
                 }
+                if (input.type == 'file') {
+                    params.push('listable', 'validate', 'label', 'nullable')
+                }
                 if (input.type == 'gallery') {
                     params.push('listable', 'validate', 'label', 'nullable')
                 }
@@ -768,6 +771,8 @@
 <style lang="scss" scoped>
     .card-header {
         position: relative;
+        color: red;
+
     }
     .card-header-btns {
         position: absolute;

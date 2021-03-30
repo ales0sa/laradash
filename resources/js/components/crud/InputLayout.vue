@@ -28,7 +28,7 @@
 --->
         <InputImage v-if="layout[input.type] == 'file'" mode="basic" name="demo[]" 
                     v-model="value.value" :value="value" :input="input"
-
+                    @myUploader="myUploader"
         />
 
     </div>
@@ -106,8 +106,8 @@
         methods: {
         myUploader(event) {
             //event.files == files to upload
-
-            this.$emit('input', event.files);
+            console.log(event, 'rec. en layout')
+            this.$emit('myUploader', event);
         }
 
         },

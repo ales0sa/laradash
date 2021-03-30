@@ -44,9 +44,9 @@ export default {
             authPermissions: window.authPermissions,
             authGroup: window.authGroup,
             layoutMode: 'static',
-            layoutColorMode: 'dark',
+            layoutColorMode: 'light',
             staticMenuInactive: false,
-            overlayMenuActive: false,
+            overlayMenuActive: true,
             mobileMenuActive: false,
             cm: [
 

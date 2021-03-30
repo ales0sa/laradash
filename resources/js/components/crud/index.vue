@@ -43,7 +43,7 @@
 
 
 
-                        <InputLayout :relations="relations" :value="content[input.columnname]" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @input="addFile" :lang="selectedlang.value">
+                        <InputLayout :relations="relations" :value="content[input.columnname]" :input="input" v-for="(input, inputk) in inputs" :key="inputk"  @myUploader="addFile" :lang="selectedlang.value">
                         </InputLayout>
 
                     </div>
@@ -169,9 +169,9 @@
         },
         methods: {
             addFile(event){
-                //console.log(event)
-                this.file = event[0]
-                console.log(this.file)
+                console.log(event, 'recibido en index.vue')
+                this.files = event.files
+                console.log(this.files)
             },
             sendForm() {
 
@@ -196,16 +196,25 @@
             postForm() {
                 let formData = new FormData()
 
-                if(this.file){
+                if(this.files){
+                    this.files.forEach(file => { 
 
-                formData.append('file', this.file);
+                        formData.append('file', file);
+
+                    })
 
                 }
 
 
                 this.inputs.forEach(input => {
                     //console.log(this.content[input.columnname].value)
-                    formData.append(input.columnname, this.content[input.columnname].value);
+                    if(input.type == 'file'){
+
+                    }else{
+
+                        formData.append(input.columnname, this.content[input.columnname].value);
+
+                    }
                     //formData.append(input.columnname+'_en', this.content[input.columnname+'_en'].value);
                     //formData.append(input.columnname+'_pt', this.content[input.columnname+'_pt'].value);
                 });
@@ -219,9 +228,31 @@
                     this.loaded = 3
                     setTimeout(() => {
                         //this.loaded = 1
-                         this.$router.back();
-                         this.loaded = 1
+                        
+                        if(response.data.status == 'success' && response.data.action == 'edit'){
+
+
+                            if(response.data.content) {
+                                response.data.inputs.forEach(input => {
+                                    this.content[input.columnname].value = response.data.content[input.columnname]
+
+
+                                });
+                                this.loaded = 1
+                            }
+
+
+                        }else{
+                            
+                            this.$router.back();
+                         
+
+                        }
+                         
                     }, 1000);
+
+
+
                 }).catch((error) => {
                     if (error.response.data.message == 'CSRF token mismatch.') {
                         csrf.refresh()
@@ -252,7 +283,7 @@
 
                             }
                             //parsedErrors = parsedErrors + '<div style="text-align: center;"> ' + errorData[item] + ' </div>'
-                        ).bind(this);
+                        )
 
                             
 

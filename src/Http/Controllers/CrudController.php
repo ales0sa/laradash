@@ -181,6 +181,37 @@ class CrudController extends Controller
             dd($input);
         }
 
+        try {
+
+            if ($input->type == 'file') {
+
+
+
+
+                if(isset($data[$input->columnname])){
+
+                    $path = $data[$input->columnname]->store('public/content/' . $this->tablename . '/');
+                    $item->{$input->columnname} = $path;
+
+                }else{
+                    
+                    if(!$item->{$input->columnname}){
+
+                        $item->{$input->columnname} = null;
+                    }
+
+                }
+
+
+                $item->save();
+                return true;
+            }
+
+        } catch (\Throwable $th) {
+            dd($th);
+        }
+
+
         if ($input->type == 'map-select-lat-lng') {
             $item->{$input->columnname . '_lat'} = $data[$input->columnname . '_lat'];
             $item->{$input->columnname . '_lng'} = $data[$input->columnname . '_lng'];
@@ -444,20 +475,21 @@ class CrudController extends Controller
 
         if($id){
             $item       = $this->model::where('id', $id)->firstOrFail();
-            $action     = 'edito';
+            $action     = 'edit';
         } else {
             $item       = new $this->model;
-            $action     = 'añadio';
+            $action     = 'create';
         }
 
         foreach ($this->inputs as $inputKey => $input) {
 
            
+            if($input->nullable == 0 && $action == 'create'){
 
-            if($input->nullable == 0){
-                //echo $input->columnname.' requerido';
-                $validHelper[$input->columnname] = 'required';
+                    $validHelper[$input->columnname] = 'required';
+               
             }
+
 
 
            
@@ -479,11 +511,24 @@ class CrudController extends Controller
             
             $item->save();
 
-            return response()->json(['status' => 'success', 'message' => 'Se ' . $action . ' con éxito.']);
+            return response()->json(['status' => 'success', 'message' => 'Se ' . $action . ' con éxito.',
+            'content' => $item, 'inputs' => $this->inputs, 'action' => $action ]);
 
 
 
     }
+
+
+    public function clean($tablename, $id, $column)
+    {
+        $item = $this->model::find($id);
+        $item->{$column} = null;
+        $item->save();
+            return response()->json(['status' => 'success', 'message' => 'Se borro el archivo.',
+            'content' => $item, 'inputs' => $this->inputs ]);
+        
+    }
+
 
     public function edit($tablename, $id)
     {
