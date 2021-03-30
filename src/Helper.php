@@ -11,6 +11,7 @@ if (!function_exists('fastcgi_finish_request')) {
     }
 }
 
+// to get value from config vars
 function __cf($key = 'header_logo', $isArray = null){
 
     $keys = [
