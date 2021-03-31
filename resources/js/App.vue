@@ -7,11 +7,11 @@
                 <div class="layout-logo">
                     <router-link to="/">
                         <picture v-if="!imgError">
-                            <img alt="Logo" :src="logo" @error="onImgError()" width="70%" />
+                            <img alt="Logo" :src="logo" @error="onImgError()" />
                         </picture>
                         <picture v-else>
                             
-                            <img alt="Logo" :src="imageUrl()" @error="onImgError()" width="70%" />
+                            <img alt="Logo" :src="imageUrl()" @error="onImgError()"  />
 
                         </picture>
 

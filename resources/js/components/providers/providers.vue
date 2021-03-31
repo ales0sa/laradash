@@ -7,8 +7,8 @@
 
         <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
         :loading="loading"
-        class="p-datatable-gridlines"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" >
+         :resizableColumns="true" columnResizeMode="fit"
+ >
 
 
         <template #header>
@@ -20,14 +20,16 @@
 
                 </div>
 
-
+<div>
                     <InputText v-model="filters['global']" placeholder="Buscar..." />
-
+</div>
 
                                 <span class="">
-                                    <router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}"> 
-                        <Button icon="pi pi-plus-circle" label="Añadir" class="p-button-primary p-button p-component" /></router-link>
-                    </span>
+<router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}"> 
+
+    <Button icon="pi pi-plus-circle" label="Añadir" class="p-button-primary p-button p-component" /></router-link>
+
+</span>
             </div>
         </template>
 
@@ -54,7 +56,7 @@
                     <div  v-if="col.type == 'select' && col.options">                     
                     <select v-model="filters[col.field]" style="width:100%;">
                         <option></option>
-                        <option  v-for="opt of col.options" :value="opt.key" > {{opt.text}} </option>
+                        <option  v-for="opt of col.options" :value="opt.key" :key="opt.key"> {{opt.text}} </option>
                     </select>
 
 
@@ -65,14 +67,13 @@
 
 
                 <template  #body="slotProps" v-if="col.type == 'textarea'">
-                    <div class="truncate" style="display: block ruby;text-overflow: ellipsis;overflow: hidden;">
+                    <div class="">
                         <span class="" v-html="slotProps.data[col.field]" />
                     </div>
                 </template>
                 <template #body="slotProps" v-else-if="col.type == 'file'">
 
-
-                        <img :src="slotProps.data.file.replace('public/','storage/')"  class="product-image"  v-if="slotProps.data.file"/>
+                        <img :src="slotProps.data[col.field].replace('public/','storage/')" height="40px"  v-if="slotProps.data[col.field]"/>
 
                         <!---
                         <Button label="Ver" icon="pi pi-file" class="p-button-secondary"  @click="openPlane(slotProps.data.file)" />  --->
@@ -155,8 +156,9 @@
 
         <Column v-if="columns.length >= 1">
         <template #body="slotProps">
-            <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" @click="edit(slotProps.data.id)" />
-            <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="del(slotProps.data.id)" />
+            <Button icon="pi pi-pencil" class="p-button-rounded  p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
+            <Button icon="pi pi-copy" class="p-button-rounded  p-button-sm p-button-warning" @click="dupe(slotProps.data.id)" />
+            <Button icon="pi pi-trash" class="p-button-rounded p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
         </template>
     </Column>
 
@@ -334,30 +336,48 @@ import axios from 'axios'
 
         },
 
+        dupe(item) {
 
+            this.$confirm.require({
+                message: 'Seguro quieres duplicar esto?',
+                header: 'Duplicar',
+                icon: 'pi pi-copy',
+                acceptClass: 'p-button-warning',
+                acceptLabel: 'Sí',
+                accept: () => {
+                    //callback to execute when user confirms the action
+
+                axios.get('/adm/crud/' + this.tablename + '/' + item + '/copy').then((response) => {
+                    setTimeout(() => {
+                        //this.loaded = 1
+                        this.load()
+                    }, 1000);
+                }).catch((error) => {
+
+                    console.log(error)
+
+                });
+
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+
+
+        },
 
     }
 }
 </script>
 <style>
 
-.p-inputtext {
-    width: -webkit-fill-available;
-}
-
 .truncate span{
-    display: block ruby;
-  width: 100%;
-  height: 120px;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-.product-image {
-    width: 100%;
 
-    padding: 10px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
 
 </style>

@@ -78,7 +78,7 @@
             color: $menuitemColor;
 
             &:hover {
-                color: $menuitemHoverColor;
+                color: black; /* $menuitemHoverColor;*/
             }
         }
 

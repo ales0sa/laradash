@@ -167,6 +167,7 @@
                                     <InputText type="text" class="" v-model="input.columnname"/>
                                     <label for="floatingInput">Column name</label>
                                 </div>
+                            <Button label="Fill" @click="fillColumn(input)" />
                             </div>
                             <div class="p-field p-col-5 p-mb-3 p-mt-3">
                                 <div class="p-float-label">
@@ -392,8 +393,7 @@
                             'text',
                             'textarea',
                             'boolean',
-                            'select',
-                            'file',
+                            'select',                            
                             'radio',
                             'checkbox',
                             'file',
@@ -635,7 +635,7 @@
                     visible: 1,
                     gridcols: 3,
                     visible_edit: 1,
-                    label: {},
+                    label: { es: '', en: '' },
                     unique: 0,
                     default: '',
                     nullable: 1,
@@ -740,11 +740,50 @@
 
 
             },
+            
+            fillColumn(column){
+                console.log(column.columnname)
+                let tn =column.columnname
+                //console.log(this.input)
+                column['label']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+                column['label']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+                
+                column.columnname = this.slugify(column.columnname, '_')
+
+                /*let tn = this.table.tablename
+                this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+                this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)*/
+
+            },
+
+
             fillTable(){
                 let tn = this.table.tablename
                 this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
                 this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
 
+            },
+            slugify(text, divider = '-'){
+                text = text
+                    .toString()       // Cast to string
+                    .toLowerCase()    // Convert the string to lowercase letters
+                    .normalize('NFD') // The normalize() method returns the Unicode Normalization Form of a given string.
+                    .trim()           // Remove whitespace from both sides of a string
+
+                if (divider == '-') {
+                    text = text
+                        .replace(/\s+/g, '-')     // Replace spaces with -
+                        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+                        .replace(/\-\-+/g, '-');  // Replace multiple - with single -
+                }
+                if (divider == '_') {
+                    text = text
+                        .replace(/\s+/g, '_')     // Replace spaces with _
+                        .replace(/[^\w\-]+/g, '') // Remove all non_word chars
+                        .replace(/\-+/g, '_')  // Replace multiple - with single -
+                        .replace(/\_\_+/g, '_');  // Replace multiple - with single -
+                }
+                return text
             },
             inputUp(key) {
                 this.inputs.splice(key - 1,0,this.inputs.splice(key,1)[0]);

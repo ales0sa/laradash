@@ -10,7 +10,8 @@ use AporteWeb\Dashboard\Models\ContentMeta;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 
 class CrudController extends Controller
@@ -379,7 +380,16 @@ class CrudController extends Controller
         }
 
         if ($id) {
-            $item = $this->model::where('id', $id)->firstOrFail();
+
+            if($this->table->singlepage == 1){
+
+                $item = $this->model::where('id', $id)->firstOrCreate();
+
+            }else{
+
+                $item = $this->model::where('id', $id)->firstOrFail();
+
+            }
             foreach ($this->inputs as $inputKey => $input) {
                 $content[$input->columnname] = $item->{$input->columnname};
                 if($input->translatable){
@@ -419,11 +429,55 @@ class CrudController extends Controller
         ]);
     }
 
-    public function index()
+    public function index($tablename)
     {
-        $data = $this->model::get();
+        $data = $this->model::get()->toArray();
         $relations = [];
         $languages = [];
+
+        $newData = array();
+
+
+        //dd($this->inputs['textarea']->type);
+/*
+        foreach ($data->toArray() as $key => $record) {    
+            echo $key;
+            echo "<hr>";
+            $found_key = null;
+            //dd($key);
+            //$record['content'] = $this->getFirstParagraph($record['content']);
+           //dd($this->inputs);
+           // echo($key);
+           // echo '-';
+           // echo($this->inputs[$key]->type);
+            foreach ($record as $wa => $value) {
+                dd($wa);
+
+                //dd($wa);
+               // echo($this->inputs[$key]->type);
+                # code...
+               // echo $key;
+               //dd($this->inputs[$key]);
+               $found_key = array_search('textarea', array_column($this->inputs, 'type'));
+               $index = $this->inputs[$found_key]->columnname;
+               //dd($wa);
+               if($wa == $index && $this->inputs[$found_key]->type == 'textarea'){
+                   
+                   echo $wa.' * '.$index. '  - '.$this->inputs[$found_key]->columnname;
+                  // $newData[$key][$wa] = $value; //Str::limit($value, 50);
+                    $newData[$key][$wa] = Str::limit($value, 30);
+                   
+                }else{
+
+                    echo $wa;
+                }
+                
+            }
+
+        }
+     die();
+        //dd($newData);
+        $data = $newData;*/
 
         foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
 
@@ -437,7 +491,14 @@ class CrudController extends Controller
             $languages[] = [ 'key' => $value['name'], 'value' => $key, 'flag' => $flag];
         }
 
+        $textareas = array();
+        
         foreach ($this->inputs as $inputKey => $input) {
+            
+           
+            if ($input->type == 'textarea' || $input->type == 'text'){
+                $textareas[] = $input->columnname;
+            }
             
             if ($input->type == 'select' && $input->valueoriginselector == 'table') {
                 $relations[$input->tabledata] = DB::table($input->tabledata)
@@ -446,6 +507,21 @@ class CrudController extends Controller
             }
 
         }    
+                
+        foreach($data as $key => $val) {
+            //dd($val);
+            foreach($val as $k => $v){
+                if (in_array($k, $textareas)) {
+                    //dd($k);
+                    //array_push($newData[], 'ww');
+                    $data[$key][$k] = Str::limit($v, 30);
+                }
+
+            }
+
+        }
+        
+        //dd($data);
 
         return response()->json([
             'data'           => $data,
@@ -483,10 +559,16 @@ class CrudController extends Controller
 
         foreach ($this->inputs as $inputKey => $input) {
 
-           
+            if($input->type == 'number' || $input->type == 'money'){
+
+                $validHelper[$input->columnname] = 'numeric';
+
+            }
+
             if($input->nullable == 0 && $action == 'create'){
 
                     $validHelper[$input->columnname] = 'required';
+
                
             }
 

@@ -48,7 +48,15 @@ trait CrudBase {
         }
     }
 
+    public static function getLimited() {
+
+        return "e";
+
+    }
+
     public function __get($key) {
+
+
         $dirPath  = app_path('Dashboard');
         $filePath = $dirPath . '/' . $this->table . '.json';
 

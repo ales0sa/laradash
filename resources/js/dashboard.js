@@ -12,7 +12,7 @@ import './assets/layout/layout.scss';
 import './assets/layout/flags/flags.css';
 import 'primevue/resources/primevue.min.css';
 
-
+import TieredMenu from 'primevue/tieredmenu';
 import Slider from 'primevue/slider';
 import ToastService from 'primevue/toastservice';
 import Toast from 'primevue/toast';
@@ -58,6 +58,7 @@ window.Vue.use(Message);
 
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
+window.Vue.component('TieredMenu', TieredMenu);
 window.Vue.component('Panel', Panel);
 window.Vue.component('Fieldset', Fieldset);
 window.Vue.component('ConfirmDialog', ConfirmDialog);

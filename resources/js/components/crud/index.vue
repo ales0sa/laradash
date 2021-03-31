@@ -207,8 +207,14 @@
 
 
                 this.inputs.forEach(input => {
-                    //console.log(this.content[input.columnname].value)
+                    console.log(this.content[input.columnname].value)
                     if(input.type == 'file'){
+
+                        this.files.forEach(file => { 
+
+                            formData.append(input.columnname, file);
+
+                        })
 
                     }else{
 

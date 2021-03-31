@@ -12,14 +12,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/home', 'HomeController@index')->name('.home');
+Route::get('/adm/home', 'HomeController@index');
+
 Route::group([
     'middleware' => 'web',
     'prefix'     => config('adashboard.prefix', 'adm'),
 ], function() {
     Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
-    Route::get('salir', 'Auth\LoginController@logout')->name('salir');
+    Route::get('logout', 'Auth\LoginController@logout')->name('salir');
     Route::post('login', 'Auth\LoginController@login')->name('.login');
-
+  
 });
 
 

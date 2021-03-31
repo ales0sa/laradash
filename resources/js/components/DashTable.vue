@@ -1,13 +1,10 @@
 <template>
     <div class="">
 
-
-
-
         <DataTable :value="data" dataKey="id" :paginator="true" :rows="15" :filters="filters" :rowHover="true"
         class="p-datatable-gridlines"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[15,20,50]" >
-
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rowsPerPageOptions="[15,20,50]" >
 
         <template #header>
             <div class="table-header d-flex">
@@ -16,19 +13,16 @@
                 </div>
                 <div>
                 <span class="p-input-icon-left">
-                    <i class="pi pi-search" />
-                    <InputText v-model="filters['global']" placeholder="Buscar..." />
+                    <i class="pi pi-search" /> 
+                    <InputText v-model="filters['global']" placeholder="Buscar..." /> 
                 </span>
                 </div>
             </div>
         </template>
 
-
         <template #empty>
            Sin resultados
        </template>
-
-
 
         <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" sortable>
 
