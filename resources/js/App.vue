@@ -6,7 +6,15 @@
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
                 <div class="layout-logo">
                     <router-link to="/">
-                        <img alt="Logo" :src="logo" width="70%" />
+                        <picture v-if="!imgError">
+                            <img alt="Logo" :src="logo" @error="onImgError()" width="70%" />
+                        </picture>
+                        <picture v-else>
+                            
+                            <img alt="Logo" :src="imageUrl()" @error="onImgError()" width="70%" />
+
+                        </picture>
+
                     </router-link>
                 </div>
 
@@ -39,7 +47,9 @@ import EventBus from './service/event-bus';
 export default {
     data() {
         return {
+            logo: 'logo.png',
             auth: 1,
+            imgError: false,
             authUser: window.authUser,
             authPermissions: window.authPermissions,
             authGroup: window.authGroup,
@@ -112,6 +122,9 @@ export default {
 
 
             return false;
+        },
+        onImgError() {
+            this.imgError = true;
         },
         onWrapperClick() {
             if (!this.menuClick) {
@@ -186,8 +199,13 @@ export default {
                 return true;
             }
         },
+        imageUrl(username) {
+            return `https://ui-avatars.com/api/?name=${this.authUser.name}`;
+        }
     },
     computed: {
+
+
         containerClass() {
             return ['layout-wrapper', {
                 'layout-overlay': this.layoutMode === 'overlay',
@@ -205,9 +223,7 @@ export default {
                 'layout-sidebar-light': this.layoutColorMode === 'light'
             }];
         },
-        logo() {
-            return (this.layoutColorMode === 'dark') ? "/logo.jpeg" : "/logo.jpeg";
-        }
+
     },
     beforeUpdate() {
         if (this.mobileMenuActive)

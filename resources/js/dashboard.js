@@ -44,6 +44,8 @@ import SelectButton from 'primevue/selectbutton';
 import Checkbox from 'primevue/checkbox';
 import Carousel from 'primevue/carousel';
 import Divider from 'primevue/divider';
+import Fieldset from 'primevue/fieldset';
+import Panel from 'primevue/panel';
 import Vuelidate from 'vuelidate'
 import moment from 'moment'
 import App from './App.vue';
@@ -51,13 +53,14 @@ import App from './App.vue';
 import router from './router';
 
 window.Vue.use(ConfirmationService);
-window.Vue.use(ConfirmDialog);
 window.Vue.use(ToastService);
 window.Vue.use(Message);
 
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
-
+window.Vue.component('Panel', Panel);
+window.Vue.component('Fieldset', Fieldset);
+window.Vue.component('ConfirmDialog', ConfirmDialog);
 window.Vue.component('Carousel', Carousel);
 window.Vue.component('Checkbox', Checkbox);
 window.Vue.component('SelectButton', SelectButton);

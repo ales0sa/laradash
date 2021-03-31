@@ -1,5 +1,9 @@
 <template>
     <div class="row">
+
+        <ConfirmDialog></ConfirmDialog>
+
+        <Toast position="center" />
         <div class="col-md-12">
             <div class="row justify-content-center" v-if="loaded == 0">
                 <h3><center><i class="fas fa-sync fa-spin"></i><br>Cargando</center></h3>
@@ -59,12 +63,18 @@
                             <label for="">Menu Icon</label>
                             </span>
                         </div>
-                        <div class="p-col-3 ">
-                            <div class="p-float-label">
-                                <InputText type="text" class="" v-model="table.tablename"/>
-                                <label for="">Table name</label>
-                            <Button label="Fill" @click="fill()" />
+                        <div class="p-col-12 p-md-4 ">
+
+                            <div class="p-float-label ">
+                                <InputText type="text" v-model="table.tablename" 
+                                :class="{'p-invalid': validationErrors.tablename && submitted}" 
+                                />
+                                <label for="">Table name - {{ this.validationErrors['tablename'] }} </label>
                             </div>
+                                
+                        </div>
+                        <div class="p-col-12 p-md-4 ">
+                            <Button label="Fill labels" @click="fillTable()" />
                         </div>
                         <div class="p-col p-mb-3"  v-for="langkey in Object.keys(languages)" :key="'Name' + langkey">
                                     <div class="p-float-label">
@@ -131,16 +141,26 @@
             <div class="card p-fluid">
 
 
-                <div class="card mt-3" v-for="( input, inputKey ) in inputs" :key="inputKey">
+
+                <div class="p-mt-2" v-for="( input, inputKey ) in inputs" :key="inputKey">
+
+<Panel  :toggleable="true" :collapsed="!input['isCollapsed']">
+
+    <template #header >
+       <p v-if="input.columnname"> {{ input.columnname }}</p>
+       <p v-else>   </p>
+    </template>
+
+    <template #icons>
+
+        <Button icon="pi pi-arrow-up" class="p-button-rounded p-button-secondary" @click="inputUp(inputKey)" v-if="inputKey > 0"></Button>
+                <Button icon="pi pi-arrow-down" class="p-button-rounded p-button-secondary" @click="inputDown(inputKey)" v-if="inputKey < ( inputs.length - 1 ) && inputs.length > 1"></Button>
+                <Button class="p-button-rounded p-button-danger" icon="pi pi-times" @click="rmInput(inputKey)"></Button>
+         
+    </template>
 
 
-    <Divider align="right">
-            <Button icon="pi pi-arrow-up" class="p-button-rounded p-button-secondary" @click="inputUp(inputKey)" v-if="inputKey > 0"></Button>
-            <Button icon="pi pi-arrow-down" class="p-button-rounded p-button-secondary" @click="inputDown(inputKey)" v-if="inputKey < ( inputs.length - 1 ) && inputs.length > 1"></Button>
-            <Button class="p-button-rounded p-button-danger" icon="pi pi-times" @click="rmInput(inputKey)"></Button>
-    </Divider>
-
-                    <div class="">
+    <div class="">
                         <div class="p-fluid p-formgrid p-grid">
                             <div class="p-field p-col-5 p-mt-3 p-mb-3">
                                 <div class="p-float-label">
@@ -302,6 +322,10 @@
 
                         </div>
                     </div>
+</Panel>
+
+
+                    
                 </div>
                 <div class="d-sm-flex align-items-center justify-content-center mt-3">
                     <Button type="button" @click="addInput()" label="Nuevo campo">
@@ -319,7 +343,7 @@
 <script>
     import axios from 'axios'
     import EventBus from './../../service/event-bus';
-    import Swal from 'sweetalert2'
+
     
     var publicPATH = document.head.querySelector('meta[name="public-path"]').content;
     export default {
@@ -344,14 +368,17 @@
         components: {},
         data(){
             return{
+
                 languages: {},
+                submitted: false,
+                validationErrors: {},
                 table: {
                     icon: 'pi pi-angle-double-right',
                     singlepage: false,
                     id: 1,
                     uuid: 0,
                     tablename: '',
-                    name: {},
+                    name: { es: '', en: '' },
                     timestamps: 1,
                     softDeletes: 1,
                     menu_show: 1,
@@ -363,22 +390,23 @@
                 seltypes: [ 'table', 'values' ],
                 itypes: [
                             'text',
-'textarea',
-'boolean',
-'select',
-'radio',
-'checkbox',
-'file',
-'icon',
-'email',
-'url',
-'tel',
-'number',
-'money',
-'password',
-'date',
-'time',
-'datetime'
+                            'textarea',
+                            'boolean',
+                            'select',
+                            'file',
+                            'radio',
+                            'checkbox',
+                            'file',
+                            'icon',
+                            'email',
+                            'url',
+                            'tel',
+                            'number',
+                            'money',
+                            'password',
+                            'date',
+                            'time',
+                            'datetime'
 
                         ],
                 icons: [
@@ -600,6 +628,7 @@
             },
             addInput() {
                 this.inputs.push({
+                    isCollapsed: true,
                     columnname: '',
                     icon: '',
                     type: 'text',
@@ -689,20 +718,33 @@
                 return params;
             },
             rmInput(key) {
-                Swal.fire({
-                    title: 'Eliminar',
-                    icon: 'warning',
-                    // width: 600,
-                    html: '<div style="text-align: center;">'+'¿Esta seguro de eliminar?'+'</div>',
-                    showCancelButton: true,
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Rechazar',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.value) {
+
+                this.$confirm.require({
+                    message: 'Seguro ?',
+                    header: 'Eliminar',
+                    icon: 'pi pi-exclamation-triangle',
+                    acceptClass: 'p-button-danger',
+                    acceptLabel: 'Sí',
+                    accept: () => {
+                        //callback to execute when user confirms the action
                         this.inputs.splice(key,1)
+
+
+                    },
+                    reject: () => {
+                        //callback to execute when user rejects the action
                     }
-                })
+                });
+
+
+
+
+            },
+            fillTable(){
+                let tn = this.table.tablename
+                this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+                this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+
             },
             inputUp(key) {
                 this.inputs.splice(key - 1,0,this.inputs.splice(key,1)[0]);
@@ -710,23 +752,46 @@
             inputDown(key) {
                 this.inputs.splice(key + 1,0,this.inputs.splice(key,1)[0]);
             },
+            validateForm(){
+
+                if (!this.table.tablename.trim())              
+                    this.validationErrors['tablename'] = true;
+                else
+                    delete this.validationErrors['tablename'];
+                
+                return !Object.keys(this.validationErrors).length;
+
+            },
             sendForm() {
-                Swal.fire({
-                    title: 'Enviar',
-                    icon: 'question',
-                    // width: 600,
-                    html: '<div style="text-align: center;">'+'¿Esta seguro de enviar el formulario?'+'</div>',
-                    showCancelButton: true,
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Rechazar',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.value) {
-                        this.postForm()
-                    }
-                })
+                this.submitted = true
+                if(this.validateForm()){
+                    console.log('?')
+
+                    this.$confirm.require({
+                        message: 'Seguro ?',
+                        header: 'Generar / Actualizar CRUD',
+                        icon: 'pi pi-exclamation-triangle',
+                        acceptClass: 'p-button-success',
+                        acceptLabel: 'Sí',
+                        accept: () => {
+                            //callback to execute when user confirms the action
+                            this.postForm()
+
+
+                        },
+                        reject: () => {
+                            //callback to execute when user rejects the action
+                        }
+                    });
+                }else{
+                    return false
+                }
+
             },
             postForm() {
+
+                this.loaded = 0
+
                 let formData = new FormData()
 
                 formData.append('data', JSON.stringify({
@@ -735,18 +800,21 @@
                 })); 
 
                 axios.post('/adm/crud-generator', formData).then((response) => {
-                    this.loaded = 3
-                    setTimeout(() => {
+                    
+                    //setTimeout(() => {
                         this.loaded = 1
-
-                        EventBus.$emit('reloadMenu');
-                        // window.location.href = response.data.redirect
-                    }, 1000);
+                        if(response.data.status == 'success'){
+                                    this.loaded = 1
+                                    this.$toast.add({severity:'success', summary: 'Success', detail: response.data.message, life: 3000})
+                                    EventBus.$emit('reloadMenu');
+                        }
+                        
+                    //}, 1000);
                 }).catch((error) => {
                     if (error.response.data.message == 'CSRF token mismatch.') {
                         csrf.refresh()
                         .then(() => {
-                            this.enviarPresupuesto()
+                               //this.enviarPresupuesto()
                         })
                         .catch((err) => {
                             if (err.message == 'Unauthenticated.') {
@@ -759,7 +827,10 @@
                         this.openLoginFormModal()
                         return true
                     }
-                    console.log(error.response.data)
+                    //console.log(error.response.data)
+                    this.$toast.add({severity:'error', summary: 'Error', detail: error.response.data.message, life: 5000})
+
+
                     this.loaded = 1
                 })
             }
@@ -782,4 +853,18 @@
         display: flex;
     }
 
+    .p-toast-message-content {
+        max-width: 500px;
+    }
+
+::v-deep .p-panel.p-panel-toggleable .p-panel-header {
+    padding: 5px;
+}
+
+    ::v-deep .p-panel-header, .p-panel-header p{
+
+        padding: 2px;
+        line-height: 1rem;
+        margin-bottom: 0px;
+    }
 </style>

@@ -1,7 +1,7 @@
 <template>
 <span class="p-float-label">
 
-
+        
         <InputText type="text"   v-model="val.value"   :id="input.columnname" style="width: 100%" />
         <label :for="input.columnname">{{ input.label[lang()] }}</label>
 
@@ -11,6 +11,7 @@
 
     export default {
         props: {
+            submitted: { type: Boolean, default: false },
             input: {
                 type: Object,
                 default: {}
@@ -23,7 +24,8 @@
         components: {},
         data(){
             return{
-                val: this.value
+                val: this.value,
+                validationErrors: this.$parent.validationErrors
             }
         },
         created() {

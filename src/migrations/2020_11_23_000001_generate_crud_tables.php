@@ -100,12 +100,15 @@ class GenerateCrudTables extends Migration
                 $col = $table->string($input->columnname.'_pt')->nullable();                
 
             }*/
+                if($input->translatable == 1){
 
-                foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-           
-            if (!Schema::hasColumn($content->table->tablename, $input->columnname.'_'.$key)) {                         
-                $col = $table->string($input->columnname.'_'.$key)->nullable();     
-            }
+                    foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
+               
+                        if (!Schema::hasColumn($content->table->tablename, $input->columnname.'_'.$key)) {                         
+                            $col = $table->string($input->columnname.'_'.$key)->nullable();     
+                        }
+                    }
+
                 }
 
                 $col = $table->string($input->columnname);
@@ -141,7 +144,7 @@ class GenerateCrudTables extends Migration
             }
             if($input->type == 'select' || $input->type == 'radio' ) {
                 //dd($input);
-                echo $input->columnname;
+                //echo $input->columnname;
                 if(isset($input->multiple) && $input->multiple == 'true'){
                     $col = $table->text($input->columnname)->nullable();
                 }else{

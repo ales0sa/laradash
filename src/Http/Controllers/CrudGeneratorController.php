@@ -120,14 +120,17 @@ class CrudGeneratorController extends Controller
         Artisan::call('migrate:refresh', [
             '--path' => 'vendor/aporteweb/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php',
             '--force' => true            
-        ], new StreamOutput($stream));
+        ]);
 
 
 
-        return 1;
+        
 
         //return Artisan::call('migrate:refresh --path=vendor/aporteweb/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
-         return response()->json([ 'status' => 'success' ]);// redirect()->route('admin.crud-generator')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');
+         
+            return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
+
+         // ]);// redirect()->route('admin.crud-generator')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');
         /*
         $dirPath = __crudFolder();
 

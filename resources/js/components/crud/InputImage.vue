@@ -51,7 +51,7 @@
             },
             previewWidth: {
                 type: Number,
-                default: 250
+                default: 100
             }
         },
         components: {
