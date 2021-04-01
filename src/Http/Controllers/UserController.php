@@ -87,6 +87,18 @@ class UserController extends Controller
     {
     }
 
+    public function users(){
+        $users  = User::get();
+
+        return ['data' => $users ];
+    }
+
+    public function groups(){
+        $groups  = Group::get();
+
+        return ['data' => $groups ];
+    }
+
     /**
      * Show the form for editing the specified resource.
      *

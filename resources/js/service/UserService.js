@@ -3,7 +3,11 @@ import axios from 'axios'
 export default class UserService {
 
 	getUsers() {
-		return axios.get('/adm/api/users').then(res => res.data.data);
+		return axios.get('/adm/user/list').then(res => res.data.data);
+	}
+
+	getGroups() {
+		return axios.get('/adm/user/groups').then(res => res.data.data);
 	}
 
 	getUser(id) {

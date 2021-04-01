@@ -7,7 +7,7 @@
                 <div class="layout-logo">
                     <router-link to="/">
                         <picture v-if="!imgError">
-                            <img alt="Logo" :src="logo" @error="onImgError()" />
+                            <img alt="Logo" :src="logo" @error="onImgError()" width="50px" />
                         </picture>
                         <picture v-else>
                             
@@ -47,7 +47,7 @@ import EventBus from './service/event-bus';
 export default {
     data() {
         return {
-            logo: 'logo.png',
+            logo: window.logo,
             auth: 1,
             imgError: false,
             authUser: window.authUser,
@@ -63,7 +63,7 @@ export default {
 
             ],
             menu : [
-                {label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/'},
+               /* {label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/'},
                 {
                     label: 'Configuraciones', icon: 'pi pi-fw pi-file',
                     items: [
@@ -71,7 +71,7 @@ export default {
                         {label: 'Contacto', icon: 'pi pi-fw pi-file', to: '/crud/material'},
                         
                     ]
-                },
+                },*/
             ]
         }
     },

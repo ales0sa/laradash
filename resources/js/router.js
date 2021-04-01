@@ -6,6 +6,7 @@ import CrudCreate from './components/crud/index.vue';
 import CrudGenerator from './components/crud-generator/cruds.vue';
 import CrudEdit from './components/crud-generator/index.vue';
 import CrudUsers from './components/users/index.vue';
+import CrudGrupos from './components/users/groups.vue';
 import WebConfig from './components/company-data/CompanyDataFormComponent.vue';
 
 Vue.use(Router);
@@ -63,6 +64,12 @@ export default new Router({
 			name: 'users',
 			component: CrudUsers,
 
+		},
+		{
+			path: '/grupos',
+			name: 'grupos',
+			component: CrudGrupos,
+			props: true
 		},
 	],
 	scrollBehavior() {

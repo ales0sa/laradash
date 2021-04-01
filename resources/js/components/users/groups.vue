@@ -1,0 +1,11 @@
+<template>
+<div class="row">
+    <ConfirmDialog></ConfirmDialog>
+	Grupos
+</div>
+</template>
+
+<script >
+	
+
+</script>

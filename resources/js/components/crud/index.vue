@@ -3,10 +3,12 @@
 
 
 
-    <div class="row">
+    <div class="">
         <ConfirmDialog></ConfirmDialog>
 
-<Toast position="top-right" />
+
+
+        <Toast position="top-right" />
 
 
         <div class="col-md-12">
@@ -50,10 +52,25 @@
                 </div>
             </div>
 
+
+                    <div class="layout-config" >
+
+
+
+            <Button type="button" @click="$router.go(-1)" class="p-button-info layout-config-button" id="layout-config-button"  icon="pi pi-chevron-left" label="Volver" style="top: -10px;"/>
+
+            <Button type="button" @click="sendForm()" class="p-button-success layout-config-button" id="layout-config-button"  icon="pi pi-save" label="Guardar" />
+
+
+
+        </div>
+
+
+<!---
             <div class="d-sm-flex align-items-center justify-content-between mt-4">
 
                 <Button type="button" @click="sendForm()" class="p-button-success" icon="pi pi-save" label="Guardar" />
-            </div>
+            </div>--->
         </div>
     </div>
 </template>
@@ -180,7 +197,9 @@
                 this.$confirm.require({
                     message: 'Seguro?',
                     header: 'Guardar registro',
-                    icon: 'pi pi-exclamation-triangle',
+                    icon: 'pi pi-save',
+                    acceptClass: 'p-button-success',
+                    acceptLabel: 'Sí',
                     accept: () => {
                         //callback to execute when user confirms the action
                         this.postForm()

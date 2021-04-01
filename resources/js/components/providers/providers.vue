@@ -1,5 +1,5 @@
 <template>
-    <div class="">
+    <div class="p-grid p-fluid dashboard">
 
 <ConfirmDialog></ConfirmDialog>
 
@@ -13,23 +13,25 @@
 
         <template #header>
 
-            <div class="p-d-flex p-jc-between p-mx-auto">
+            <div class="p-d-flex p-jc-between p-mx-auto ">
                 <div style=""> 
                     <h3>{{ title }}</h3>
 
 
                 </div>
 
-<div>
-                    <InputText v-model="filters['global']" placeholder="Buscar..." />
+<div class="p-d-flex">
+                    <InputText v-model="filters['global']" placeholder="Buscar..." style="    height: 30px;
+    margin-right: 10px;"/>
+
+
+  
+<router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}" > 
+
+    <Button icon="pi pi-plus-circle" label="Nuevo" class=" p-button-primary p-button p-component" /></router-link>
+
 </div>
 
-                                <span class="">
-<router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}"> 
-
-    <Button icon="pi pi-plus-circle" label="Añadir" class="p-button-primary p-button p-component" /></router-link>
-
-</span>
             </div>
         </template>
 
@@ -154,11 +156,15 @@
                 
         </Column>
 
-        <Column v-if="columns.length >= 1">
+        <Column v-if="columns.length >= 1" headerStyle="width: 120px;">
         <template #body="slotProps">
-            <Button icon="pi pi-pencil" class="p-button-rounded  p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
-            <Button icon="pi pi-copy" class="p-button-rounded  p-button-sm p-button-warning" @click="dupe(slotProps.data.id)" />
-            <Button icon="pi pi-trash" class="p-button-rounded p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
+
+            <span class="p-buttonset">
+
+            <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
+            <Button icon="pi pi-copy" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="dupe(slotProps.data.id)" />
+            <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
+            </span>
         </template>
     </Column>
 
@@ -346,7 +352,7 @@ import axios from 'axios'
                 acceptLabel: 'Sí',
                 accept: () => {
                     //callback to execute when user confirms the action
-
+                    this.loading = true
                 axios.get('/adm/crud/' + this.tablename + '/' + item + '/copy').then((response) => {
                     setTimeout(() => {
                         //this.loaded = 1

@@ -4,7 +4,7 @@
 <ConfirmDialog></ConfirmDialog>
 
 
-<Dialog :visible.sync="productDialog" :style="{width: '450px'}" header="Nuevo usuario del sistema" :modal="true" class="p-fluid">
+<Dialog :visible.sync="productDialog" :style="{width: '550px'}" header="Nuevo usuario del sistema" :modal="true" class="p-fluid">
 <img :src="'demo/images/product/' + product.image" :alt="product.image" class="product-image" v-if="product.image" />
 <div class="p-field">
     <label for="name">Nombre</label>
@@ -12,11 +12,11 @@
     <small class="p-invalid" v-if="submitted && !product.name">Nombre oblitatorío.</small>
 </div>
 
-
+<!---
 <div class="p-field">
     <label class="p-mb-3">Grupo</label>
     <div class="p-formgrid p-grid">
-        <div class="p-field-radiobutton p-col-6">
+        <div class="p-field-radiobutton p-col-6" v-for="">
             <RadioButton id="category1" name="category" value="gerencia" v-model="product.category" />
             <label for="category1">Gerencia</label>
         </div>
@@ -33,21 +33,28 @@
             <label for="category4">Operario</label>
         </div>
     </div>
-</div>
-<div class="p-formgrid p-grid" v-if="product.category == 'taller'">
+</div> 
+<div class="p-formgrid p-grid" v-if="product.category == 'taller'">---->
+    <div class="p-formgrid p-grid">
     <div class="p-field p-col">
-<Dropdown v-model="product.sector" :options="sectores" optionValue="id" optionLabel="name" placeholder="Seleccione sector" />
+<Dropdown v-model="product.sector" :options="sectores" optionValue="id" optionLabel="name" placeholder="Seleccione grupo" />
 </div>
 
 </div>
 <div class="p-formgrid p-grid">
     <div class="p-field p-col">
         <label for="price">Usuario</label>
-        <InputNumber id="price" v-model="product.price" mode="currency" currency="USD" locale="en-US" />
+        <InputText id="price" v-model="product.price" />
     </div>
-    <div class="p-field p-col">
+    <div class="p-field p-col" style="min-height: 100px;">
         <label for="quantity">Contraseña</label>
-        <InputNumber id="quantity" v-model="product.quantity" integeronly />
+        
+        <Password v-model="product.quantity"
+         weakLabel="Debil"
+         mediumLabel="Media"
+         strongLabel="Fuerte"
+         promptLabel="Ingresa una contraseña"
+         toggleMask></Password>
     </div>
 </div>
 <template #footer>
@@ -77,7 +84,8 @@
                     <i class="pi pi-search" />
                     <InputText v-model="filters['global']" placeholder="Buscar..." />
                 </span>
-                <Button label="Nuevo" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew" />
+                <router-link :to="{ name: 'grupos' }"><Button label="Grupos" /></router-link>
+                <Button label="Nuevo" icon="pi pi-plus" class="p-mr-2" @click="openNew" />
             </div>
         </template>
 
@@ -112,8 +120,6 @@
 <script>
 
 import UserService from './../../service/UserService';
-
-
 import ConfirmDialog from 'primevue/confirmdialog';
 
     export default {
@@ -153,14 +159,13 @@ import ConfirmDialog from 'primevue/confirmdialog';
 
         },
         created() {
-        this.UserService = new UserService();
-           this.SectorService = new SectorService();
 
+            this.UserService = new UserService();
 
         },
         mounted() {
 
-          this.SectorService.getSectores().then(data => this.sectores = data);
+           this.UserService.getGroups().then(data => this.sectores = data);
             //this.tablename = this.$route.params.table
             //this.UserService.getTable(this.tablename).then(data => this.inputs = data.inputs);
            // this.UserService.getData(this.tablename).then(data => this.data = data);
@@ -179,7 +184,8 @@ import ConfirmDialog from 'primevue/confirmdialog';
             this.inputs = [];
             this.columns = [];
             this.rels = [];
-          this.SectorService.getSectores().then(data => this.sectores = data);
+            this.UserService.getGroups().then(data => this.sectores = data);
+
             this.UserService.getUsers().then(data => { 
                 this.data = data
              });

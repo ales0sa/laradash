@@ -41,18 +41,37 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
         $files = \File::allFiles($dirPath);
 
 
+
+
         foreach ($files as $fileKey => $file) {
+
           $content = json_decode(file_get_contents($file->getPathname()));
-          //dd($content);
+          
           if($content->table->menu_show == 1 && $content->table->singlepage == true){ 
 
             $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.'/1/edit'];
 
           }else{
+
             $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename ];
           }
 
         }
+
+
+
+        $menu[] = [ 'label' => 'Configuraciones', 'icon' => 'pi pi-cog', 
+
+
+                      'items' => [ 
+
+                                    ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'],
+                                    ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users']
+
+                                ]
+
+                  ];
+
 
         return($menu);
 

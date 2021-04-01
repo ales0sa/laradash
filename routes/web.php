@@ -37,6 +37,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
 
         Route::get('/', 'HomeController@index')->name('.home');
         Route::get('/api/menu', 'HomeController@menu')->name('.menu');
+        //Route::get('/api/groups', 'HomeController@menu')->name('.menu');
 
         Route::group([
             'prefix' => 'crud-generator',
@@ -79,6 +80,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
             'as' => '.user',
         ], function() {
             Route::get ('/', 'UserController@index');
+
+            Route::get ('/groups', 'UserController@groups');
+            Route::get ('/list', 'UserController@users');
+
             Route::get ('/create', 'UserController@create')->name('.create');
             Route::post('/', 'UserController@store')->name('.store');
             Route::get ('/{id}/edit', 'UserController@edit')->name('.edit');

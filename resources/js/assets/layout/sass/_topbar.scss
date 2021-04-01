@@ -8,6 +8,18 @@
     @include clearfix();
     @include linear-gradient-left($topbarLeftBgColor,$topbarRightBgColor);
     transition: left $transitionDuration;
+    
+    .layout-topbar-profile {
+           
+        float: right;
+        button {
+            
+            top:  -5px;
+            right: 0px;
+            font-size: 1.2em;
+            animation-duration: .5s;
+        }
+    }
 
     .layout-topbar-icons {
         float: right;

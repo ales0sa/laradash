@@ -35,29 +35,15 @@
     <title>{{ config('app.name', 'Panel') }}</title>
 
 
-<link href="https://unpkg.com/primevue/resources/themes/saga-blue/theme.css " rel="stylesheet">
-<link href="https://unpkg.com/primevue/resources/primevue.min.css " rel="stylesheet">
+
 <link href="https://unpkg.com/primeicons/primeicons.css " rel="stylesheet">
-    <!-- Hardcodeada temporal -->  
-<style type="text/css">
-    .btn .app-primary{
-        color: white;
-    }
-    .dataTable-top {
-            justify-content: flex-end !important;
-        
-        
-    }
 
-
-</style>
-    <!-- Hardcodeada temporal -->  
 
 </head>
 <body >
 
     @if (Auth::check())
-    <div id="app" class="p-2">
+    <div id="app" class="">
     </div>
 
         <!-- Scripts -->
@@ -66,9 +52,10 @@
 
          <script>
 
-            window.authUser={!! json_encode(Auth::user()); !!};
-            window.authPermissions= [1]
-            window.authGroup= [1]
+            window.logo            = '{{ url('/').__cf() }}'
+            window.authUser        = {!! json_encode(Auth::user()); !!};
+            window.authPermissions = [1]
+            window.authGroup       = [1]
 
      </script>
     @else

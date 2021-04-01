@@ -1,10 +1,14 @@
 <template>
-<span class="p-float-label">
+<span class="p-float-label p-mt-3">
 
         <InputNumber mode="currency" 
         currency="ARS"
          v-model="val.value"   :id="input.columnname"
-        v-if="input.type == 'number' || input.type == 'money'"/>
+        v-if="input.type == 'number'"/>
+        <InputNumber mode="currency" 
+        currency="ARS"
+         v-model="val.value"   :id="input.columnname"
+        v-else-if="input.type == 'money'"/>
 
         <InputText type="text"   v-model="val.value"   :id="input.columnname" style="width: 100%" v-else/>
         <label :for="input.columnname">{{ input.label[lang()] }}</label>
