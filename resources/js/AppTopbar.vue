@@ -23,6 +23,7 @@
 
 		</div>
 		<div class="layout-topbar-profile">
+			<router-link :to="{ name: 'crudgenerator' }"> CRUD Generator </router-link>
  			<SplitButton :label="this.$parent.authUser.name" 
  			icon="pi pi-user" :model="usermenu" class="profile-button">
 	 		</SplitButton>

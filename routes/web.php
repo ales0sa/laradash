@@ -15,15 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/home', 'HomeController@index')->name('.home');
 Route::get('/adm/home', 'HomeController@index');
 
-Route::group([
-    'middleware' => 'web',
-    'prefix'     => config('adashboard.prefix', 'adm'),
-], function() {
-    Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
-    Route::get('logout', 'Auth\LoginController@logout')->name('salir');
-    Route::post('login', 'Auth\LoginController@login')->name('.login');
-  
-});
+
 
 
 
@@ -37,6 +29,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
 
         Route::get('/', 'HomeController@index')->name('.home');
         Route::get('/api/menu', 'HomeController@menu')->name('.menu');
+        Route::get ('/dbtables', 'CrudGeneratorController@dbtables')->name('.dbtables');
+        Route::get ('/dbtables/{tablename}', 'CrudGeneratorController@dbgetcols')->name('.dbgetcols');
+        Route::post ('/jsonfromdb', 'CrudGeneratorController@jsonfromdb')->name('.jsonfromdb');
         //Route::get('/api/groups', 'HomeController@menu')->name('.menu');
 
         Route::group([
@@ -45,6 +40,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
         ], function() {
             Route::get ('/', 'CrudGeneratorController@index');
             Route::get ('/cg', 'CrudGeneratorController@index2')->name('.index');
+            
             Route::get ('/create', 'CrudGeneratorController@create')->name('.create');
             Route::post('/', 'CrudGeneratorController@store')->name('.store');
             Route::get ('/{id}/edit', 'CrudGeneratorController@edit')->name('.edit');
@@ -81,8 +77,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
         ], function() {
             Route::get ('/', 'UserController@index');
 
-            Route::get ('/groups', 'UserController@groups');
-            Route::get ('/list', 'UserController@users');
+            Route::get ('/groups', 'UserController@groups')->name('.groups');
+            Route::get ('/list', 'UserController@users')->name('.list');
 
             Route::get ('/create', 'UserController@create')->name('.create');
             Route::post('/', 'UserController@store')->name('.store');

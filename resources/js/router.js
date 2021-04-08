@@ -9,6 +9,8 @@ import CrudUsers from './components/users/index.vue';
 import CrudGrupos from './components/users/groups.vue';
 import WebConfig from './components/company-data/CompanyDataFormComponent.vue';
 
+import CrudDB from './components/crud-generator/fromdb.vue';
+
 Vue.use(Router);
 
 export default new Router({
@@ -42,6 +44,12 @@ export default new Router({
 			props: true
 		},
 		{
+			path: '/crud-generator/createfromdb',
+			name: 'crdb',
+			component: CrudDB,
+
+		},
+		{
 			path: '/crud-generator/:file',
 			name: 'cre',
 			component: CrudEdit,
@@ -53,6 +61,7 @@ export default new Router({
 			component: CrudEdit,
 
 		},
+
 		{
 			path: '/crud/:table/:id/edit',
 			name: 'ced',

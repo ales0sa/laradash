@@ -39,7 +39,7 @@ class DashboardServiceProvider extends ServiceProvider
         $this->configurePublishing();
         $this->configureRoutes();
 
-        Paginator::useBootstrap();
+        //Paginator::useBootstrap();
         Artisan::command('dashboard:init', function () {
 
 
@@ -50,10 +50,11 @@ class DashboardServiceProvider extends ServiceProvider
             $bar->advance();
             Artisan::call('storage:link');
             $bar->advance();
-            Artisan::call('migrate:fresh', [
+            Artisan::call('migrate:refresh', [
                 '--seed' => true
             ]);
             $bar->advance();
+
             DB::table('users')->insert([
                 'uuid'     => __uuid(),
                 'name'     => 'Administrador',
@@ -62,6 +63,7 @@ class DashboardServiceProvider extends ServiceProvider
                 'password' => bcrypt('admin'),
                 'root'     => 1,
             ]);
+
             $bar->advance();
             $bar->finish();
             $this->info("\nSe ejecutaron las migraciones, seeders y se creo el usuario admin!");
@@ -116,10 +118,10 @@ class DashboardServiceProvider extends ServiceProvider
         /*if (version_compare(App::VERSION(), '7.0.0') >= 0) {
             Blade::withoutComponentTags();
         }*/
-        config([
+        /*config([
             'log-viewer.theme'         => 'bootstrap-4',
             'log-viewer.route.enabled' => false
-        ]);
+        ]);*/
         Blade::component('dashboard-messages', Messages::class);
         Blade::directive('exception', function () {
             return '<?php try { ?>';

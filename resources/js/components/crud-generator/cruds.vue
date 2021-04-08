@@ -1,8 +1,24 @@
 <template>
     <div class="">
 
+<Toolbar>
+    <template #left>
+    <router-link :to="{ name: 'cren' }"> <Button icon="pi pi-plus" class="p-button-primary p-mr-2" label="New Model"/></router-link>
+    <router-link :to="{ name: 'crdb' }"> <Button icon="pi pi-clone" class="p-button-secondary" label="Create From DB"/></router-link>
+    </template>
+
+    <template #right>
+        <Button icon="pi pi-search" class="p-mr-2" />
+        <Button icon="pi pi-calendar" class="p-button-success p-mr-2" />
+        <Button icon="pi pi-times" class="p-button-danger" />
+    </template>
+</Toolbar>
+
         <div class="p-md-3">
-            <router-link :to="{ name: 'cren' }"> <Button icon="pi pi-plus" class="p-button-primary" label="Add Model"/></router-link>
+            
+        </div>
+        <div class="p-md-3">
+           
         </div>
 
 

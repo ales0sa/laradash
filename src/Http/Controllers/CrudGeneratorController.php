@@ -35,15 +35,53 @@ class CrudGeneratorController extends Controller
 
 
     }
-    public function index2()
+    public function dbtables()
     {
         $dirPath = __crudFolder();
         $data = File::allFiles($dirPath);
-        
-        return view('Dashboard::admin.crud-generator.index', [
-            'data'           => $data,
-            '__admin_active' => 'admin.crud-generator'
-        ]);
+        //dd($data);
+        $files = array();
+        foreach ($data as $key => $value) {
+            # code...
+            $filename = $value->getFilename();
+            $noext = str_replace('.json','',$filename);
+            //$files[ $noext ];
+            $files[] = $noext;
+        }
+        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+        //dd($files);
+        $difftables = array_diff($tables, $files);
+
+        return ['status' => 'success', 'tables' => $difftables];
+    }
+
+    public function dbgetcols($tablename)
+    {
+        $data = [];
+        $sm = \Schema::getConnection()->getDoctrineSchemaManager();
+        $table = $sm->listTableDetails($tablename);
+
+        foreach ($table->getColumns() as $column) {
+
+            $data[$column->getName()]  = [ 'type' => $column->getType()->getName(), 'props' => $column->toArray()];
+
+        }
+
+        return ['status' => 'success', 'columns' => $data];
+    }
+
+    public function jsonfromdb(Request $request){
+
+        $dirPath = __crudFolder();
+
+        $data     = json_decode($request->data);
+        $filePath = $dirPath . '/' . $data->table->tablename . '.json';
+
+
+        file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+
+        return ['status' => 'success', 'message' => 'Succefully generated CRUD from DataBase'];
+
     }
 
     public function data($table = false)
@@ -116,9 +154,9 @@ class CrudGeneratorController extends Controller
         (new Generator($data->table, $data->inputs))->crud();
         $stream = fopen("php://output", "w");
 
-        
+
         Artisan::call('migrate:refresh', [
-            '--path' => 'vendor/aporteweb/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php',
+            '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
             '--force' => true            
         ]);
 
