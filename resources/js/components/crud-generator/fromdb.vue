@@ -13,7 +13,7 @@
         <Button label="Create JSON File" @click="generate()" />
 
         <div>
-        {{ jsonIdea }} 
+        <pre>{{ jsonIdea }} </pre>
         </div>
 
         </div>
@@ -34,9 +34,21 @@ export default {
 	return {
 		selectedTable: null,
         jsonIdea: null,
-		tables: [
-		]
-	}
+		tables: null,
+        dbtypes: {
+                    "bigint": 'number',
+                    "string": 'text',
+                    "text": 'textarea',
+                    "integer": 'number',                    
+                    "biginteger": 'number',
+                    "datetime": 'datetime',
+                    "date": 'date',
+                    "boolean": 'boolean'
+                }
+        }
+        
+
+
     },
     methods: {
         generate() {
@@ -86,15 +98,18 @@ export default {
                         let parsedInputs = []
                         const array1 =  Object.keys(response.data.columns);
 
-                        console.log(array1)
+                        console.log(response.data.columns)
 
                         Array.prototype.forEach.call(array1, child => {
-
-                            parsedInputs.push({
+                            if(child == 'id' || child == 'created_at' || child == 'deleted_at' || child == 'updated_at'){
+                                //return;
+                                console.log(child)
+                            }else{
+                                parsedInputs.push({
                                 isCollapsed: true,
                                 columnname: child,
                                 icon: '',
-                                type: 'text',
+                                type: this.dbtypes[response.data.columns[child].type],
                                 visible: 1,
                                 gridcols: 3,
                                 visible_edit: 1,
@@ -111,6 +126,9 @@ export default {
                                 translatable: 0,
                                 multiple: false
                             })
+
+                            }
+                           
                             /*console.log()
                             console.log(response.data.columns[child].type)*/
 
@@ -156,7 +174,7 @@ export default {
                     
                    if(response.data.status == 'success') {
                         
-                        this.tables = response.data.tables
+                        this.tables = Object.values(response.data.tables)
 
                     }
         });

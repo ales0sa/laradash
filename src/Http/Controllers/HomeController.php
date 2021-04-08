@@ -2,7 +2,9 @@
 
 namespace AporteWeb\Dashboard\Http\Controllers;
 
+use AporteWeb\Dashboard\Models\User;
 use Illuminate\Http\Request;
+use Auth;
 
 class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
 {
@@ -16,11 +18,35 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+    public function whoami()
+    {
+        $user = User::find(Auth::user()->id);
+        $groups      = $user->groups()->get();
+        $permissions = $user->permissions()->get();
+        return [ 'user' => $user, 'groups' => $groups, 'perms' => $permissions ];
+    }
+    
+
+    public function ccache()
+    {
+
+        \Artisan::call('optimize');
+
+        return [ 'status' => 'success', 'message' => 'Cache cleaned.' ];
+        
+    }
+    
+
+    public function symlinkgenerator()
+    {
+
+        \Artisan::call('storage:link');
+
+        return [ 'status' => 'success', 'message' => 'Se creo el symlink.' ];
+        
+    }
+    
+
     public function index()
     {
         return view('Dashboard::admin.home', [

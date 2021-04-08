@@ -37,8 +37,7 @@
 
 
 <link href="https://unpkg.com/primeicons/primeicons.css " rel="stylesheet">
-
-
+<script src="https://kit.fontawesome.com/a82e74739c.js" crossorigin="anonymous"></script>
 </head>
 <body >
 

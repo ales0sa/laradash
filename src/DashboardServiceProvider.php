@@ -39,10 +39,24 @@ class DashboardServiceProvider extends ServiceProvider
         $this->configurePublishing();
         $this->configureRoutes();
 
-        //Paginator::useBootstrap();
+
+        Artisan::command('dashboard:user', function () {
+
+        
+        DB::table('users')->insert([
+            'uuid'     => __uuid(),
+            'name'     => 'Administrador',
+            'username' => 'admin',
+            'email'    => 'admin@local.test',
+            'password' => bcrypt('admin'),
+            'root'     => 1,
+        ]);
+
+        $this->info("\nSe creo el usuario admin!");
+
+        });
+
         Artisan::command('dashboard:init', function () {
-
-
 
             $bar = $this->output->createProgressBar(4);
             $bar->start();
@@ -180,16 +194,6 @@ class DashboardServiceProvider extends ServiceProvider
             config(['permissions' => include __DIR__.'/config/permissions.php']);
         }
         */
-        config(['admin.theme.styles' => 'css/dashboard.css']);
-        config(['admin.text.footer' => 'Todos los derechos reservados © Dashboard 2020']);
-        view()->share([
-            '__admin_active' => 'admin',
-        ]);
-        view()->composer('*', function ($view)
-        {
-            //...with this variable
-            // $view->with('__admin_menu', 'Dashboard::admin.menu');
-        });
     }
 
 

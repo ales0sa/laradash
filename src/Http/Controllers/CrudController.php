@@ -43,7 +43,9 @@ class CrudController extends Controller
             $className = str_replace(['_', '-', '.'], ' ', $this->tablename);
             $className = ucwords($className);
             $className = str_replace(' ', '', $className);
+            $className = Str::singular($className);
             $this->model = "\\App\\Models\\" . $className;
+
         }
 
     }

@@ -3,14 +3,16 @@
 
 <Toolbar>
     <template #left>
-    <router-link :to="{ name: 'cren' }"> <Button icon="pi pi-plus" class="p-button-primary p-mr-2" label="New Model"/></router-link>
-    <router-link :to="{ name: 'crdb' }"> <Button icon="pi pi-clone" class="p-button-secondary" label="Create From DB"/></router-link>
+    <router-link :to="{ name: 'cren' }"> <Button icon="pi pi-plus" class="p-button-primary p-mr-2" label="New CRUD"/></router-link>
+    <router-link :to="{ name: 'crdb' }"> <Button icon="pi pi-clone" class="p-button-secondary" label="CRUD From DB"/></router-link>
     </template>
 
     <template #right>
-        <Button icon="pi pi-search" class="p-mr-2" />
-        <Button icon="pi pi-calendar" class="p-button-success p-mr-2" />
-        <Button icon="pi pi-times" class="p-button-danger" />
+        <router-link :to="{ name: 'laralogs' }">  <Button icon="pi pi-info-circle" class="p-button-outlined p-mr-2" label="Logs" /></router-link>
+        <Button icon="pi pi-refresh" class="p-button-outlined p-button-danger p-mr-2" label="Cache Clear" @click="cleanCache()" />
+        <Button icon="pi pi-link" class="p-button-outlined p-button-help p-mr-2" label="Storage Link" @click="makeSymlink()" />
+        <!---<Button icon="pi pi-calendar" class="p-button-success p-mr-2" />
+        <Button icon="pi pi-times" class="p-button-danger" /> --->
     </template>
 </Toolbar>
 
@@ -66,6 +68,22 @@
             }
         },
         methods: {
+            cleanCache(){
+                axios.get('/adm/ccache').then((response) => {
+                    
+                    if(response.data.status == 'success') {
+                        console.log(response.data)
+                    }
+                });
+            },
+            makeSymlink(){
+                axios.get('/adm/symlink').then((response) => {
+                    
+                    if(response.data.status == 'success') {
+                        console.log(response.data)
+                    }
+                });
+            },
             del(what){
                 axios.get('/adm/crud-generator/'+what+'/delete').then((response) => {
                     

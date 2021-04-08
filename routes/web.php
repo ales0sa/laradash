@@ -28,7 +28,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
     ], function() {
 
         Route::get('/', 'HomeController@index')->name('.home');
+        Route::get('/whoami', 'HomeController@whoami')->name('.whoami');
         Route::get('/api/menu', 'HomeController@menu')->name('.menu');
+        Route::get('/symlink', 'HomeController@symlinkgenerator')->name('.symlink');
+        Route::get('/ccache', 'HomeController@ccache')->name('.ccache');
         Route::get ('/dbtables', 'CrudGeneratorController@dbtables')->name('.dbtables');
         Route::get ('/dbtables/{tablename}', 'CrudGeneratorController@dbgetcols')->name('.dbgetcols');
         Route::post ('/jsonfromdb', 'CrudGeneratorController@jsonfromdb')->name('.jsonfromdb');

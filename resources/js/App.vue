@@ -35,7 +35,7 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 import AppTopBar from './AppTopbar.vue';
 import AppProfile from './AppProfile.vue';
 import AppMenu from './AppMenu.vue';
@@ -53,6 +53,7 @@ export default {
             authUser: window.authUser,
             authPermissions: window.authPermissions,
             authGroup: window.authGroup,
+            authRoot: 0,
             layoutMode: 'static',
             layoutColorMode: 'light',
             staticMenuInactive: false,
@@ -89,6 +90,15 @@ export default {
     },
     created(){
         this.cm = this.menu;
+        
+        axios.get('/adm/whoami').then((response) => {
+
+            this.authRoot = response.data.user.root
+            console.log(response.data)
+
+        });
+                    
+
         
         this.CrudService = new CrudService()
         this.CrudService.getMenu().then(data => this.cm = data).then( data => {

@@ -10,6 +10,7 @@ import CrudGrupos from './components/users/groups.vue';
 import WebConfig from './components/company-data/CompanyDataFormComponent.vue';
 
 import CrudDB from './components/crud-generator/fromdb.vue';
+import Laralogs from './components/laralogs.vue';
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ export default new Router({
 			path: '/company-data',
 			name: 'webconfig',
 			component: WebConfig
+		},
+		{
+			path: '/laralogs',
+			name: 'laralogs',
+			component: Laralogs
 		},
 		{
 			path: '/crud/:table',

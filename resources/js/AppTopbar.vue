@@ -23,7 +23,10 @@
 
 		</div>
 		<div class="layout-topbar-profile">
-			<router-link :to="{ name: 'crudgenerator' }"> CRUD Generator </router-link>
+			
+			<router-link :to="{ name: 'crudgenerator' }" v-if="this.$parent.authRoot == 1" >
+				 <Button label="Developer" icon="fa fa-sm fa-code" class="p-button" style="background: white; color: black;"/>
+			</router-link>
  			<SplitButton :label="this.$parent.authUser.name" 
  			icon="pi pi-user" :model="usermenu" class="profile-button">
 	 		</SplitButton>
