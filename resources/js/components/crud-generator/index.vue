@@ -295,19 +295,20 @@
                                            @click="addOption(input)" />
                                         </div>
                                     </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table'">
+                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' || input.type == 'subForm'">
                                         <div class="p-float-label">
                                             <InputText type="text" class="" v-model="input.tabledata"/>
                                             <label for="floatingInput">TABLE DATA</label>
                                         </div>
                                     </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table'">
+                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' || input.type == 'subForm'">
                                         <div class="p-float-label">
                                             <InputText type="text" class="" v-model="input.tablekeycolumn"/>
                                             <label for="floatingInput">TABLE KEY COlUMN</label>
                                         </div>
                                     </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table'">
+                                    
+                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' ">
                                         <div class="p-float-label">
                                             <InputText type="text" class="" v-model="input.tabletextcolumn"/>
                                             <label for="floatingInput">TABLE TEXT COlUMN</label>
@@ -406,7 +407,8 @@
                             'password',
                             'date',
                             'time',
-                            'datetime'
+                            'datetime',
+                            'subForm'
 
                         ],
                 icons: [
@@ -713,7 +715,9 @@
                 if (input.type == 'checkbox') {
                     params.push('validate', 'label', 'default', 'nullable', 'validate', 'valueoriginselector')
                 }
-
+                if (input.type == 'subForm') {
+                    params.push('listable', 'settable', 'validate', 'label', 'default', 'gridcols', 'nullable', 'tabledata', 'tablekeycolumn')
+                }
                 //params.push('visible')
                 return params;
             },

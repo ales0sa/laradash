@@ -21,17 +21,15 @@
         <InputDate :value="value" :input="input" v-if="layout[input.type] == 'date'" ></InputDate>
 
         <Editor v-model="value.value" :value="value" :input="input" v-if="layout[input.type] == 'textarea'" editorStyle="height: 320px; margin-bottom: 20px;"/> 
-<!---
-        <FileUpload v-if="layout[input.type] == 'file'" mode="basic" name="demo[]" 
-                    accept="image/*" :maxFileSize="1000000"  :customUpload="true" @uploader="myUploader" :auto="true"
-        />
---->
+
+        <SubForm :relations="relations" :value="value" :subForm="subForm" :input="input" v-if="layout[input.type] == 'subForm'"></SubForm>
+
         <InputImage v-if="layout[input.type] == 'file'" mode="basic" name="demo[]" 
                     v-model="value.value" :value="value" :input="input"
                     @myUploader="myUploader"
         />
 
-    </div>
+    </div> 
 </template>
 <script>
     import InputTextDash from './InputText'
@@ -41,6 +39,7 @@
     import InputBoolean from './InputBoolean'
     import InputCheckbox from './InputCheckbox'
     import InputImage from './InputImage'
+    import SubForm     from './SubForm'
 
     export default {
         props: {
@@ -66,7 +65,8 @@
             InputDate,
             InputBoolean,
             InputCheckbox,
-            InputImage
+            InputImage,
+            SubForm
         },
         data(){
             return{
@@ -89,6 +89,7 @@
                     "radio": 'radio',
                     "checkbox": 'checkbox',
                     "file": 'file',
+                    "subForm": 'subForm'
                 }
             }
         },
