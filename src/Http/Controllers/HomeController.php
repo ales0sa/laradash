@@ -75,7 +75,15 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
           
           if($content->table->menu_show && (isset($content->table->singlepage) && $content->table->singlepage == true)){ 
 
-            $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.'/1/edit'];
+            $editornew = '/1/edit';
+            $mm = DB::table($content->table->tablename)->first();
+
+            if(!$mm){
+                $editornew == '/create';
+            }
+
+            $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.$editornew];
+
 
           }elseif($content->table->menu_show){
 
