@@ -381,7 +381,7 @@ public function data($tablename, $id = false)
         //dd($id);
         if($this->table->singlepage == 1){
 
-            $item = $this->model::where('id', $id)->firstOrCreate();
+            $item = $this->model::first();
 
         }else{
 
