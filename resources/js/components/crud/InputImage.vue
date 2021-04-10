@@ -18,7 +18,7 @@
             <div class="" v-if="file">
                 <div class="p-fileupload-row">
                     <div>
-                        <img role="presentation" :alt="file" :src="file.replace('public/','storage/')" :width="previewWidth" />
+                        <img role="presentation" :alt="file" :src="file" :width="previewWidth" />
                     </div>
                     <div> </div>
                     

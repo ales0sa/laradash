@@ -162,7 +162,7 @@ class CrudController extends Controller
 
                 if(isset($data[$input->columnname])){
 
-                    $path = $data[$input->columnname]->store('public/content/' . $this->tablename . '/');
+                    $path = $data[$input->columnname]->storePublicly($this->tablename);
                     $item->{$input->columnname} = $path;
 
                 }else{

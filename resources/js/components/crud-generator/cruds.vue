@@ -113,11 +113,11 @@
                         this.data  = response.data
                     }
 
-               for (var index = 0; index < this.data.length; index++) {
-                   
-                    this.data2.push({ value: this.data[index], header: this.data[index] });
+                    for (var index = 0; index < this.data.length; index++) {
+                        
+                        this.data2.push({ value: this.data[index], header: this.data[index] });
 
-                }
+                    }
 
 
                 });

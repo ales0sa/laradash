@@ -13,7 +13,7 @@ import './assets/layout/flags/flags.css';
 import 'primevue/resources/primevue.min.css';
 
 import Listbox from 'primevue/listbox';
-
+import Skeleton from 'primevue/skeleton';
 import Password from 'primevue/password';
 import TieredMenu from 'primevue/tieredmenu';
 import Slider from 'primevue/slider';
@@ -63,6 +63,7 @@ window.Vue.use(Message);
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 
+window.Vue.component('Skeleton', Skeleton );
 window.Vue.component('ProgressSpinner', ProgressSpinner);
 window.Vue.component('Listbox', Listbox);
 window.Vue.component('Password', Password);

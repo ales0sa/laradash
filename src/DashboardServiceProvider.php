@@ -70,7 +70,6 @@ class DashboardServiceProvider extends ServiceProvider
             $bar->advance();
 
             DB::table('users')->insert([
-                'uuid'     => __uuid(),
                 'name'     => 'Administrador',
                 'username' => 'admin',
                 'email'    => 'admin@local.test',

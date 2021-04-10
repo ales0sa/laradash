@@ -17,15 +17,25 @@ Route::get('/adm/home', 'HomeController@index');
 
 
 
-
-
-Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
     Route::group([
         'prefix'     => config('adashboard.prefix', 'adm'),
+    ], function() {
+        Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+        Route::post('login', 'Auth\LoginController@login');
+        Route::post('logout', 'Auth\LoginController@logout');
+        Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+    });
+
+
+
+    Route::group([
+        'prefix'     => config('laradash.prefix', 'adm'),
         'as'         => 'admin',
         'middleware' => 'auth',
         //'namespace'  => 'Admin',
     ], function() {
+
+
 
         Route::get('/', 'HomeController@index')->name('.home');
         Route::get('/whoami', 'HomeController@whoami')->name('.whoami');
@@ -182,24 +192,3 @@ Route::group(['prefix' => LaravelLocalization::setLocale()], function() {
             Route::get('/api/data', 'CompanyDataController@data')->name('.data');
         });
     });
-    /*
-    Route::get ('test', function () {
-        $test = new \App\Test;
-        // $test->text = [
-        //     ['id' => 4, 'meta' => ['saludo' => 'hola']],
-        //     ['id' => 5, 'meta' => ['saludo' => 'hola']]
-        // ];
-        $test->text = ['es', 'en'];
-        //$test->save();
-        $test = new \App\Test;
-        //dd($test->whereRaw("JSON_CONTAINS(text, '{\"id\": 5}')")->get());
-        dd($test->whereRaw("JSON_SEARCH(text, 'one', \"it\") is not null")->get());
-    })->name('test');
-
-    Route::get('/install-laravel', function () {
-        return response()->json([
-            'storage:link' => Illuminate\Support\Facades\Artisan::call('storage:link')
-        ]);
-    });
-    */
-});
