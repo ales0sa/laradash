@@ -73,7 +73,7 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
 
           $content = json_decode(file_get_contents($file->getPathname()));
           
-          if($content->table->menu_show && $content->table->singlepage == true){ 
+          if($content->table->menu_show && (isset($content->table->singlepage) && $content->table->singlepage == true)){ 
 
             $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.'/1/edit'];
 
