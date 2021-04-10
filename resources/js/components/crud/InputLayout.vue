@@ -55,8 +55,8 @@
                 default: {}
             },
             subForm: {
-                type: Object,
-                default: {}
+             //   type: Object,
+             //   default: {}
             },
             value: {
                 type: Object,
