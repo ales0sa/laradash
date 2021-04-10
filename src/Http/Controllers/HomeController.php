@@ -5,6 +5,7 @@ namespace AporteWeb\Dashboard\Http\Controllers;
 use AporteWeb\Dashboard\Models\User;
 use Illuminate\Http\Request;
 use Auth;
+use DB;
 
 class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
 {
