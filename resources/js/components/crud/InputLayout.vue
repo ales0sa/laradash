@@ -1,5 +1,5 @@
 <template>
-    <div :class="'p-field  p-col-12 p-md-' + input.gridcols">
+    <div :class="'p-field  p-col-12 p-md-' + input.gridcols" v-if="input.type !== 'bigInteger' && input.visible_edit == 1" >
 
 
 
@@ -22,8 +22,9 @@
 
         <Editor v-model="value.value" :value="value" :input="input" v-if="layout[input.type] == 'textarea'" editorStyle="height: 320px; margin-bottom: 20px;"/> 
 
-        <SubForm :relations="relations" :value="value" :subForm="subForm" :input="input" v-if="layout[input.type] == 'subForm'"></SubForm>
 
+        <SubForm :relations="relations" :value="value" :subForm="subForm" :input="input" v-if="layout[input.type] == 'subForm'"></SubForm>
+        
         <InputImage v-if="layout[input.type] == 'file'" mode="basic" name="demo[]" 
                     v-model="value.value" :value="value" :input="input"
                     @myUploader="myUploader"
@@ -51,6 +52,10 @@
                 default: {}
             },
             relations: {
+                default: {}
+            },
+            subForm: {
+                type: Object,
                 default: {}
             },
             value: {

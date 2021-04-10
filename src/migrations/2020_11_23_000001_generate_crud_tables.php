@@ -156,11 +156,15 @@ class GenerateCrudTables extends Migration
                 //$col = $table->jsonb($input->columnname);
             }
             
-            if($input->nullable == 1) {
+            if($input->type == 'bigInteger') {
+                $col = $table->bigInteger($input->columnname);
+            }
+
+            if($input->nullable) {
                 $col->nullable();
-            }/* else {
+            }else {
                 $col->nullable(false);
-            }*/
+            }
 
             if($input->default) {
                 $col->default($input->default);

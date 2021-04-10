@@ -53,7 +53,7 @@ import Panel from 'primevue/panel';
 import Vuelidate from 'vuelidate'
 import moment from 'moment'
 import App from './App.vue';
-
+import ProgressSpinner from 'primevue/progressspinner'
 import router from './router';
 
 window.Vue.use(ConfirmationService);
@@ -63,6 +63,7 @@ window.Vue.use(Message);
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 
+window.Vue.component('ProgressSpinner', ProgressSpinner);
 window.Vue.component('Listbox', Listbox);
 window.Vue.component('Password', Password);
 window.Vue.component('SplitButton', SplitButton);
@@ -104,6 +105,7 @@ window.Vue.component('Chip', Chip);
 
 window.Vue.component('dashtable', require('./components/DashTable.vue').default)
 window.Vue.component('users', require('./components/users/index.vue').default)
+window.Vue.component('InputLayout', require('./components/crud/InputLayout.vue').default)
 
  const eventHub = new Vue() // Single event hub
 

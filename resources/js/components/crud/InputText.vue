@@ -1,8 +1,7 @@
 <template>
 <span class="p-float-label p-mt-3">
 
-        <InputNumber mode="currency" 
-        currency="ARS"
+        <InputNumber 
          v-model="val.value"   :id="input.columnname"
         v-if="input.type == 'number'"/>
         <InputNumber mode="currency" 

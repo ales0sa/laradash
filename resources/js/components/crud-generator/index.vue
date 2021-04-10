@@ -142,7 +142,7 @@
 
 
 
-                <div class="p-mt-2" v-for="( input, inputKey ) in inputs" :key="inputKey">
+                <div :class="'p-mt-2 '+input.gridcols" v-for="( input, inputKey ) in inputs" :key="inputKey">
 
 <Panel  :toggleable="true" :collapsed="!input['isCollapsed']">
 
@@ -391,7 +391,7 @@
                 loaded: 0,
                 seltypes: [ 'table', 'values' ],
                 itypes: [
-                            'text',
+                            'text',                            
                             'textarea',
                             'boolean',
                             'select',                            
@@ -408,6 +408,7 @@
                             'date',
                             'time',
                             'datetime',
+                            'bigInteger',
                             'subForm'
 
                         ],

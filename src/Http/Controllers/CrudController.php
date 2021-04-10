@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
+use Illuminate\Support\Facades\Schema;
 
 class CrudController extends Controller
 {
@@ -20,7 +21,7 @@ class CrudController extends Controller
     private $tablename;
     private $table;
     private $inputs;
-
+    private $subForm;
 
     public function __construct()
     {
@@ -35,7 +36,11 @@ class CrudController extends Controller
             if (file_exists($filePath)) {
                 $content      = json_decode(file_get_contents($filePath));
                 $this->table  = $content->table;
+
+
                 $this->inputs = $content->inputs;
+
+
 
             }
 //            dd($temp);
@@ -43,7 +48,7 @@ class CrudController extends Controller
             $className = str_replace(['_', '-', '.'], ' ', $this->tablename);
             $className = ucwords($className);
             $className = str_replace(' ', '', $className);
-            $className = Str::singular($className);
+            //$className = Str::singular($className);
             $this->model = "\\App\\Models\\" . $className;
 
         }
@@ -62,42 +67,9 @@ class CrudController extends Controller
                 $content[$input->columnname] = $item->{$input->columnname};
             }
         }
-        if ($input->type == 'map-select-lat-lng') {
-            $found = true;
-            $content[$input->columnname . '_lat'] = $item->{$input->columnname . '_lat'};
-            $content[$input->columnname . '_lng'] = $item->{$input->columnname . '_lng'};
-        }
 
-        if ($input->type == 'multimedia_file') {
-            $found = true;
-            $file = Multimedia::find($item->{$input->columnname . '_id'});
-            if ($file) {
-                $content[$input->columnname] = [
-                    'url'  => asset(Storage::url($file->path)),
-                    'path' => $file->path,
-                    'id'   => $file->id,
-                    'type' => Storage::mimeType($file->path)
-                ];
-            }
-        }
-
-        if ($input->type == 'gallery' && $item) {
-            $found = true;
-            $galleries[$input->columnname] = [];
-            $gallery = Gallery::find($item->{$input->columnname});
-            if ($gallery) {
-                foreach ($gallery->items as $key => $item) {
-                    $galleries[$input->columnname][] = [
-                        'url'  => asset(Storage::url($item->path)),
-                        'path' => $item->path,
-                        'id'   => $item->id,
-                        'type' => Storage::mimeType($item->path)
-                    ];
-                }
-            }
-        }
         if ($input->type == 'subForm') {
-
+           // dd($input);
             //dd("HERE");
             $found = true;
             $dirPath  = app_path('Dashboard');
@@ -109,6 +81,7 @@ class CrudController extends Controller
             $className = str_replace(' ', '', $className);
             $subModel = "\\App\\Models\\" . $className;
             //dd($subModel);
+            //dd($subModel);
             if (file_exists($filePath)) {
                 $subFormLayout      = json_decode(file_get_contents($filePath));
                 $subForm[$input->columnname] = [
@@ -117,6 +90,9 @@ class CrudController extends Controller
                 ];
 
                 foreach ($subFormLayout->inputs as $subInputKey => $subInput) {
+
+
+                    
                     $results = $this->getInput(
                         false, // ID false
                         $subInput,
@@ -126,10 +102,10 @@ class CrudController extends Controller
                         $subForm,
                         null
                     );
-                    // $input     = $results['input'];
-                    // $content   = $results['content'];
+
+
                     $relations = $results['relations'];
-                    $galleries = $results['galleries'];
+                    //$galleries = $results['galleries'];
                     $subForm   = $results['subForm'];
                 }        
 
@@ -138,7 +114,10 @@ class CrudController extends Controller
                     if (Schema::hasColumn($subFormLayout->table->tablename, 'order_index')) {
                         $subItems = $subItems->orderBy('order_index', 'asc');
                     }
+                    //dd($input->columnname);
+                    //dd($input);
                     $subForm[$input->columnname]['content'] = $subItems->get();
+
                     foreach ($subForm[$input->columnname]['content'] as $itemKey => $item) {
                         foreach ($subFormLayout->inputs as $subkKy => $subInputs) {
                             if ($subInputs->type == 'multimedia_file') {
@@ -174,16 +153,6 @@ class CrudController extends Controller
     public function attachInput($item, $input, $data)
     {
 
-        //dd($data);
-
-        try {
-            if ($input->type == 'card-header') {
-                return true;
-            }
-        } catch (\Throwable $th) {
-            dd($input);
-        }
-
         try {
 
             if ($input->type == 'file') {
@@ -214,75 +183,6 @@ class CrudController extends Controller
             dd($th);
         }
 
-
-        if ($input->type == 'map-select-lat-lng') {
-            $item->{$input->columnname . '_lat'} = $data[$input->columnname . '_lat'];
-            $item->{$input->columnname . '_lng'} = $data[$input->columnname . '_lng'];
-            $item->save();
-            return true;
-        }
-
-        if ($input->type == 'multimedia_file') {
-            try {
-                if ($data[$input->columnname]->isValid()) {
-                    $path = $data[$input->columnname]->store('public/content/' . $this->tablename . '/');
-                    $multimedia = new Multimedia;
-                    $multimedia->path          = $path;
-                    $multimedia->order         = null;
-                    $multimedia->filename      = null;
-                    $multimedia->alt           = null;
-                    $multimedia->caption       = null;
-                    $multimedia->original_name = null;
-                    $multimedia->disk          = null;
-                    $multimedia->meta_value    = null;
-                    $multimedia->save();
-                    $item->{$input->columnname . '_id'} = $multimedia->id;
-                    $item->save();
-                }
-            } catch (\Throwable $th) {
-                if ( is_integer(intval($data[$input->columnname])) && intval($data[$input->columnname]) > 0) {
-                    $item->{$input->columnname . '_id'} = intval($data[$input->columnname]);
-                }
-            }
-            return true;
-        }
-        if ($input->type == 'gallery') {
-            // Gallery
-            // 
-            if ($item->{$input->columnname}) {
-                $gallery = Gallery::where('id', $item->{$input->columnname})->firstOrNew();
-            } else {
-                $gallery = new Gallery;
-            }
-            $gallery->description       = $this->tablename . ' gallery' . $item->id;
-            $gallery->save();
-
-            $item->{$input->columnname} = $gallery->id;
-            $item->save();
-
-            $ids = [];
-            foreach ($data[$input->columnname] as $key => $value) {
-                if(is_string($value)) {
-                    $ids[$value] = [ 'order' => $key ];
-                } else {
-                    $path = $value->store('public/content/' . $this->tablename . '/');
-                    $multimedia = new Multimedia;
-                    $multimedia->path          = $path;
-                    $multimedia->order         = null;
-                    $multimedia->filename      = null;
-                    $multimedia->alt           = null;
-                    $multimedia->caption       = null;
-                    $multimedia->original_name = null;
-                    $multimedia->disk          = null;
-                    $multimedia->meta_value    = null;
-                    $multimedia->save();
-                    $ids[$multimedia->id] = [ 'order' => $key ];
-                }
-            }
-            $gallery->items()->sync($ids);
-            return true;
-        }
-
         if ($input->type == 'subForm') {
             $dirPath  = app_path('Dashboard');
             $filePath = $dirPath . '/' . $input->tabledata . '.json';
@@ -298,24 +198,25 @@ class CrudController extends Controller
             $className = str_replace(' ', '', $className);
             $subModel = "\\App\\Models\\" . $className;
             //dd($subModel);
+            $subModel::where(''.$input->tablekeycolumn.'', $item->id)->delete();
 
             try {
                 if (array_key_exists($input->columnname, $data)) {
 
-                    $subModel::where(''.$input->tablekeycolumn.'', $item->id)->delete();
+
 
                     foreach ($data[$input->columnname] as $subFormKey =>  $subFormItem) {
 
-                        if ( array_key_exists('id', $subFormItem) ) {
-                           $subItem = $subModel::withTrashed()->find($subFormItem['id']);
-
-                        } else {
+                        //if ( array_key_exists('id', $subFormItem) ) {
+                         //  $subItem = $subModel::withTrashed()->find($subFormItem['id']);
+/*
+                        } else {*/
                             $subItem = new $subModel;
-                        }
+                       /* }
 
                         if (Schema::hasColumn($subTable->tablename, 'order_index')) {
                             $subItem->order_index = $subFormKey;
-                        }
+                        }*/
 
                         $item->save();
 
@@ -354,20 +255,24 @@ class CrudController extends Controller
             return true;
         }
 
-            $item->{$input->columnname} = $data[$input->columnname];
+        
+        $item->{$input->columnname} = $data[$input->columnname];
 
 
 
         
     }
 
-
+/*
     public function data($tablename, $id = false)
     {
 
-        $content = null;
+        $content   = null;
         $relations = [];
         $languages = [];
+        $subForm   = [];
+        $galleries = [];
+        $item      = null;
 
         foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
             $flag = $key;
@@ -390,8 +295,9 @@ class CrudController extends Controller
             }else{
 
                 $item = $this->model::where('id', $id)->firstOrFail();
-
+                //dd($item);
             }
+
             foreach ($this->inputs as $inputKey => $input) {
                 $content[$input->columnname] = $item->{$input->columnname};
                 if($input->translatable){
@@ -406,7 +312,7 @@ class CrudController extends Controller
 
             }    
         }
-
+/*
         foreach ($this->inputs as $inputKey => $input) {
             
             if ($input->type == 'select' && $input->valueoriginselector == 'table' 
@@ -420,6 +326,32 @@ class CrudController extends Controller
 
         }    
 
+
+        foreach ($this->inputs as $inputKey => $input) {
+
+
+            $results = $this->getInput(
+                $id,
+                $input,
+                $content,
+                $relations,
+                $galleries,
+                $subForm,
+                $item
+            );
+
+            $input     = $results['input'];
+            $content   = $results['content'];
+            $relations = $results['relations'];
+            $subForm   = $results['subForm'];
+
+
+        }
+
+        //// filtrar inputs
+
+
+
         return response()->json([
             'languages' => $languages,
             'locale'    => App::getLocale(),
@@ -427,15 +359,144 @@ class CrudController extends Controller
             'table'     => $this->table,
             'inputs'    => $this->inputs,
             'relations' => $relations,
-            'content' => $content
+            'subForm'   => $subForm,
+            'content'   => $content
         ]);
     }
+*/
+
+
+public function data($tablename, $id = false)
+{
+
+    $content   = null;
+    $relations = [];
+    $languages = [];
+    $subForm   = [];
+    $galleries = [];
+    $item      = null;
+
+
+    if ($id) {
+        //dd($id);
+        if($this->table->singlepage == 1){
+
+            $item = $this->model::where('id', $id)->firstOrCreate();
+
+        }else{
+
+            $item = $this->model::where('id', $id)->firstOrFail();
+
+        }
+
+
+        foreach ($this->inputs as $inputKey => $input) {
+
+            $content[$input->columnname] = $item->{$input->columnname};
+
+
+
+        }
+
+    }
+
+
+
+    foreach ($this->inputs as $inputKey => $input) {
+
+
+        $results = $this->getInput(
+            $id,
+            $input,
+            $content,
+            $relations,
+            $galleries,
+            $subForm,
+            $item
+        );
+        $input     = $results['input'];
+        $content   = $results['content'];
+        $relations = $results['relations'];
+        $galleries = $results['galleries'];
+        $subForm   = $results['subForm'];
+
+
+    }
+
+
+    /*foreach ($this->inputs as $inputKey => $input) {
+        
+        if ( $input->type == 'select' && $input->valueoriginselector == 'table' 
+              || $input->type == 'checkbox' && $input->valueoriginselector == 'table' 
+            )                
+            {
+
+            $relations[$input->tabledata] = DB::table($input->tabledata)
+                            ->whereNull('deleted_at')
+                            ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+            }
+
+    }*/
+
+    $data = $this->model::get()->toArray();
+
+    $newData = array();
+
+    $textareas = array();
+    
+    foreach ($this->inputs as $inputKey => $input) {
+        
+       
+        if ($input->type == 'textarea' || $input->type == 'text'){
+            $textareas[] = $input->columnname;
+        }
+        
+        if ($input->type == 'select' && $input->valueoriginselector == 'table') {
+            $relations[$input->tabledata] = DB::table($input->tabledata)
+                            ->whereNull('deleted_at')
+                            ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+        }
+
+    }    
+            
+    foreach($data as $key => $val) {
+
+        foreach($val as $k => $v){
+            if (in_array($k, $textareas)) {
+
+                $data[$key][$k] = Str::limit($v, 30);
+            }
+
+        }
+
+    }
+
+    return response()->json([
+        'languages' => $languages,
+        'locale'    => App::getLocale(),
+        'tablename' => $this->tablename,
+        'table'     => $this->table,
+        'inputs'    => $this->inputs,
+        'relations' => $relations,
+        'content'   => $content,
+        'subForm'   => $subForm,
+        'data'      => $data
+    ]);
+}
+
 
     public function index($tablename)
     {
+
+
         $data = $this->model::get()->toArray();
+
+        $content   = null;
         $relations = [];
         $languages = [];
+        $subForm   = [];
+        $galleries = [];
+        $item      = null;
 
         $newData = array();
 
@@ -523,7 +584,28 @@ class CrudController extends Controller
 
         }
         
-        //dd($data);
+
+
+        foreach ($this->inputs as $inputKey => $input) {
+
+
+            $results = $this->getInput(
+                null,
+                $input,
+                $content,
+                $relations,
+                $galleries,
+                $subForm,
+                $item
+            );
+
+            $input     = $results['input'];
+            $content   = $results['content'];
+            $relations = $results['relations'];
+            $subForm   = $results['subForm'];
+
+
+        }
 
         return response()->json([
             'data'           => $data,
@@ -532,16 +614,8 @@ class CrudController extends Controller
             'languages'      => $languages,
             'table'          => $this->table,
             'inputs'         => $this->inputs,
-            '__admin_active' => 'admin.crud.' . $this->tablename
-        ]);
-    }
-
-    public function create()
-    {
-        return view('Dashboard::admin.crud.create', [
-            'tablename'      => $this->tablename,
-            'table'          => $this->table,
-            'inputs'         => $this->inputs,
+            'subForm'        => $subForm,
+            'content'        => $content,
             '__admin_active' => 'admin.crud.' . $this->tablename
         ]);
     }
@@ -561,18 +635,23 @@ class CrudController extends Controller
 
         foreach ($this->inputs as $inputKey => $input) {
 
+            if( !$input->nullable){
+
+            
+            
             if($input->type == 'number' || $input->type == 'money'){
 
                 $validHelper[$input->columnname] = 'numeric';
 
             }
 
-            if($input->nullable == 0 && $action == 'create'){
+            if(!$input->nullable && $action == 'create'){
 
-                    $validHelper[$input->columnname] = 'required';
-
-               
+                $validHelper[$input->columnname] = 'required';
+              
             }
+
+        }
 
 
 
@@ -589,6 +668,7 @@ class CrudController extends Controller
                 if($request[$input->columnname] !== 'null'){
 
                     $this->attachInput($item, $input, $request->all());
+                    
                 }
             
             }
@@ -614,26 +694,15 @@ class CrudController extends Controller
     }
 
 
-    public function edit($tablename, $id)
-    {
-        $item = $this->model::find($id);
-        return view('Dashboard::admin.crud.edit', [
-            'item'           => $item,
-            'tablename'      => $this->tablename,
-            'table'          => $this->table,
-            'inputs'         => $this->inputs,
-            '__admin_active' => 'admin.crud.' . $this->tablename
-        ]);
-    }
-
     public function destroy($tablename, $id)
     {
         $item = $this->model::findOrFail($id);
         $item->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Se  elimino con éxito.']);
-       /* return redirect()->route('admin.crud', ['tablename' => $tablename, 'id' => $item->id])->with('status', 'Se elimino un <strong>item</strong> con éxito.');*/
+
     }
+
     public function trash($tablename)
     {
         $data = $this->model::onlyTrashed()->get();
@@ -646,6 +715,8 @@ class CrudController extends Controller
             '__admin_active' => 'admin.crud.' . $this->tablename
         ]);
     }
+
+
     public function restore($tablename, $id)
     {
         $item = $this->model::withTrashed()->findOrFail($id);
@@ -653,10 +724,15 @@ class CrudController extends Controller
         $item->save();
         return redirect()->route('admin.crud.trash', ['tablename' => $tablename])->with('success', 'Se ha restaurado un <strong>item</strong> con éxito.');
     }
+
+
     public function copy($tablename, $id)
     {
         $new = $this->model::findOrFail($id)->replicate();
         $new->save();
-        return redirect()->route('admin.crud.edit', ['tablename' => $tablename, 'id' => $new->id])->with('success', 'Se ha duplicado un <strong>item</strong> con éxito.');
+
+        return response()->json(['status' => 'success', 'message' => 'Se  duplico con éxito.']);
     }
+
+
 }
