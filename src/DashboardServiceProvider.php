@@ -45,6 +45,7 @@ class DashboardServiceProvider extends ServiceProvider
             "vue" => "^2.6.12",
             'vue-loader' => '^15.9.5',
             'vue-template-compiler' => '^2.6.10',
+            "vue-style-loader" => "^4.1.3",
             "mitt" => "^2.1.0",
             "moment" => "^2.29.1",
             "primeflex" => "^2.0.0",
