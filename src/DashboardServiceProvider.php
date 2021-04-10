@@ -93,7 +93,7 @@ class DashboardServiceProvider extends ServiceProvider
             Artisan::call('storage:link');
             $bar->advance();
             Artisan::call('migrate:refresh', [
-                '--seed' => true
+                '--seed' => false
             ]);
             $bar->advance();
 
