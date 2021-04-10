@@ -7,13 +7,13 @@ use AporteWeb\Dashboard\Requests\GroupCreateRequest;
 use AporteWeb\Dashboard\Requests\GroupEditRequest;
 use App\Http\Controllers\Controller;
 use AporteWeb\Dashboard\Models\User;
-use Junges\ACL\Http\Models\Group;
-use Junges\ACL\Http\Models\Permission;
+/*use Junges\ACL\Http\Models\Group;
+use Junges\ACL\Http\Models\Permission;*/
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+//use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use AporteWeb\Dashboard\Generators\Generator;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\StreamOutput;
@@ -49,6 +49,7 @@ class CrudGeneratorController extends Controller
             $files[] = $noext;
         }
         $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+        //dd($files);
         //dd($files);
         $difftables = array_diff($tables, $files);
 
@@ -86,7 +87,7 @@ class CrudGeneratorController extends Controller
 
     public function data($table = false)
     {
-        $languages = [];
+        $languages = [ 'es' => 'Español' ];
         $content = null;
         if($table) {
             $dirPath  = app_path('Dashboard');
@@ -95,9 +96,9 @@ class CrudGeneratorController extends Controller
                 $content = json_decode(file_get_contents($filePath));
             }
         }
-        foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-            $languages[$key] = $value['name'];
-        }
+        //foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
+        //    $languages[$key] = $value['name'];
+        //}
         return response()->json([
             'content'   => $content,
             'languages' => $languages,

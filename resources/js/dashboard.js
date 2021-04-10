@@ -1,6 +1,6 @@
-import Vue from 'vue'
-import axios from 'axios'
-window.Vue = require('vue');
+//import Vue from 'vue/dist/vue'
+//import axios from 'axios'
+window.Vue = require('vue').default;
 
 import PrimeVue from 'primevue/config';
 window.Vue.use(PrimeVue);
@@ -10,7 +10,7 @@ import 'primevue/resources/primevue.min.css';
 import 'primeflex/primeflex.css';
 import './assets/layout/layout.scss';
 import './assets/layout/flags/flags.css';
-import 'primevue/resources/primevue.min.css';
+
 
 import Listbox from 'primevue/listbox';
 import Skeleton from 'primevue/skeleton';

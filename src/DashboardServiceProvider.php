@@ -21,6 +21,10 @@ use AporteWeb\Dashboard\Models\Content;
 use AporteWeb\Dashboard\View\Components\Messages;
 use AporteWeb\Dashboard\Dashboard;
 
+
+use Illuminate\Support\Arr;
+
+
 class DashboardServiceProvider extends ServiceProvider
 {
 
@@ -30,6 +34,30 @@ class DashboardServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(__DIR__.'/../config/dashboard.php', 'Dashboard');
 
+    }
+
+    public static function updatePackageArray(array $packages)
+    {
+        return [
+            'resolve-url-loader' => '^2.3.1',
+            'sass' => '^1.20.1',
+            'sass-loader' => '^8.0.0',
+            "vue" => "^2.6.12",
+            'vue-loader' => '^15.9.5',
+            'vue-template-compiler' => '^2.6.10',
+            "mitt" => "^2.1.0",
+            "moment" => "^2.29.1",
+            "primeflex" => "^2.0.0",
+            "primeicons" => "^4.1.0",
+            "primevue" => "^2.4.0",
+            "quill" => "^1.3.7",
+            "vue-router" => "^3.5.1",
+            "vuelidate" => "^0.7.6",
+        ] + Arr::except($packages, [
+            '@babel/preset-react',
+            'react',
+            'react-dom',
+        ]);
     }
 
     public function boot()
@@ -58,7 +86,7 @@ class DashboardServiceProvider extends ServiceProvider
 
         Artisan::command('dashboard:init', function () {
 
-            $bar = $this->output->createProgressBar(4);
+            $bar = $this->output->createProgressBar(5);
             $bar->start();
             Artisan::call('key:generate');
             $bar->advance();
@@ -78,6 +106,33 @@ class DashboardServiceProvider extends ServiceProvider
             ]);
 
             $bar->advance();
+            
+            if (! file_exists(base_path('package.json'))) {
+                return;
+            }
+    
+            $configurationKey = 'dependencies'; //$dev ? 'devDependencies' : 'dependencies';
+    
+            $packages = json_decode(file_get_contents(base_path('package.json')), true);
+    
+            $packages[$configurationKey] = DashboardServiceProvider::updatePackageArray(
+                array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
+                $configurationKey
+            );
+    
+            ksort($packages[$configurationKey]);
+    
+            file_put_contents(
+                base_path('package.json'),
+                json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
+            );
+
+            copy(__DIR__.'/vue-stubs/webpack.mix.js', base_path('webpack.mix.js'));
+            copy(__DIR__.'/vue-stubs/dashboard.js', resource_path('js/dashboard.js'));
+            //copy(__DIR__.'/vue-stubs/dashboard.js', public_path('js/dashboard.js'));
+
+            $bar->advance();
+
             $bar->finish();
             $this->info("\nSe ejecutaron las migraciones, seeders y se creo el usuario admin!");
         });

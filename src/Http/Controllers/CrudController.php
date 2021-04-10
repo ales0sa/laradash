@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use AporteWeb\Dashboard\Models\Content;
 use AporteWeb\Dashboard\Models\ContentMeta;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+//use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -542,7 +542,7 @@ public function data($tablename, $id = false)
         //dd($newData);
         $data = $newData;*/
 
-        foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
+        /*foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
 
             $flag = 'es';
             if($key == 'pt'){
@@ -551,9 +551,9 @@ public function data($tablename, $id = false)
             if($key == 'en') {
                 $flag = 'us';
             }
-            $languages[] = [ 'key' => $value['name'], 'value' => $key, 'flag' => $flag];
-        }
-
+        }*/
+        //$languages[] = [ 'key' => $value['name'], 'value' => $key, 'flag' => $flag];
+        $languages = [ 'es' => 'Español' ];
         $textareas = array();
         
         foreach ($this->inputs as $inputKey => $input) {

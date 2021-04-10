@@ -6,11 +6,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Junges\ACL\Traits\UsersTrait;
+//use Junges\ACL\Traits\UsersTrait;
 
 class User extends Authenticatable
 {
-    use Notifiable, SoftDeletes, UsersTrait;
+    use Notifiable, SoftDeletes;//, UsersTrait;
 
     /**
      * The attributes that are mass assignable.

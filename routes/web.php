@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/home', 'HomeController@index')->name('.home');
+//Route::get('/home', 'HomeController@index')->name('.home');
 Route::get('/adm/home', 'HomeController@index');
 
 

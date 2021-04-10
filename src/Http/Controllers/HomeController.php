@@ -21,8 +21,8 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
     public function whoami()
     {
         $user = User::find(Auth::user()->id);
-        $groups      = $user->groups()->get();
-        $permissions = $user->permissions()->get();
+        $groups      = [1];//$user->groups()->get();
+        $permissions = [1];//$user->permissions()->get();
         return [ 'user' => $user, 'groups' => $groups, 'perms' => $permissions ];
     }
     
