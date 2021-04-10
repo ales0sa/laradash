@@ -102,12 +102,13 @@ class GenerateCrudTables extends Migration
             }*/
                 if($input->translatable == 1){
 
-                    foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
+                    $col = $table->string($input->columnname.'_en')->nullable();   
+                    /*foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
                
                         if (!Schema::hasColumn($content->table->tablename, $input->columnname.'_'.$key)) {                         
                             $col = $table->string($input->columnname.'_'.$key)->nullable();     
                         }
-                    }
+                    }*/
 
                 }
 
