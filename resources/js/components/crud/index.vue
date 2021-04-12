@@ -225,6 +225,7 @@
                     icon: 'pi pi-save',
                     acceptClass: 'p-button-success',
                     acceptLabel: 'Sí',
+                    rejectLabel: 'No',
                     accept: () => {
                         //callback to execute when user confirms the action
                         this.postForm()

@@ -366,6 +366,7 @@ import axios from 'axios'
                 icon: 'pi pi-exclamation-triangle',
                 acceptClass: 'p-button-danger',
                 acceptLabel: 'Sí',
+                rejectLabel: 'No',
                 accept: () => {
                     //callback to execute when user confirms the action
 
@@ -397,6 +398,7 @@ import axios from 'axios'
                 icon: 'pi pi-copy',
                 acceptClass: 'p-button-warning',
                 acceptLabel: 'Sí',
+                rejectLabel: 'No',
                 accept: () => {
                     //callback to execute when user confirms the action
                     this.loading = true

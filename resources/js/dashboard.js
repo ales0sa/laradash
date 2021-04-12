@@ -1,9 +1,17 @@
-//import Vue from 'vue/dist/vue'
-//import axios from 'axios'
-window.Vue = require('vue').default;
 
-import PrimeVue from 'primevue/config';
-window.Vue.use(PrimeVue);
+//import Vue from 'vue';
+
+window.Vue = require('vue').default;
+//
+
+window.axios = require('axios');
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+
+
+//import PrimeVue from './primevue/config';
+//window.Vue.use(Vue);
 
 import 'primevue/resources/themes/nova/theme.css'
 import 'primevue/resources/primevue.min.css';
@@ -41,8 +49,7 @@ import ProgressBar from 'primevue/progressbar';
 import RadioButton from 'primevue/radiobutton';
 import FileUpload from 'primevue/fileupload';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
-import ConfirmationService from 'primevue/confirmationservice';
-import ConfirmDialog from 'primevue/confirmdialog';
+
 import Editor from 'primevue/editor';
 import SelectButton from 'primevue/selectbutton';
 import Checkbox from 'primevue/checkbox';
@@ -54,8 +61,10 @@ import Vuelidate from 'vuelidate'
 import moment from 'moment'
 import App from './App.vue';
 import ProgressSpinner from 'primevue/progressspinner'
-import router from './router';
 
+
+import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmDialog from 'primevue/confirmdialog';
 window.Vue.use(ConfirmationService);
 window.Vue.use(ToastService);
 window.Vue.use(Message);
@@ -128,9 +137,10 @@ window.Vue.component('InputLayout', require('./components/crud/InputLayout.vue')
 Vue.component('file-manager', require('./components/file-manager').default);
 
 
+import router from './router';
+
+
 new Vue({
     router,
-
-
     render: h => h(App)
 }).$mount('#app');

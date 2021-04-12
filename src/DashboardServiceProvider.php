@@ -36,16 +36,73 @@ class DashboardServiceProvider extends ServiceProvider
 
     }
 
+
+    public static function changeEnv($data = array()){
+        if(count($data) > 0){
+
+            // Read .env-file
+            $env = file_get_contents(base_path() . '/.env');
+
+            // Split string on every " " and write into array
+            $env = preg_split('/\s+/', $env);;
+
+            // Loop through given data
+            foreach((array)$data as $key => $value){
+
+                // Loop through .env-data
+                foreach($env as $env_key => $env_value){
+
+                    // Turn the value into an array and stop after the first split
+                    // So it's not possible to split e.g. the App-Key by accident
+                    $entry = explode("=", $env_value, 2);
+
+                    // Check, if new key fits the actual .env-key
+                    if($entry[0] == $key){
+                        // If yes, overwrite it with the new one
+                        $env[$env_key] = $key . "=" . $value;
+                    } else {
+                        // If not, keep the old one
+                        $env[$env_key] = $env_value;
+                    }
+                }
+            }
+
+            // Turn the array back to an String
+            $env = implode("\n", $env);
+
+            // And overwrite the .env with the new data
+            file_put_contents(base_path() . '/.env', $env);
+            
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function updateDevPackageArray(array $packages)
+    {
+
+        return [
+            "axios" => "^0.21.0",        
+            "cross-env" => "^7.0",
+            "laravel-mix" => "^6.0.6",
+            "lodash" => "^4.17.19",
+            "resolve-url-loader" => "^3.1.2",
+            "sass" => "^1.20.1",
+            "sass-loader" => "^8.0.2",
+            "vue" => "^2.5.17",
+            "vue-template-compiler" => "^2.6.10",
+            "vue-style-loader" => "^4.1.3"
+        ];
+
+
+    }
+
     public static function updatePackageArray(array $packages)
     {
+
         return [
-            'resolve-url-loader' => '^2.3.1',
-            'sass' => '^1.20.1',
-            'sass-loader' => '^8.0.0',
-            "vue" => "^2.6.12",
-            'vue-loader' => '^15.9.5',
-            'vue-template-compiler' => '^2.6.10',
-            "vue-style-loader" => "^4.1.3",
+           
             "mitt" => "^2.1.0",
             "moment" => "^2.29.1",
             "primeflex" => "^2.0.0",
@@ -54,11 +111,8 @@ class DashboardServiceProvider extends ServiceProvider
             "quill" => "^1.3.7",
             "vue-router" => "^3.5.1",
             "vuelidate" => "^0.7.6",
-        ] + Arr::except($packages, [
-            '@babel/preset-react',
-            'react',
-            'react-dom',
-        ]);
+
+        ];
     }
 
     public function boot()
@@ -89,22 +143,64 @@ class DashboardServiceProvider extends ServiceProvider
 
             $bar = $this->output->createProgressBar(5);
             $bar->start();
-            Artisan::call('key:generate');
+
+            if ($this->confirm('Config .env DB Access?')) {
+
+            
+            //$dbhost = $this->ask('Database Host? (localhost)');
+            $dbname = $this->ask('Database Name?');
+            $dbuser = $this->ask('Database User?');
+            $dbpass = $this->secret('Database Password?');
+
+            $env_update = DashboardServiceProvider::changeEnv([
+                'DB_DATABASE'   => $dbname ? $dbname : 'laravel',
+                'DB_USERNAME'   => $dbuser ? $dbuser : 'root',
+                'DB_PASSWORD'   => $dbpass ? $dbpass : 'password',
+                'DB_HOST'       => '127.0.0.1' //'localhost'
+            ]);
+
+            if($env_update){
+                $this->info("Modify .env succesfully.");
+                Artisan::call('key:generate');
+            } else {
+                // Do something else
+            }
+
+            }
+            /*
+            try {
+
+            } catch (\Throwable $th) {
+                $this->info($th);
+            }
+            */
+
+
+            // more code
+            
+
+
             $bar->advance();
             Artisan::call('storage:link');
-            $bar->advance();
-            Artisan::call('migrate:refresh', [
-                '--seed' => false
-            ]);
+
+
             $bar->advance();
 
+            /*Artisan::call('migrate:refresh', [
+                '--seed' => false
+            ]);*/
+
+            $bar->advance();
+
+
+            /*
             DB::table('users')->insert([
-                'name'     => 'Administrador',
+                'name'     => 'Ale Sosa',
                 'username' => 'admin',
-                'email'    => 'admin@local.test',
+                'email'    => 'admin@donsistema.com',
                 'password' => bcrypt('admin'),
                 'root'     => 1,
-            ]);
+            ]);*/
 
             $bar->advance();
             
@@ -120,7 +216,14 @@ class DashboardServiceProvider extends ServiceProvider
                 array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
                 $configurationKey
             );
+
+            $configurationKey = 'devDependencies';
+            $packages[$configurationKey] = DashboardServiceProvider::updateDevPackageArray(
+                array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
+                $configurationKey
+            );
     
+
             ksort($packages[$configurationKey]);
     
             file_put_contents(
@@ -133,6 +236,10 @@ class DashboardServiceProvider extends ServiceProvider
             //copy(__DIR__.'/vue-stubs/dashboard.js', public_path('js/dashboard.js'));
 
             $bar->advance();
+
+
+            Artisan::call('optimize');
+            
 
             $bar->finish();
             $this->info("\nSe ejecutaron las migraciones, seeders y se creo el usuario admin!");

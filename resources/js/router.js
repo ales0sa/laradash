@@ -1,5 +1,11 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+/*
+import ConfirmationService from 'primevue/confirmationservice';
+Vue.use(ConfirmationService);
+import ConfirmDialog from 'primevue/confirmdialog';
+Vue.component(ConfirmDialog)
+*/
+import Router from 'vue-router'
 import Dashboard from './components/Dashboard.vue';
 import Crud from './components/providers/providers.vue';
 import CrudCreate from './components/crud/index.vue';
@@ -13,6 +19,7 @@ import CrudDB from './components/crud-generator/fromdb.vue';
 import Laralogs from './components/laralogs.vue';
 
 Vue.use(Router);
+
 
 export default new Router({
 	routes: [

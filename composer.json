@@ -1,5 +1,6 @@
 {
     "name": "ales0sa/laradash",
+    "description": "Laravel Dashboard",
     "authors": [
         {
             "name": "Alejandro Sosa",

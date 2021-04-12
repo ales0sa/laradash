@@ -3,7 +3,9 @@
 
         <ConfirmDialog></ConfirmDialog>
 
-        <Toast position="center" />
+        <Toast position="top-right" />
+
+
         <div class="col-md-12">
             <div class="row justify-content-center" v-if="loaded == 0">
                 <h3><center><i class="fas fa-sync fa-spin"></i><br>Cargando</center></h3>
@@ -346,7 +348,9 @@
     import axios from 'axios'
     import EventBus from './../../service/event-bus';
 
-    
+    import ConfirmationService from 'primevue/confirmationservice';
+    import ConfirmDialog from 'primevue/confirmdialog';
+
     var publicPATH = document.head.querySelector('meta[name="public-path"]').content;
     export default {
         props: {
@@ -724,12 +728,14 @@
             },
             rmInput(key) {
 
+
                 this.$confirm.require({
                     message: 'Seguro ?',
                     header: 'Eliminar',
                     icon: 'pi pi-exclamation-triangle',
                     acceptClass: 'p-button-danger',
                     acceptLabel: 'Sí',
+                    rejectLabel: 'No',
                     accept: () => {
                         //callback to execute when user confirms the action
                         this.inputs.splice(key,1)
@@ -817,6 +823,7 @@
                         icon: 'pi pi-exclamation-triangle',
                         acceptClass: 'p-button-success',
                         acceptLabel: 'Sí',
+                        rejectLabel: 'No',
                         accept: () => {
                             //callback to execute when user confirms the action
                             this.postForm()

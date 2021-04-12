@@ -39,18 +39,27 @@ class CrudGeneratorController extends Controller
     {
         $dirPath = __crudFolder();
         $data = File::allFiles($dirPath);
-        //dd($data);
+
+        // Remove Laravel Tables from Array.
         $files = array();
+        $files[] = 'users';
+        $files[] = 'migrations';
+        $files[] = 'password_resets';
+        $files[] = 'failed_jobs';
+
+        
+        // Remove Laradash Tables from Array.
+        $files[] = 'config_vars';
+
+
         foreach ($data as $key => $value) {
-            # code...
+
             $filename = $value->getFilename();
             $noext = str_replace('.json','',$filename);
-            //$files[ $noext ];
             $files[] = $noext;
         }
         $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
-        //dd($files);
-        //dd($files);
+
         $difftables = array_diff($tables, $files);
 
         return ['status' => 'success', 'tables' => $difftables];
