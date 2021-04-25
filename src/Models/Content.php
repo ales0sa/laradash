@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\Models;
+namespace Ales0sa\Laradash\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

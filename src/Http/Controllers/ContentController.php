@@ -1,10 +1,10 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\Content;
+use Ales0sa\Laradash\Models\Content;
 
 class ContentController extends Controller
 {

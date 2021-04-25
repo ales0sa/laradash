@@ -1,13 +1,13 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\TranslationCreateRequest;
 use App\Http\Requests\TranslationEditRequest;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
-use AporteWeb\Dashboard\Models\Translation;
+use Ales0sa\Laradash\Models\User;
+use Ales0sa\Laradash\Models\Translation;
 use Illuminate\Support\Str;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 

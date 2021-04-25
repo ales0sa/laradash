@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard;
+namespace Ales0sa\Laradash;
 
 
 

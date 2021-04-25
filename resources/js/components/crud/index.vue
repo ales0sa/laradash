@@ -369,23 +369,13 @@
                     }
 
                     if (error.response.data.message == 'The given data was invalid.'){
-
-
                         let parsedErrors  = '';
                         let errorData = error.response.data.errors
 
                         Object.keys(error.response.data.errors).forEach(item =>  {
-                            //console.log(errorData[item][0])
                             this.$toast.add({severity:'error', summary: 'Error', detail: errorData[item][0], life: 5000})
-
                             }
-                            //parsedErrors = parsedErrors + '<div style="text-align: center;"> ' + errorData[item] + ' </div>'
                         )
-
-                            
-
-
-
                     }
 
                     this.loaded = 1

@@ -1,13 +1,13 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\SeoCreateRequest;
 use App\Http\Requests\SeoEditRequest;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
-use AporteWeb\Dashboard\Models\Seo;
+use Ales0sa\Laradash\Models\User;
+use Ales0sa\Laradash\Models\Seo;
 use Illuminate\Support\Str;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 

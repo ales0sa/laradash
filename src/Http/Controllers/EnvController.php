@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 

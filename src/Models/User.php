@@ -1,17 +1,20 @@
 <?php
 
-namespace AporteWeb\Dashboard\Models;
+namespace Ales0sa\Laradash\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 //use Junges\ACL\Traits\UsersTrait;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable, SoftDeletes;//, UsersTrait;
 
+    use HasRoles, Notifiable, SoftDeletes;//, UsersTrait;
+
+    protected $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *
@@ -20,7 +23,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name', 'email', 'password',
     ];
-
+    protected $appends = [
+//        'roles',
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -39,5 +44,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /*public function getRolesAttribute(){
+        return $this->getRoleNames;
+    }
+    */
 
 }

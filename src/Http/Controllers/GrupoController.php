@@ -1,15 +1,18 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
-use AporteWeb\Dashboard\Requests\GroupCreateRequest;
-use AporteWeb\Dashboard\Requests\GroupEditRequest;
+use Ales0sa\Laradash\Requests\GroupCreateRequest;
+use Ales0sa\Laradash\Requests\GroupEditRequest;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
-use Junges\ACL\Http\Models\Group;
-use Junges\ACL\Http\Models\Permission;
+use Ales0sa\Laradash\Models\User;
+//use Junges\ACL\Http\Models\Group;
+//use Junges\ACL\Http\Models\Permission;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
 
 class GrupoController extends Controller
 {
@@ -39,20 +42,17 @@ class GrupoController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(GroupCreateRequest $request, Group $item)
+    public function store(Request $request)
     {
-        $item->name              = $request->name;
-        $item->slug              = Str::slug($request->name);
-        $item->description       = $request->description;
-        $item->display_only_root = $request->display_only_root;
-        $item->save();
-        return redirect()->route('admin.grupo')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');
+        //$item->name              = $request->name;
+        //$item->slug              = Str::slug($request->name);
+        //$item->description       = $request->description;
+        //$item->display_only_root = $request->display_only_root;
+        //$item->save();
+        //return redirect()->route('admin.grupo')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');
+        $role = Role::create(['name' => $request->name]);
+
+        return $role;
     }
 
     /**

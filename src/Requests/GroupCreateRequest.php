@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\Requests;
+namespace Ales0sa\Laradash\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class GroupCreateRequest extends FormRequest
      */
     public function authorize()
     {
-        return auth()->user()->hasPermission('group-create') || auth()->user()->root;
+        return auth()->user()->hasRole('root') || auth()->user()->root;
     }
 
     /**

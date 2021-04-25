@@ -1,13 +1,16 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
-use AporteWeb\Dashboard\Models\User;
+use Ales0sa\Laradash\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 use DB;
 
-class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
+use Spatie\Permission\Models\Role;
+
+
+class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
 {
     /**
      * Create a new controller instance.
@@ -67,45 +70,63 @@ class HomeController extends \AporteWeb\Dashboard\Http\Controllers\Controller
         $dirPath = __crudFolder();
         $files = \File::allFiles($dirPath);
 
-
-
+        /*$all_users_with_all_their_roles = User::with('roles')->get();
+        $all_users_with_all_direct_permissions = User::with('permissions')->get();
+        $all_roles_in_database = Role::all()->pluck('name');
+        $users_without_any_roles = User::doesntHave('roles')->get();
+        $all_roles_except_a_and_b = Role::whereNotIn('name', ['role A', 'role B'])->get();*/
+        $userId = auth()->user()->id;
+        $user = User::find($userId);
 
         foreach ($files as $fileKey => $file) {
 
-          $content = json_decode(file_get_contents($file->getPathname()));
-          
-          if($content->table->menu_show && (isset($content->table->singlepage) && $content->table->singlepage == true)){ 
+                $content = json_decode(file_get_contents($file->getPathname()));
+                
+                if($content->table->menu_show && (isset($content->table->singlepage) && $content->table->singlepage == true)){ 
 
-            $editornew = '/1/edit';
-            $mm = DB::table($content->table->tablename)->first();
+                    $editornew = '/1/edit';
+                    $mm = DB::table($content->table->tablename)->first();
 
-            if(!$mm){
-                $editornew == '/create';
-            }
+                    if(!$mm){
+                        $editornew == '/create';
+                    }
 
-            $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.$editornew];
+                    $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.$editornew];
 
 
-          }elseif($content->table->menu_show){
-
-            $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename ];
-          }
+                }elseif($content->table->menu_show){
+                    if(isset($content->table->whoCan) && $user->hasAnyRole([$content->table->whoCan])){
+                        $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename ];
+                    }
+                }
 
         }
 
 
+        if($user->hasAnyRole(['root'])){
+            $menu[] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
+            
+        }
 
-        $menu[] = [ 'label' => 'Configuraciones', 'icon' => 'pi pi-cog', 
+        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger'])){
+            $menu[] = ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'];
 
 
-                      'items' => [ 
+/*
+            $menu[] = [ 'label' => 'Configuraciones', 'icon' => 'pi pi-cog', 
 
-                                    ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'],
-                                    ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users']
 
-                                ]
+            'items' => [ 
 
-                  ];
+                          ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'],
+                          //['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users']
+
+                      ]
+
+        ];
+*/
+        }
+
 
 
         return($menu);

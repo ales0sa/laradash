@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard;
+namespace Ales0sa\Laradash;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\App;
@@ -16,14 +16,16 @@ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\ServiceProvider;
 
-use AporteWeb\Dashboard\Models\ConfigVar;
-use AporteWeb\Dashboard\Models\Content;
-use AporteWeb\Dashboard\View\Components\Messages;
-use AporteWeb\Dashboard\Dashboard;
+use Ales0sa\Laradash\Models\ConfigVar;
+use Ales0sa\Laradash\Models\Content;
+use Ales0sa\Laradash\View\Components\Messages;
+use Ales0sa\Laradash\Dashboard;
 
 
 use Illuminate\Support\Arr;
 
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DashboardServiceProvider extends ServiceProvider
 {
@@ -88,6 +90,7 @@ class DashboardServiceProvider extends ServiceProvider
             "laravel-mix" => "^6.0.6",
             "lodash" => "^4.17.19",
             "resolve-url-loader" => "^3.1.2",
+            "postcss" => "^8.1",
             "sass" => "^1.20.1",
             "sass-loader" => "^8.0.2",
             "vue" => "^2.5.17",
@@ -125,17 +128,32 @@ class DashboardServiceProvider extends ServiceProvider
 
         Artisan::command('dashboard:user', function () {
 
+        //$role = Role::create(['name' => 'root']);
+        //$permission = Permission::create(['name' => 'root']);
+        //$role->givePermissionTo($permission);
+        //$permission->assignRole($role);
+       // $user = ales0sa\laradash\src\Models\User::where('username', 'ales0sa')->delete();
+        $user = \Ales0sa\Laradash\Models\User::where('username', 'root')->first();
         
-        DB::table('users')->insert([
-            'uuid'     => __uuid(),
-            'name'     => 'Administrador',
-            'username' => 'admin',
-            'email'    => 'admin@local.test',
-            'password' => bcrypt('admin'),
+        if(!$user){
+            
+        //
+        
+
+        $user = DB::table('users')->insert([
+           // 'uuid'     => __uuid(),
+            'name'     => 'Root User',
+            'username' => 'root',
+            'email'    => 'root@localhost',
+            'password' => bcrypt('root'),
             'root'     => 1,
         ]);
 
-        $this->info("\nSe creo el usuario admin!");
+        }
+
+        $user->assignRole(['root']);
+
+        $this->info("\nSe creo el usuario!");
 
         });
 
@@ -146,7 +164,7 @@ class DashboardServiceProvider extends ServiceProvider
 
             if ($this->confirm('Config .env DB Access?')) {
 
-            
+            // php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
             //$dbhost = $this->ask('Database Host? (localhost)');
             $dbname = $this->ask('Database Name?');
             $dbuser = $this->ask('Database User?');
@@ -314,7 +332,7 @@ class DashboardServiceProvider extends ServiceProvider
         // Load Routes
         /*if(file_exists(__DIR__.'/routes/web.php')) {
             Route::middleware('web')
-                ->namespace('\AporteWeb\Dashboard\Controllers')
+                ->namespace('\Ales0sa\Laradash\Controllers')
                 ->group(__DIR__.'/routes/web.php');
         }*/
         /*if(file_exists(__DIR__.'/routes/breadcrumbs.php')) {
@@ -328,7 +346,7 @@ class DashboardServiceProvider extends ServiceProvider
         if(is_dir(__DIR__.'/resources/lang')) {
             $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'Dashboard');
             // $this->publishes([
-            //     __DIR__.'/lang' => resource_path('lang/vendor/aporteweb/dashboard'),
+            //     __DIR__.'/lang' => resource_path('lang/vendor/Ales0sa/dashboard'),
             // ]);
         }
         // Load Migrations
@@ -384,7 +402,7 @@ class DashboardServiceProvider extends ServiceProvider
 
         if (Dashboard::$registersRoutes) {
             Route::middleware('web')
-                ->namespace('\AporteWeb\Dashboard\Http\Controllers')
+                ->namespace('\Ales0sa\Laradash\Http\Controllers')
                 ->group(__DIR__.'/../routes/web.php');
         }
 

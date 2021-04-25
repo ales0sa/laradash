@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 <?php endif ?>
 use Illuminate\Support\Str;
-use AporteWeb\Dashboard\Models\CrudBase;
+use Ales0sa\Laradash\Models\CrudBase;
 
 class <?php print $className ?> extends Model
 {

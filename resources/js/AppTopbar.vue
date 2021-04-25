@@ -44,7 +44,8 @@ export default {
             usermenu: [
                 {
                    label:'Salir',
-                   icon:'pi pi-fw pi-power-off'
+                   icon:'pi pi-fw pi-power-off',
+				   url: '/adm/logout'
                 }
              ]
         }

@@ -1,12 +1,12 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\Content;
-use AporteWeb\Dashboard\Models\ContentMeta;
+use Ales0sa\Laradash\Models\Content;
+use Ales0sa\Laradash\Models\ContentMeta;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class DynamicContentController extends Controller

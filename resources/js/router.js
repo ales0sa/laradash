@@ -18,6 +18,8 @@ import WebConfig from './components/company-data/CompanyDataFormComponent.vue';
 import CrudDB from './components/crud-generator/fromdb.vue';
 import Laralogs from './components/laralogs.vue';
 
+import CustomComponent from './components/crud/CustomComponent.vue';
+
 Vue.use(Router);
 
 

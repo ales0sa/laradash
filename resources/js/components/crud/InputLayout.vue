@@ -30,6 +30,12 @@
                     @myUploader="myUploader"
         />
 
+        <div  v-if="layout[input.type] == 'VueComponent'" >  
+
+            <CustomComponent :input="input" />
+
+        </div>
+
     </div> 
 </template>
 <script>
@@ -41,6 +47,7 @@
     import InputCheckbox from './InputCheckbox'
     import InputImage from './InputImage'
     import SubForm     from './SubForm'
+    import CustomComponent     from './CustomComponent'
 
     export default {
         props: {
@@ -71,7 +78,8 @@
             InputBoolean,
             InputCheckbox,
             InputImage,
-            SubForm
+            SubForm,
+            CustomComponent
         },
         data(){
             return{
@@ -94,7 +102,8 @@
                     "radio": 'radio',
                     "checkbox": 'checkbox',
                     "file": 'file',
-                    "subForm": 'subForm'
+                    "subForm": 'subForm',
+                    "VueComponent": "VueComponent"
                 }
             }
         },

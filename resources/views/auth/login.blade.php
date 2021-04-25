@@ -273,10 +273,18 @@ input:focus {
     <div class="left">
 
     </div>
-    <form action="{{ route('login') }}" class="log-in" autocomplete="off" method="post"> 
+    <form action="/adm/login" class="log-in" autocomplete="off" method="post"> 
     	@csrf
       <h4>Acceso al <span>Panel</span></h4>
-      <p>Bienvenido! Ingresa tus credenciales para continuar.</p>
+
+
+      @if(Session::has('errors'))
+      <div style="background: danger;"><small> Datos incorrectos de ingreso. </small> </div>
+      @else
+          <p>Bienvenido! Ingresa tus credenciales para continuar.</p>
+      @endif
+
+
       <div class="floating-label">
         <input placeholder="Usuario" type="text" name="username" id="email" autocomplete="off">
         <label for="email">Usuario</label>

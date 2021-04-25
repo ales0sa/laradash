@@ -98,7 +98,7 @@ export default {
                         let parsedInputs = []
                         const array1 =  Object.keys(response.data.columns);
 
-                        console.log(response.data.columns)
+                        //console.log(response.data.columns)
 
                         Array.prototype.forEach.call(array1, child => {
                             if(child == 'id' || child == 'created_at' || child == 'deleted_at' || child == 'updated_at'){
@@ -107,6 +107,7 @@ export default {
                             }else{
                                 parsedInputs.push({
                                 isCollapsed: true,
+                               
                                 columnname: child,
                                 icon: '',
                                 type: this.dbtypes[response.data.columns[child].type],
@@ -154,7 +155,8 @@ export default {
                                                 "singlepage": false,
                                                 "slug": 0,
                                                 "slug_global": 0,
-                                                "icon": "pi pi-file"
+                                                "icon": "pi pi-file",
+                                                 "whoCan": ['root']
                             },
                             'inputs': parsedInputs
 

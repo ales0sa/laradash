@@ -1,5 +1,5 @@
 <?php
-namespace AporteWeb\Dashboard\Generators;
+namespace Ales0sa\Laradash\Generators;
 
 class Generator
 {

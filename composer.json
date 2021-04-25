@@ -10,20 +10,21 @@
     "minimum-stability": "stable",
     "require": {
         "laravel/ui": "^3.1",
-        "doctrine/dbal": "^3.0"
+        "doctrine/dbal": "^3.0",
+        "spatie/laravel-permission": "^4.0"
     },
     "autoload": {
         "files": [
             "src/Helper.php"
         ],
         "psr-4": {
-            "AporteWeb\\Dashboard\\": "src/"
+            "Ales0sa\\Laradash\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "AporteWeb\\Dashboard\\DashboardServiceProvider"
+                "Ales0sa\\Laradash\\DashboardServiceProvider"
             ]
         }
     }

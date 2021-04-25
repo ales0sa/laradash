@@ -1,1 +1,1 @@
-@inject('cf', '\AporteWeb\Dashboard\Models\ConfigVar')
+@inject('cf', '\Ales0sa\Laradash\Models\ConfigVar')

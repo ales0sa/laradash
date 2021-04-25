@@ -35,7 +35,7 @@ function __cf($key = 'header_logo', $isArray = null){
 
     if($isArray !== 'A'){
 
-        $cf = \AporteWeb\Dashboard\Models\ConfigVar::where('config_key', $key)->pluck('config_value')->toArray();
+        $cf = \Ales0sa\Laradash\Models\ConfigVar::where('config_key', $key)->pluck('config_value')->toArray();
         if($cf){
             return $cf[0];
         }else{
@@ -43,7 +43,7 @@ function __cf($key = 'header_logo', $isArray = null){
         }
 
     }else{
-        $cf = \AporteWeb\Dashboard\Models\ConfigVar::where('config_key', $key)->get('config_value')->toArray();
+        $cf = \Ales0sa\Laradash\Models\ConfigVar::where('config_key', $key)->get('config_value')->toArray();
         return json_decode($cf[0]['config_value']);
     }
 
@@ -94,7 +94,7 @@ if (!function_exists('__file_url')) {
 if (!function_exists('__t')) {
     function __t($key)
     {
-        $item = \AporteWeb\Dashboard\Models\Translation::where('key', $key)->first();
+        $item = \Ales0sa\Laradash\Models\Translation::where('key', $key)->first();
         if ($item) {
             return $item->translation;
         } else {
@@ -148,7 +148,7 @@ if (!function_exists('__meta')) {
     function __meta($section, $key)
     {
         $meta = Cache::remember('seo', env('CACHE_DURATION', 0), function () {
-            return AporteWeb\Dashboard\Models\Seo::get();
+            return Ales0sa\Laradash\Models\Seo::get();
         });
         if ($meta) {
             $meta = $meta->where('section', $section)->first();
@@ -176,7 +176,7 @@ if (!function_exists('__config_var')) {
     function __config_var($key)
     {
         $var = Cache::remember('config_var', env('CACHE_DURATION', 0), function () {
-            return AporteWeb\Dashboard\Models\ConfigVar::get()->pluck('config_value', 'config_key');
+            return Ales0sa\Laradash\Models\ConfigVar::get()->pluck('config_value', 'config_key');
         })->toArray();
 
         if (is_array($var) && array_key_exists($key, $var)) {

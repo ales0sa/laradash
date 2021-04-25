@@ -1,12 +1,12 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
-use AporteWeb\Dashboard\Requests\GroupCreateRequest;
-use AporteWeb\Dashboard\Requests\GroupEditRequest;
+use Ales0sa\Laradash\Requests\GroupCreateRequest;
+use Ales0sa\Laradash\Requests\GroupEditRequest;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
+use Ales0sa\Laradash\Models\User;
 /*use Junges\ACL\Http\Models\Group;
 use Junges\ACL\Http\Models\Permission;*/
 use Illuminate\Support\Str;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 //use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use AporteWeb\Dashboard\Generators\Generator;
+use Ales0sa\Laradash\Generators\Generator;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\StreamOutput;
 
@@ -174,7 +174,7 @@ class CrudGeneratorController extends Controller
 
         
 
-        //return Artisan::call('migrate:refresh --path=vendor/aporteweb/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
+        //return Artisan::call('migrate:refresh --path=vendor/Ales0sa/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
          
             return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
 
@@ -210,7 +210,7 @@ class CrudGeneratorController extends Controller
         ], ['slug'], ['name', 'description']);
 
         (new Generator($data->table, $data->inputs))->crud();
-        return Artisan::call('migrate:refresh --path=vendor/aporteweb/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
+        return Artisan::call('migrate:refresh --path=vendor/Ales0sa/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
         return 1;
         return redirect()->route('Dashboard::admin.crud-generator')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');*/
     }

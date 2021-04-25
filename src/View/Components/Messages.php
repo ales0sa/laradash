@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\View\Components;
+namespace Ales0sa\Laradash\View\Components;
 
 use Illuminate\View\Component;
 

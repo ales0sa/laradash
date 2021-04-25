@@ -2,54 +2,31 @@
     <div class="">
 
 <ConfirmDialog></ConfirmDialog>
-
+        <Toast position="top-right" />
 
 <Dialog :visible.sync="productDialog" :style="{width: '550px'}" header="Nuevo usuario del sistema" :modal="true" class="p-fluid">
-<img :src="'demo/images/product/' + product.image" :alt="product.image" class="product-image" v-if="product.image" />
+
 <div class="p-field">
     <label for="name">Nombre</label>
-    <InputText id="name" v-model.trim="product.name" required="true" autofocus :class="{'p-invalid': submitted && !product.name}" />
-    <small class="p-invalid" v-if="submitted && !product.name">Nombre oblitatorío.</small>
+    <InputText id="name" v-model.trim="uform.name" required="true" autofocus :class="{'p-invalid': submitted && !uform.name}" />
+    <small class="p-invalid" v-if="submitted && !uform.name">Nombre obligatorío.</small>
 </div>
 
-<!---
-<div class="p-field">
-    <label class="p-mb-3">Grupo</label>
-    <div class="p-formgrid p-grid">
-        <div class="p-field-radiobutton p-col-6" v-for="">
-            <RadioButton id="category1" name="category" value="gerencia" v-model="product.category" />
-            <label for="category1">Gerencia</label>
-        </div>
-        <div class="p-field-radiobutton p-col-6">
-            <RadioButton id="category2" name="category" value="jefes-de-taller" v-model="product.category" />
-            <label for="category2">Jefe de Taller</label>
-        </div>
-        <div class="p-field-radiobutton p-col-6">
-            <RadioButton id="category3" name="category" value="ingenieros" v-model="product.category" />
-            <label for="category3">Ingeniero</label>
-        </div>
-        <div class="p-field-radiobutton p-col-6">
-            <RadioButton id="category4" name="category" value="taller" v-model="product.category" />
-            <label for="category4">Operario</label>
-        </div>
-    </div>
-</div> 
-<div class="p-formgrid p-grid" v-if="product.category == 'taller'">---->
     <div class="p-formgrid p-grid">
     <div class="p-field p-col">
-<Dropdown v-model="product.sector" :options="sectores" optionValue="id" optionLabel="name" placeholder="Seleccione grupo" />
+<Dropdown v-model="uform.role" :options="sectores" optionLabel="name" optionValue="name" placeholder="Seleccione rol" />
 </div>
 
 </div>
 <div class="p-formgrid p-grid">
     <div class="p-field p-col">
         <label for="price">Usuario</label>
-        <InputText id="price" v-model="product.price" />
+        <InputText id="price" v-model="uform.username" />
     </div>
     <div class="p-field p-col" style="min-height: 100px;">
         <label for="quantity">Contraseña</label>
         
-        <Password v-model="product.quantity"
+        <Password v-model="uform.password"
          weakLabel="Debil"
          mediumLabel="Media"
          strongLabel="Fuerte"
@@ -58,8 +35,8 @@
     </div>
 </div>
 <template #footer>
-    <Button label="Cancelar" icon="pi pi-times" class="p-button-text"/>
-    <Button label="Guardar" icon="pi pi-check" class="p-button-text"  />
+    <Button label="Cancelar" icon="pi pi-times" class="p-button-danger"/>
+    <Button label="Generar" icon="pi pi-check" class="p-button-success" @click="newUser()" />
 </template>
 </Dialog>
 
@@ -67,6 +44,7 @@
 
         <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
         class="p-datatable-gridlines"
+                 :resizableColumns="false" columnResizeMode="fit"
         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" >
 
 
@@ -75,17 +53,11 @@
             <div class="p-d-flex p-jc-between p-mx-auto">
                 <div style=""> 
                     <h3> Usuarios </h3>
-
-
                 </div>
-
-
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search" />
-                    <InputText v-model="filters['global']" placeholder="Buscar..." />
-                </span>
-                <router-link :to="{ name: 'grupos' }"><Button label="Grupos" /></router-link>
-                <Button label="Nuevo" icon="pi pi-plus" class="p-mr-2" @click="openNew" />
+                <div>
+                    <router-link :to="{ name: 'grupos' }"><Button icon="pi pi-key" label="Roles"  class="p-button-secondary" /></router-link>
+                    <Button label="Nuevo" icon="pi pi-plus" class="p-mr-2 p-button-primary" @click="openNew" />
+                </div>
             </div>
         </template>
 
@@ -95,20 +67,26 @@
        </template>
 
        <Column field="name" header="Nombre"></Column>
-       <Column field="grupito" header="Grupo">
-        <template #body="slotProps">
-        <span v-for="grup in slotProps.data.grupito">
+       <Column field="grupito" header="Rol">
 
-            {{ grup.description  }}
-
-        </span>
-        </template>
+            <template #body="slotProps">
+                
+                    <Chip v-for="(rol, index) in slotProps.data.roles" :key="rol.id">
+                        {{ rol.name }}
+                    </Chip>
+                
+            </template>
+       
        </Column>
 
         <Column> 
         <template #body="slotProps">
-            <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" @click="edit(slotProps.data.id)" />
-            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="del(slotProps.data.id)" />
+
+            
+            <span class="p-buttonset">
+                <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
+                <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm p-button-danger" @click="del(slotProps.data.id)" />
+            </span>
         </template>
     </Column>
 
@@ -121,14 +99,22 @@
 
 import UserService from './../../service/UserService';
 import ConfirmDialog from 'primevue/confirmdialog';
-
+import Toast from 'primevue/toast';
     export default {
 
 
 
         data() {
             return {
-                              sectores: null,
+            uform: {
+                name: 'abc', 
+                username: 'abc', 
+                password: 'abc', 
+                role: 'root'
+
+
+            },
+            sectores: null,
             products: null,
             productDialog: false,
             deleteProductDialog: false,
@@ -192,12 +178,58 @@ import ConfirmDialog from 'primevue/confirmdialog';
 
 
         },
+        newUser(){
+                console.log(this.uform)
+                let formData = new FormData()
+                Object.keys(this.uform).forEach((key) => {
+                    formData.append(key, this.uform[key]);
+                })
+
+
+                
+
+                axios.post('/adm/user/', formData).then((response) => {
+                    this.loaded = 3
+                    setTimeout(function(){
+                        this.loaded = 1
+                        //console.log(response)
+                        if(response.data.status = 'success'){
+                            this.load()
+                            this.productDialog = false;
+                        }
+
+
+
+
+                    }.bind(this), 1000);
+                }).catch((error) => {
+
+                        if (error.response.data.message == 'The given data was invalid.'){
+                            let parsedErrors  = '';
+                            let errorData = error.response.data.errors
+
+                        Object.keys(error.response.data.errors).forEach(item =>  {
+                                this.$toast.add({severity:'error', summary: 'Error', detail: errorData[item][0], life: 5000})
+                                }
+                            )
+                        }
+
+                });
+
+        },
         edit(item) {
 
 
         },
         del(item) {
+                console.log(item)
+                axios.get('/adm/user/'+item+'/delete').then((response) => {
 
+                    console.log(response.data.status)
+
+                    this.load()
+
+                })
 
         },
 

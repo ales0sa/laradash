@@ -71,7 +71,7 @@
                                 <InputText type="text" v-model="table.tablename" 
                                 :class="{'p-invalid': validationErrors.tablename && submitted}" 
                                 />
-                                <label for="">Table name - {{ this.validationErrors['tablename'] }} </label>
+                                <label for="">Table name {{ this.validationErrors['tablename'] }} </label>
                             </div>
                                 
                         </div>
@@ -86,6 +86,18 @@
                                 </div>
    
                         </div>
+                        <div class="p-col p-mb-3" >
+                                    <div class="p-float-label">
+                                        <InputText type="text" class="" v-model="table.whoCan"/>
+                                        <label for="floatingInput">Who can see: 
+                                            
+                                            {{ languages[langkey] }}
+
+
+                                        </label>
+                                    </div>
+                                </div>
+   
                         <div class="p-col">
                             <div class="p-formgroup-inline">
 
@@ -342,7 +354,8 @@
                 </Button>
             </div>
         </div>
-    </div></div>
+
+    
 </template>
 <script>
     import axios from 'axios'
@@ -412,6 +425,7 @@
                             'date',
                             'time',
                             'datetime',
+                            'VueComponent',
                             'bigInteger',
                             'subForm'
 

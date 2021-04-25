@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers\Auth;
+namespace Ales0sa\Laradash\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -87,6 +87,6 @@ class LoginController extends Controller
         $this->performLogout($request);
         return $request->wantsJson()
             ? new Response('', 204)
-            : redirect()->route('login');
+            : redirect('/');
     }
 }

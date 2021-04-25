@@ -1,6 +1,6 @@
 <?php
 
-namespace AporteWeb\Dashboard\Requests;
+namespace Ales0sa\Laradash\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

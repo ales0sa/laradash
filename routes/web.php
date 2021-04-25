@@ -18,12 +18,12 @@ Route::get('/adm/home', 'HomeController@index');
 
 
     Route::group([
-        'prefix'     => config('adashboard.prefix', 'adm'),
+        'prefix'     => config('laradash.prefix', 'adm'),
     ], function() {
-        Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+        Route::get('login', 'Auth\LoginController@showLoginForm')->name('.login');
         Route::post('login', 'Auth\LoginController@login');
         Route::post('logout', 'Auth\LoginController@logout');
-        Route::get('logout', 'Auth\LoginController@logout')->name('logout');
+        Route::get('logout', 'Auth\LoginController@logout')->name('.logout');
     });
 
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
+use Ales0sa\Laradash\Models\User;
 use Junges\ACL\Http\Models\Permission;
 class PermissionController extends Controller
 {

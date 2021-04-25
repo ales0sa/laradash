@@ -1,13 +1,13 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\ConfigVar;
+use Ales0sa\Laradash\Models\ConfigVar;
 use Str;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+//use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class CompanyDataController extends Controller
 {
@@ -64,9 +64,9 @@ class CompanyDataController extends Controller
                 }
             }
         }
-        foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-            $languages[$key] = $value['name'];
-        }
+        //foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
+            $languages['es'] = 'Español';//$value['name'];
+        //}
         return response()->json([
             'languages' => $languages,
             'config' => [],

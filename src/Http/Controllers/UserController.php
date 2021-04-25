@@ -1,14 +1,18 @@
 <?php
 
-namespace AporteWeb\Dashboard\Http\Controllers;
+namespace Ales0sa\Laradash\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use AporteWeb\Dashboard\Models\User;
+use Ales0sa\Laradash\Models\User;
 use App\Models\Sucursal;
-use Junges\ACL\Http\Models\Group;
-use Junges\ACL\Http\Models\Permission;
+// use Junges\ACL\Http\Models\Group;
+// use Junges\ACL\Http\Models\Permission;
 use Illuminate\Support\Str;
+
+
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller
 {
@@ -54,6 +58,13 @@ class UserController extends Controller
      */
     public function store(Request $request, $uuid = null)
     {
+
+        $validatedData = $request->validate([
+            'username' => 'required|unique:users',
+            'password' => 'required'
+        
+        ]);
+
         if($uuid){
             $item   = User::where('uuid', $uuid)->firstOrFail();
             $action = 'edito';
@@ -63,18 +74,21 @@ class UserController extends Controller
         } else {
             $item       = new User;
             $action     = 'añadio';
-            $item->root = 0;
             //$item->uuid = __uuid();
         }
+        $item->root = 0;
         $item->name       = $request->name;
         $item->username   = $request->username;
-        $item->email      = $request->email;
+        $item->email      = $request->username.'@'.url('/');//$request->email;
         $item->password   = bcrypt($request->password);
-        $item->root       = $request->root;
+        //$item->root       = $request->root;
         //$item->sucursal_id  = $request->sucursal_id;
+        $item->assignRole($request->role);
         $item->save();
-        $item->groups()->sync($request->groups);
-        return redirect()->route('admin.user')->with('success', 'Se añadio un <strong>Usuario</strong> con éxito.');
+
+        return $item;
+        //$item->groups()->sync($request->groups);
+        //return redirect()->route('admin.user')->with('success', 'Se añadio un <strong>Usuario</strong> con éxito.');
     }
 
     /**
@@ -88,14 +102,14 @@ class UserController extends Controller
     }
 
     public function users(){
-        $users  = User::get();
+        $users  = User::with('roles')->get();
 
         return ['data' => $users ];
     }
 
     public function groups(){
-        $groups  = Group::get();
-
+        //$groups  = Group::get();
+        $groups = Role::get();
         return ['data' => $groups ];
     }
 
@@ -158,7 +172,9 @@ class UserController extends Controller
     public function destroy($id)
     {
         User::find($id)->delete();
-        return redirect()->route('admin.user')->with('success', 'Se ha eliminado un <strong>Usuario</strong> con éxito.');
+        //return redirect()->route('admin.user')->with('success', 'Se ha eliminado un <strong>Usuario</strong> con éxito.');
+        return ['status' => 'success'];
+
     }
     public function trash()
     {

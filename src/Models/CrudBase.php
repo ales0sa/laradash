@@ -1,11 +1,11 @@
 <?php
 
-namespace AporteWeb\Dashboard\Models;
+namespace Ales0sa\Laradash\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use AporteWeb\Dashboard\Models\Gallery;
-use AporteWeb\Dashboard\Models\Multimedia;
+use Ales0sa\Laradash\Models\Gallery;
+use Ales0sa\Laradash\Models\Multimedia;
 use Illuminate\Support\Facades\Storage;
 
 trait CrudBase {
