@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-
+use Ales0sa\Laradash\Models\User;
 use Illuminate\Support\Facades\Schema;
 
 class CrudController extends Controller
@@ -26,7 +26,12 @@ class CrudController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        //$user = auth()->guard('web');
+        // $user->assignRole('developer');
+        // dd(auth()->user()->roles);
+      // dd($user);
 
+ 
         $this->tablename = request()->route()->parameters()['tablename'];
 
         if($this->tablename) {
@@ -162,7 +167,7 @@ class CrudController extends Controller
 
                 if(isset($data[$input->columnname])){
 
-                    $path = $data[$input->columnname]->storePublicly($this->tablename);
+                    $path = $data[$input->columnname]->store($this->tablename);
                     $item->{$input->columnname} = $path;
 
                 }else{
@@ -487,9 +492,21 @@ public function data($tablename, $id = false)
 
     public function index($tablename)
     {
-
+        $userId = auth()->user()->id;
+        $user   = User::find($userId);
 
         $data = $this->model::get()->toArray();
+
+        //dd($user->getRoleNames());
+        //dd($user->getPermissionsViaRoles());
+        if(isset($this->table->whoCan) && 
+           !$user->hasAnyRole([$this->table->whoCan]
+           
+           )){
+       
+            return response()->json(['error' => 'Not authorized.'], 403);
+    
+        }
 
         $content   = null;
         $relations = [];

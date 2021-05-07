@@ -1,13 +1,13 @@
 <template>
-<div class="container">
-    <div class="col s12">
-        <div class="row justify-content-center" v-if="loaded == 0">
+<div class="p-row">
+    <div class="p-col-12">
+        <div class="p-row justify-content-center" v-if="loaded == 0">
             <h3><center><i class="fas fa-sync fa-spin"></i><br>Cargando</center></h3>
         </div>
-        <div class="row justify-content-center" v-if="loaded == 2">
+        <div class="p-row justify-content-center" v-if="loaded == 2">
             <h3><center><i class="fas fa-sync fa-spin"></i><br>Guardando</center></h3>
         </div>
-        <div class="row justify-content-center" v-if="loaded == 3">
+        <div class="p-row justify-content-center" v-if="loaded == 3">
             <div class="col-xl-12 col-md-12 mb-12">
                 <div class="card border-left-success shadow h-100 py-2">
                     <div class="card-body">
@@ -28,7 +28,7 @@
         </div>
 
 
-        <div class="row" v-if="loaded == 1">
+        <div class="p-row" v-if="loaded == 1">
 
 
 <div class="p-grid nested-grid">
@@ -40,7 +40,7 @@
                                 <input-file-image2
                                     :model.sync="config.header_logo"
                                     id="input-logo-header"
-                                    label-text="Logo Web Superior"
+                                    label-text="Logo Superior"
                                     label-descript=""
                                 ></input-file-image2>
 
@@ -63,7 +63,7 @@
                                 <input-file-image2
                                     :model.sync="config.footer_logo"
                                     id="input-logo-header"
-                                    label-text="Logo Web Inferior"
+                                    label-text="Logo Inferior"
                                     label-descript=""
                                 ></input-file-image2>
                 </div>
@@ -98,7 +98,7 @@
 
                             <div class="p-col-12 ">
                                 <div class="">
-                                <link-info :model.sync="config.header_networks" :legend="'Social Networks'" :icon="true"></link-info>
+                                <link-info :model.sync="config.header_networks" :legend="'Social Networks'" :icon="true" :label="true"></link-info>
                                 </div>
                             </div>
 

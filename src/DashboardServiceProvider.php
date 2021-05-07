@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 use Illuminate\Support\ServiceProvider;
 
+use Ales0sa\Laradash\Models\User;
 use Ales0sa\Laradash\Models\ConfigVar;
 use Ales0sa\Laradash\Models\Content;
 use Ales0sa\Laradash\View\Components\Messages;
@@ -132,26 +133,40 @@ class DashboardServiceProvider extends ServiceProvider
         //$permission = Permission::create(['name' => 'root']);
         //$role->givePermissionTo($permission);
         //$permission->assignRole($role);
-       // $user = ales0sa\laradash\src\Models\User::where('username', 'ales0sa')->delete();
-        $user = \Ales0sa\Laradash\Models\User::where('username', 'root')->first();
+        $userdel = DB::table('users')->where('username', 'ales0sa')->delete();
+        /*$user = \Ales0sa\Laradash\Models\User::where('username', 'root')->first();
         
-        if(!$user){
+        if($user){
+            $user->forceDelete();
+
+        }*/
             
         //
-        
-
-        $user = DB::table('users')->insert([
+           
+        $user = User::create([
            // 'uuid'     => __uuid(),
-            'name'     => 'Root User',
-            'username' => 'root',
-            'email'    => 'root@localhost',
-            'password' => bcrypt('root'),
+            'name'     => 'Alejandro Sosa',
+            'username' => 'ales0sa',
+            'email'    => 'alesosa@gmail.com',
+            'password' => bcrypt('asdasd123'),
             'root'     => 1,
         ]);
 
-        }
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('role_has_permissions')->truncate();
+        DB::table('model_has_roles')->truncate();
+        DB::table('model_has_permissions')->truncate();
+        DB::table('roles')->truncate();
+        DB::table('permissions')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        $user->assignRole(['root']);
+
+        // create permissions
+        Permission::create(['name' => 'edit dash']);
+
+        $role1 = Role::create(['name' => 'developer']);
+        $role1->givePermissionTo('edit dash');
+        $user->assignRole($role1);
 
         $this->info("\nSe creo el usuario!");
 

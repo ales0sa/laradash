@@ -7,7 +7,7 @@
                     :showUploadButton="false"
 
                     :showCancelButton="false"
-                    accept="image/*" :maxFileSize="1000000"  :customUpload="true" @uploader="myUploader" :auto="true"
+                    accept="image/*" :maxFileSize="10000000"  :customUpload="true" @uploader="myUploader" :auto="true"
 
         
         >

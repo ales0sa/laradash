@@ -78,26 +78,26 @@
                         <div class="p-col-12 p-md-4 ">
                             <Button label="Fill labels" @click="fillTable()" />
                         </div>
-                        <div class="p-col p-mb-3"  v-for="langkey in Object.keys(languages)" :key="'Name' + langkey">
+                        <div class="p-col-3 p-mb-3"  v-for="langkey in Object.keys(languages)" :key="'Name' + langkey">
                                     <div class="p-float-label">
                                         <InputText type="text" class="" v-model="table.name[langkey]"/>
                                         <label for="floatingInput">Name: {{ languages[langkey] }}</label>
                                     </div>
                                 </div>
    
-                        </div>
-                        <div class="p-col p-mb-3" >
-                                    <div class="p-float-label">
-                                        <InputText type="text" class="" v-model="table.whoCan"/>
-                                        <label for="floatingInput">Who can see: 
-                                            
-                                            {{ languages[langkey] }}
-
-
-                                        </label>
+                       
+                        <div class="p-col-4 p-mb-3" >
+                                    <div class="p-field p-float-label">
+                                        <MultiSelect v-model="table.whoCan" 
+                                         id="multiselect"
+                                        :options="groups"
+                                            optionLabel="name" optionValue="name"
+                                     
+                                        />
+                                         <label for="multiselect"> Who can see: </label>
                                     </div>
                                 </div>
-   
+                         </div>
                         <div class="p-col">
                             <div class="p-formgroup-inline">
 
@@ -201,13 +201,15 @@
                                         </div>
                             </div>
     
-                                
-                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-for="langkey in Object.keys(languages)" :key="'Label' + langkey" v-if="inputParams(input).includes('label')">
+                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('label')">
+                                    <div  v-for="langkey in Object.keys(languages)" :key="'Label' + langkey" >
                                         <div class="p-float-label mb-3">
                                             <InputText type="text" class="" v-model="input.label[langkey]"/>
                                             <label for="floatingInput">Label: {{ languages[langkey] }}</label>
                                         </div>
                                     </div>
+                                    </div>
+
                                     <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('valueoriginselector')">
 
                                         <SelectButton v-model="input.valueoriginselector" :options="seltypes"  />
@@ -406,6 +408,7 @@
                 },
                 inputs: [],
                 loaded: 0,
+                groups: [],
                 seltypes: [ 'table', 'values' ],
                 itypes: [
                             'text',                            
@@ -620,9 +623,10 @@
             this.$nextTick(() => {
                 axios.get('/adm/crud-generator/api/data/'+this.$route.params.file).then((response) => {
                     this.languages = response.data.languages
+                    this.groups  = response.data.groups
                     if(response.data.content) {
-                        this.table  = response.data.content.table
-                        this.inputs = response.data.content.inputs
+                        this.table   = response.data.content.table
+                        this.inputs  = response.data.content.inputs
                     }
                     this.loaded = 1
                 });
@@ -921,7 +925,11 @@
     .p-toast-message-content {
         max-width: 500px;
     }
+.p-multiselect {
+    display: flex;
 
+    
+}
 ::v-deep .p-panel.p-panel-toggleable .p-panel-header {
     padding: 5px;
 }

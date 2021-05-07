@@ -345,7 +345,21 @@ import axios from 'axios'
                 this.rels   = data.relations
                 this.data = data.data
                 this.loading = false;
-             });
+             }).catch(error => 
+             {
+
+                 console.log(error)
+                   let path = '/error';
+                    switch (error.response.status) {
+                        case 401: path = '/login'; break;
+                        case 404: path = '/404'; break;
+                        case 403: path = '/403'; break;
+                    }
+                    this.$router.push(path);
+                    
+             }
+             
+             );
 
              }, 100);
 

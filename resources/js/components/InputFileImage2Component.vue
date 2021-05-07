@@ -15,7 +15,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ labelText }}</h5>
             <label class="btn btn-block btn-light">
-                <input type="file" class="d-none" @change="onFileChange($event)">
+                <input type="file" style="display: none" @change="onFileChange($event)">
                 <i class="fas fa-images"></i>
                 Seleccionar Imagen
             </label>
@@ -110,6 +110,10 @@
             },
             getPreviewImage() {
                 let file = this.image
+                console.log(file)
+
+     //           return file
+
 
                 if (!this.checkValidFileSize(file)) {
                     return publicPATH + '/images/icons/Emblem-important-red.svg'
@@ -131,7 +135,7 @@
                     return icon
                 }
 
-                let imgExt = ['image/jpeg', 'image/png', 'image/svg+xml', 'image/svg']
+                let imgExt = ['image', 'image/jpeg', 'image/png', 'image/svg+xml', 'image/svg']
                 if (imgExt.includes(file.type)) {
                     if (file && file instanceof File) {
                         return URL.createObjectURL(file)
@@ -142,7 +146,7 @@
                 }
                 return publicPATH + '/images/icons/raw.svg'
                 if (typeof file === 'string' || file instanceof String) {
-                    return this.storage_path(file)
+                    return file//this.storage_path(file)
                 }
             }
         }

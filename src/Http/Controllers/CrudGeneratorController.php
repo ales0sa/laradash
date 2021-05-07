@@ -18,10 +18,48 @@ use Ales0sa\Laradash\Generators\Generator;
 use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\Console\Output\StreamOutput;
 
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+
+use Illuminate\Support\Facades\Auth;
+
 class CrudGeneratorController extends Controller
 {
+
+    protected $user;
+
+    public function __construct()
+    {
+        
+     //   $this->middleware('auth:api');
+
+
+        //$user = Ales0sa\Laradash\Models\User::find(Auth::user()->id);
+        //dd(auth()->user());
+        //dd(auth()->user());
+       //$user = User::find(Auth::user()->id);
+
+        //$user = Auth::guard('web');
+        //dd(Auth::guard('web')->user()->name);
+        //$user = auth()->guard('root')->user();//user();
+        //dd($user);
+      //$this->middleware(['role_or_permission:root|edit crud-generator']);
+       //$this->middleware('role:root');
+       //$this->middleware(['role:developer']);
+    }
+
     public function index()
     {
+        $userId = auth()->user()->id;
+       // $user->assignRole('developer');
+       // dd(auth()->user()->roles);
+       $user   = User::find($userId);
+       if(!$user->hasRole('developer')){
+        //!$user->hasAnyRole([$this->table->whoCan]
+        return response()->json(['error' => 'Not authorized.'], 403);
+
+       }
+
         $dirPath = __crudFolder();
         $data = File::allFiles($dirPath);
        //dd($data);
@@ -97,6 +135,8 @@ class CrudGeneratorController extends Controller
     public function data($table = false)
     {
         $languages = [ 'es' => 'Español' ];
+        $groups  = Role::get();
+
         $content = null;
         if($table) {
             $dirPath  = app_path('Dashboard');
@@ -110,6 +150,7 @@ class CrudGeneratorController extends Controller
         //}
         return response()->json([
             'content'   => $content,
+            'groups'    => $groups,
             'languages' => $languages,
         ]);
     }

@@ -157,10 +157,10 @@
 
                     url = url + '/data/' + this.edit
                 }
-                
+                console.log('mmm')
                 this.CrudService.getTable(url).then((response) => {
 
-                    //console.log(response)
+                    console.log(response)
                     this.languages = response.languages
                     this.tablename = response.tablename
                     this.table     = response.table
@@ -197,6 +197,7 @@
                     });
                 }
                     this.loaded = 1
+ 
                 });
             });
 

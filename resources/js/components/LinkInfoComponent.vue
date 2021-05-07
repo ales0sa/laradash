@@ -19,13 +19,13 @@
 <template>
     <div>
 
-
-    <Dropdown v-model="item.icon" :options="options" :filter="true"
-     optionLabel="icon" optionValue="icon" dataKey="icon" placeholder="Seleccione un icono">
+    <Dropdown v-model="item.icon" :options="options" :filter="true" :value="model"
+     optionLabel="icon" optionValue="icon" dataKey="icon"
+      placeholder="Seleccione un icono">
 
     <template #value="slotProps">
         <div class="country-item country-item-value" v-if="item.icon">
-            <i :class="item.icon" /> {{ item.icon }}
+            <i :class="'fa ' + item.icon" />
 
         </div>
         <span v-else>
@@ -44,7 +44,8 @@
     </div>
 </template>
                                         
-                                    </div>
+
+</div>
                                     <div class="p-fieldo p-col-md-3">
                                         <InputText
                                             type="text"

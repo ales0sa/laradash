@@ -35,27 +35,34 @@ class CompanyDataController extends Controller
             'header_logo',
             'header_portrait'
         ];
+        
         $content = [];
         foreach ($vars as $var_key => $var_value) {
             if (in_array($var_key, $images)) {
                 if($var_value != null && $var_value != '') {
                     if (filter_var($var_value, FILTER_VALIDATE_URL)) {
+
                         $content[$var_key] = [
                             'url'  => $var_value,
                             'path' => $var_value,
                             'type' => ''
                         ];
+
                     } else {
-                        if (!Storage::exists($var_value) && Str::startsWith($var_value, '/storage/')) {
-                            $var_value = Str::replaceFirst('/storage/', 'public/', $var_value);
-                        }
-                        if (Storage::exists($var_value)) {
+
+                        $var_value = Str::replaceFirst('/storage/', '', $var_value);
+                        /*if (!Storage::exists($var_value) && Str::startsWith($var_value, '/storage/')) {
+                        }*/
+
+                        //if (Storage::exists($var_value)) {
+
                             $content[$var_key] = [
-                                'url'  => asset(Storage::url($var_value)),
+                                'url'  => 'storage/'.$var_value,//asset(Storage::url($var_value)),
                                 'path' => $var_value,
-                                'type' => Storage::mimeType($var_value)
+                                'type' => 'image'//Storage::mimeType($var_value)
                             ];
-                        }
+                       // }
+
                     }
                 }
             } else {
@@ -98,7 +105,7 @@ class CompanyDataController extends Controller
                         $var->config_value = null;
                     }
                 } else {
-                    $path = $all[$key]->store('public/general/imagen', env('DEFAULT_STORAGE_DISK', 'local'));
+                    $path = $all[$key]->store('general/', env('DEFAULT_STORAGE_DISK', 'local'));
                     Storage::disk(env('DEFAULT_STORAGE_DISK', 'local'))->setVisibility($path, 'public');
                     $var->config_value = Storage::disk(env('DEFAULT_STORAGE_DISK', 'local'))->url($path);
                 }

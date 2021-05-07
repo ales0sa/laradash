@@ -35,7 +35,7 @@
     </div>
 </div>
 <template #footer>
-    <Button label="Cancelar" icon="pi pi-times" class="p-button-danger"/>
+    <Button label="Cancelar" icon="pi pi-times" class="p-button-danger" @click="productDialog = false"/>
     <Button label="Generar" icon="pi pi-check" class="p-button-success" @click="newUser()" />
 </template>
 </Dialog>

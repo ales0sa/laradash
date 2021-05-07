@@ -57,6 +57,15 @@
             window.authGroup       = [1]
 
      </script>
+
+<script>
+  @auth
+    window.Permissions = {!! json_encode(Auth::user()->permissions, true) !!};
+  @else
+    window.Permissions = [];
+  @endauth
+</script>
+
     @else
 
          <script>window.authUser=null;</script>

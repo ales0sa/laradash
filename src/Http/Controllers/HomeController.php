@@ -103,12 +103,12 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         }
 
 
-        if($user->hasAnyRole(['root'])){
+        if($user->hasAnyRole(['developer'])){
             $menu[] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
             
         }
 
-        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger'])){
+        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger', 'developer'])){
             $menu[] = ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'];
 
 
