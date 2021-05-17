@@ -11,10 +11,7 @@ export default {
                 type: Object,
                 default: {}
             },
-            value: {
-                type: Object,
-                default: {}
-            }
+
     },
   data() {
     return {
@@ -24,7 +21,7 @@ export default {
   computed: {
     currentEditForm: function() {
       if (this.componentToDisplay) {
-        return () => import(`./../../../../../../../resources/js/admin/`+ this.input.columnname +`.vue`);
+        return () => import(`./../../../../../../../resources/js/components/laradash/`+ this.input.columnname +`.vue`);
       }
       return null;
     }

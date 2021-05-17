@@ -1,6 +1,10 @@
+$mainColorLight: #9d0b26;
+$mainColorDark: #33050e;
 
-$mainColorLight: #32a08e;
-/* General */
+/* General 
+#14e1bf < rcostura
+#9d0b26 < abcmuebles
+*/
 $fontSize:14px;
 $bodyBgColor:#edf0f5;
 $textColor:#333333;
@@ -51,3 +55,6 @@ $topbarSearchInputColor:#ffffff;
 
 /* Footer */
 $footerBgColor:#ffffff;
+
+
+$paginatorBg: $mainColorLight;

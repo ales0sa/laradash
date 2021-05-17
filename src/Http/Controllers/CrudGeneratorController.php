@@ -50,29 +50,30 @@ class CrudGeneratorController extends Controller
 
     public function index()
     {
-        $userId = auth()->user()->id;
-       // $user->assignRole('developer');
-       // dd(auth()->user()->roles);
+       
+       $userId = auth()->user()->id;       
        $user   = User::find($userId);
-       if(!$user->hasRole('developer')){
-        //!$user->hasAnyRole([$this->table->whoCan]
-        return response()->json(['error' => 'Not authorized.'], 403);
 
-       }
+       if($user->root == 1){ //$user->hasAnyRoles('root')){
 
-        $dirPath = __crudFolder();
-        $data = File::allFiles($dirPath);
-       //dd($data);
-        $jsonfiles = array();
+            $dirPath = __crudFolder();
+            $data = File::allFiles($dirPath);            
+            $jsonfiles = array();
+            
+            foreach($data as $f){
+                $jsonfiles[] = $f->getfilename();
+            }
 
-        foreach($data as $f){
-            $jsonfiles[] = $f->getfilename();
+            return $jsonfiles;        
+        
+        }else{
+        
+            return response()->json(['error' => 'Not authorized.'], 403);
+
         }
-        return $jsonfiles;
-
-
 
     }
+
     public function dbtables()
     {
         $dirPath = __crudFolder();
@@ -83,6 +84,13 @@ class CrudGeneratorController extends Controller
         $files[] = 'users';
         $files[] = 'migrations';
         $files[] = 'password_resets';
+        $files[] = 'model_has_permissions';
+        $files[] = 'model_has_roles';
+        $files[] = 'permissions';
+        $files[] = 'role_has_permissions';
+        $files[] = 'roles';
+        $files[] = 'seo';
+        $files[] = 'translations';
         $files[] = 'failed_jobs';
 
         
@@ -100,7 +108,7 @@ class CrudGeneratorController extends Controller
 
         $difftables = array_diff($tables, $files);
 
-        return ['status' => 'success', 'tables' => $difftables];
+        return ['status' => 'success', 'tables' => $difftables, 'jsonfiles' => $files, 'alltables' => $tables];
     }
 
     public function dbgetcols($tablename)
@@ -205,12 +213,18 @@ class CrudGeneratorController extends Controller
         (new Generator($data->table, $data->inputs))->crud();
         $stream = fopen("php://output", "w");
 
+        if($data->migrate == 0){
 
-        Artisan::call('migrate:refresh', [
-            '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
-            '--force' => true            
-        ]);
 
+
+        }else{
+        
+            Artisan::call('migrate:refresh', [
+                '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
+                '--force' => true            
+            ]);
+            
+        }
 
 
         

@@ -6,6 +6,8 @@
         <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
         :loading="loading"
          :resizableColumns="false" columnResizeMode="fit"
+         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" 
+                :rowsPerPageOptions="[10,25,50,100]"
         >
 
 
@@ -63,13 +65,25 @@
 
                 </template>
 
+                <!--- COLUMNS --->
 
-
-                <template  #body="slotProps" v-if="col.type == 'textarea'">
+                <template  #body="slotProps" v-if="col.type == 'number'">
+                    <div class="" v-if="slotProps.data[col.field] >= 1">
+                        
+                        <span class="" v-html="slotProps.data[col.field]" />
+                    </div>
+                    <div class="" v-else>
+                        
+                        <span class="p-error" v-html="slotProps.data[col.field]" />
+                    </div>
+                </template>
+                <template  #body="slotProps" v-else-if="col.type == 'money'">
                     <div class="">
+                        $
                         <span class="" v-html="slotProps.data[col.field]" />
                     </div>
                 </template>
+
                 <template #body="slotProps" v-else-if="col.type == 'file'">
 
                     <div v-if="checkFileType(slotProps.data[col.field]) == 'image'">
@@ -92,45 +106,25 @@
 
                 </template>
                 <template #body="slotProps" v-else-if="col.type == 'boolean'">
-
-                  
                         <InputSwitch :value="Boolean(Number(slotProps.data[col.field]))"  :disabled="true"/>
-
-           <!---              <span v-if="slotProps.data[col.field] === 1">
-                            <i class="pi pi-check"></i>
-                        </span>
-                        <span v-else> 
-                            <i class="pi pi-times"></i> 
-                        </span>
---->
-
                 </template>
                 <template #body="slotProps" v-else-if="col.type == 'checkbox'">
-
-                <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
-
-                    <Chip class="p-ml-1 p-mb-1"
-                      :label="rels[col.tabledata][item]" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
-
-                </span>
-                <span v-else-if="col.valueoriginselector == 'values' "> 
-
-                      <Chip class="p-ml-1 p-mb-1"
-                      :label="getKeyByValue(col.options,item)" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
-                </span>
-
+                      <span v-if="col.tabledata && col.valueoriginselector == 'table' "> 
+                            <Chip class="p-ml-1 p-mb-1"
+                            :label="rels[col.tabledata][item]" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+                      </span>
+                      <span v-else-if="col.valueoriginselector == 'values' "> 
+                          <Chip class="p-ml-1 p-mb-1"
+                          :label="getKeyByValue(col.options,item)" v-for="item of splitMe(slotProps.data[col.field])" :key="item" />
+                      </span>
                 </template>
-
-
                 
                 <template #body="slotProps" v-else-if="col.type == 'radio'">
-
                         {{ getKeyByValue(col.options,slotProps.data[col.field]) }}
-
                 </template>
 
                 <template #body="slotProps" v-else-if="col.type == 'select'">
-                    
+                   
 
                     <div v-if="col.multiple == true">
                             
@@ -166,11 +160,10 @@
                 
         </Column>
 
-        <Column v-if="columns.length >= 1" headerStyle="width: 120px;">
+        <Column v-if="columns.length >= 1" headerStyle="">
         <template #body="slotProps">
 
             <span class="p-buttonset">
-
             <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
             <Button icon="pi pi-copy" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="dupe(slotProps.data.id)" />
             <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />

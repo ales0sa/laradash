@@ -1,9 +1,6 @@
 <template>
-    <div class="form-floating mb-3">
-
-        <label class="form-label">{{ input.label[lang()] }}</label>
-
-        <div v-if="this.input.multiple">
+    <div class="p-field">
+        <span v-if="this.input.multiple"  class="p-float-label p-mt-3">
 
         <MultiSelect  
             v-model="selected"
@@ -11,29 +8,30 @@
             :value="value.value"
             optionLabel="text" 
             optionValue="key"
+            dataKey="key"
+            :filter="true"
             :options="options" 
             :placeholder="'Seleccione ' + input.label[lang()]">
         </MultiSelect>
-        </div>
+        </span>
 
-        <div v-else>
+        <span class="p-float-label p-mt-3" v-else>
 
         <Dropdown 
+            :id="input.columnname"
             v-model="selected"
             @change="setSelect($event.value)"
             :value="value.value"
             optionLabel="text" 
             optionValue="key"
             :options="options" 
-            :placeholder="'Seleccione ' + input.label[lang()]">
+            dataKey="key"
+            :filter="true"
+            >
         </Dropdown>
-        </div>
-       <!--- <select class="p-fieldex" v-model="value.value">
-            <option value="0"  v-if="!mode">Si</option>
-            <option value="1" v-if="!mode" selected="">No</option>
-            <option :value="key" v-for="(option, key) in options" :key="key" :v-if="mode == 'table'">{{ option }} {{ mode }}</option>
-            <option :value="option.key" v-for="(option, key) in optionsA" :key="key" :v-else-if="mode == 'values'">{{ option.text }}</option> 
-        </select> --->
+                 <label :for="input.columnname">{{ input.label[lang()] }}</label>
+        </span>
+
         
     </div>
 </template>
@@ -56,7 +54,7 @@
         components: {},
         data(){
             return{
-                selected: 0,
+                selected: null,
                 options: [],
                 optionsA: [],                
                 mode: this.input.valueoriginselector
@@ -120,7 +118,7 @@
                     this.value.value = event
             },
             lang() {
-                return document.documentElement.lang
+                return 'es' //document.documentElement.lang
             }
         },
         computed: {
@@ -128,9 +126,3 @@
     }
 
 </script>
-<style lang="css" scoped>
-.form-label {
-    margin-bottom: .5rem;
-    font-weight: bold;
-}
-</style>

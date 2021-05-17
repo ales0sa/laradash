@@ -67,7 +67,13 @@ class CrudController extends Controller
 
         if ($input->type == 'select' && $input->valueoriginselector == 'table') {
             $found = true;
-            $relations[$input->tabledata] = DB::table($input->tabledata)->whereNull('deleted_at')->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+
+            if($this->table->softDeletes == 1){
+                $relations[$input->tabledata] = DB::table($input->tabledata)->whereNull('deleted_at')->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+            }else{
+                $relations[$input->tabledata] = DB::table($input->tabledata)->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+            }
+
             if ($item) {
                 $content[$input->columnname] = $item->{$input->columnname};
             }
@@ -457,9 +463,17 @@ public function data($tablename, $id = false)
         }
         
         if ($input->type == 'select' && $input->valueoriginselector == 'table') {
+            //dd($this->table);
+            if($this->table->softDeletes == 1){
             $relations[$input->tabledata] = DB::table($input->tabledata)
                             ->whereNull('deleted_at')
                             ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+            }    else {
+                $relations[$input->tabledata] = DB::table($input->tabledata)
+                            
+                            ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+            }
+                        
         }
 
     }    
@@ -501,10 +515,13 @@ public function data($tablename, $id = false)
         //dd($user->getPermissionsViaRoles());
         if(isset($this->table->whoCan) && 
            !$user->hasAnyRole([$this->table->whoCan]
-           
+           //|| ( $user->root !== 1)
            )){
+               
+            if(!$user->root){
+                return response()->json(['error' => 'Not authorized.'], 403);
+            }
        
-            return response()->json(['error' => 'Not authorized.'], 403);
     
         }
 
@@ -517,7 +534,7 @@ public function data($tablename, $id = false)
 
         $newData = array();
 
-
+        //dd($this->table);
         //dd($this->inputs['textarea']->type);
 /*
         foreach ($data->toArray() as $key => $record) {    
@@ -581,9 +598,25 @@ public function data($tablename, $id = false)
             }
             
             if ($input->type == 'select' && $input->valueoriginselector == 'table') {
-                $relations[$input->tabledata] = DB::table($input->tabledata)
-                                ->whereNull('deleted_at')
-                                ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+
+
+                if($this->table->softDeletes == 1){
+
+                    $relations[$input->tabledata] = DB::table($input->tabledata)
+                    ->whereNull('deleted_at')
+                    ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+
+
+                }else{
+
+                    $relations[$input->tabledata] = DB::table($input->tabledata)                    
+                    ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
+
+                }
+
+
+
+
             }
 
         }    

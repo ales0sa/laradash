@@ -56,37 +56,49 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $uuid = null)
+    public function store(Request $request)
     {
 
-        $validatedData = $request->validate([
-            'username' => 'required|unique:users',
-            'password' => 'required'
-        
-        ]);
 
-        if($uuid){
-            $item   = User::where('uuid', $uuid)->firstOrFail();
+
+        if($request->id){
+
+            $validatedData = $request->validate([
+                //'username' => 'required|unique:users',
+                //'password' => 'required'
+            
+            ]);
+
+            $item   = User::where('id', $request->id)->firstOrFail();
             $action = 'edito';
-            if ($request->root != null && $request->root != '' && auth()->user()->root) {
+            /*if ($request->root != null && $request->root != '' && auth()->user()->root) {
                 $item->root = $request->root;
-            }
+            }*/
+
         } else {
+
+            $validatedData = $request->validate([
+                'username' => 'required|unique:users',
+                'password' => 'required'
+            
+            ]);
+
             $item       = new User;
             $action     = 'añadio';
             //$item->uuid = __uuid();
         }
-        $item->root = 0;
+        //$item->root = 0;
         $item->name       = $request->name;
         $item->username   = $request->username;
         $item->email      = $request->username.'@'.url('/');//$request->email;
         $item->password   = bcrypt($request->password);
         //$item->root       = $request->root;
         //$item->sucursal_id  = $request->sucursal_id;
-        $item->assignRole($request->role);
+        $sr  = explode(',',$request->role);
+        $item->syncRoles($sr);
         $item->save();
 
-        return $item;
+        return [ 'statu' => 'success', 'user' => $item ];
         //$item->groups()->sync($request->groups);
         //return redirect()->route('admin.user')->with('success', 'Se añadio un <strong>Usuario</strong> con éxito.');
     }

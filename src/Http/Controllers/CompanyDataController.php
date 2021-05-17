@@ -105,9 +105,10 @@ class CompanyDataController extends Controller
                         $var->config_value = null;
                     }
                 } else {
-                    $path = $all[$key]->store('general/', env('DEFAULT_STORAGE_DISK', 'local'));
-                    Storage::disk(env('DEFAULT_STORAGE_DISK', 'local'))->setVisibility($path, 'public');
-                    $var->config_value = Storage::disk(env('DEFAULT_STORAGE_DISK', 'local'))->url($path);
+                    //$path = $all[$key]->store('general/', env('DEFAULT_STORAGE_DISK', 'local'));
+                    $path = $all[$key]->store('config_vars', 'public');
+                    //Storage::disk(env('DEFAULT_STORAGE_DISK', 'local'))->setVisibility($path, 'public');
+                    $var->config_value = $path; //Storage::disk(env('DEFAULT_STORAGE_DISK', 'public'))->url($path);
                 }
                 $var->save();
             }

@@ -31,3 +31,16 @@
     margin: 0;
     width: -webkit-fill-available;
 }
+
+$primaryColor: $mainColorLight;
+$buttonHoverBg: $mainColorDark;
+
+.p-button {
+	background-color: $mainColorLight;
+	border: 1px solid $mainColorDark;
+}
+.p-button:enabled:hover {
+	background-color: $mainColorDark;
+	border: 1px solid $mainColorLight;
+}
+

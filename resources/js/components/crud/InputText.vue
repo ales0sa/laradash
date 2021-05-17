@@ -3,7 +3,9 @@
 
         <InputNumber 
          v-model="val.value"   :id="input.columnname"
-        v-if="input.type == 'number'"/>
+        v-if="input.type == 'number'"
+        :minFractionDigits="2" 
+        />
         <InputNumber mode="currency" 
         currency="ARS"
          v-model="val.value"   :id="input.columnname"

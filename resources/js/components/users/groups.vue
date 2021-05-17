@@ -6,17 +6,16 @@
 
 <Dialog :visible.sync="productDialog" :style="{width: '550px'}" header="Nuevo rol" :modal="true" class="p-fluid">
 
-<div class="p-field">
-    <label for="name">Nombre</label>
-    <InputText id="name" v-model.trim="uform.name" required="true" autofocus :class="{'p-invalid': submitted && !uform.name}" />
-    <small class="p-invalid" v-if="submitted && !uform.name">Nombre obligatorío.</small>
-</div>
+    <div class="p-field">
+        <label for="name">Nombre</label>
+        <InputText id="name" v-model.trim="uform.name" required="true" autofocus :class="{'p-invalid': submitted && !uform.name}" />
+        <small class="p-invalid" v-if="submitted && !uform.name">Nombre obligatorío.</small>
+    </div>
 
-
-<template #footer>
-    <Button label="Cancelar" icon="pi pi-times" class="p-button-danger"/>
-    <Button label="Generar" icon="pi pi-check" class="p-button-success" @click="newRol()" />
-</template>
+    <template #footer>
+        <Button label="Cancelar" icon="pi pi-times" class="p-button-danger"/>
+        <Button label="Generar" icon="pi pi-check" class="p-button-success" @click="newRol()" />
+    </template>
 </Dialog>
 
 
@@ -135,6 +134,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
         },
 
         load(){
+            this.productDialog = false
             this.data = [];
             this.inputs = [];
             this.columns = [];
@@ -144,7 +144,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 
         },
         newRol(){
-                console.log(this.uform)
+                //console.log(this.uform)
                 let formData = new FormData()
                 Object.keys(this.uform).forEach((key) => {
                     formData.append(key, this.uform[key]);
@@ -157,7 +157,10 @@ import ConfirmDialog from 'primevue/confirmdialog';
                     this.loaded = 3
                     setTimeout(function(){
                         this.loaded = 1
-                        console.log(response)
+                        //console.log(response)
+                        if(response.statusText == 'Created'){
+                            this.load()
+                        }
                     }.bind(this), 1000);
                 })
 

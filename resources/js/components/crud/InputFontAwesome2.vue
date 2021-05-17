@@ -38,7 +38,7 @@
         data(){
             return{
                 options: [
-    {icon: "fa fa-500px", text: "500px"},
+    {icon: "fa fa-500px", text: "500px"}, 
     {icon: "fa fa-adjust", text: "Adjust"},
     {icon: "fa fa-adn", text: "Adn"},
     {icon: "fa fa-align-center", text: "Align center"},

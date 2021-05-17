@@ -8,16 +8,7 @@ window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-
-
-//import PrimeVue from './primevue/config';
-//window.Vue.use(Vue);
-
-import 'primevue/resources/themes/nova/theme.css'
-import 'primevue/resources/primevue.min.css';
-import 'primeflex/primeflex.css';
 import './assets/layout/layout.scss';
-import './assets/layout/flags/flags.css';
 
 
 import Listbox from 'primevue/listbox';
@@ -67,11 +58,12 @@ import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
 window.Vue.use(ConfirmationService);
 window.Vue.use(ToastService);
-window.Vue.use(Message);
+//window.Vue.use(Message);
 
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 
+window.Vue.component('Message', Message );
 window.Vue.component('Skeleton', Skeleton );
 window.Vue.component('ProgressSpinner', ProgressSpinner);
 window.Vue.component('Listbox', Listbox);

@@ -77,11 +77,14 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         $all_roles_except_a_and_b = Role::whereNotIn('name', ['role A', 'role B'])->get();*/
         $userId = auth()->user()->id;
         $user = User::find($userId);
+        $submenu = [];
+
 
         foreach ($files as $fileKey => $file) {
+            $content = json_decode(file_get_contents($file->getPathname()));
 
-                $content = json_decode(file_get_contents($file->getPathname()));
-                
+            //$submenu[$fileKey] = array();
+
                 if($content->table->menu_show && (isset($content->table->singlepage) && $content->table->singlepage == true)){ 
 
                     $editornew = '/1/edit';
@@ -91,28 +94,82 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
                         $editornew == '/create';
                     }
 
-                    $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.$editornew];
+                    $menu[$content->table->tablename] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename.$editornew];
 
 
                 }elseif($content->table->menu_show){
-                    if(isset($content->table->whoCan) && $user->hasAnyRole([$content->table->whoCan])){
-                        $menu[] = [ 'label' => $content->table->name->es, 'icon' => $content->table->icon, 'to' => '/crud/'.$content->table->tablename ];
+                    if(isset($content->table->whoCan) && $user->hasAnyRole([$content->table->whoCan]) || $user->root == 1 ){
+
+
+                       if(isset($content->table->menu_parent)){
+                   //         unset($menu[1]);
+                           // dd($menu);
+                            /*$submenu[$content->table->menu_parent] = [ 
+                                    'label' => $content->table->name->es,
+                                    'icon' => $content->table->icon,
+                                    'to' => '/crud/'.$content->table->tablename ];*/
+
+                        }else{
+
+                            $menu[$content->table->tablename] = [ 'label' => $content->table->name->es,
+                                    'icon' => $content->table->icon,
+                                    'to' => '/crud/'.$content->table->tablename,
+                                    //'items' => [ $menu[$content->table->tablename]]
+                            ];
+
+                        }
+
+
+
+
+
+
                     }
                 }
 
         }
 
+        
+        foreach ($files as $fileKey => $file) {
+            $content = json_decode(file_get_contents($file->getPathname()));
+            if(isset($content->table->menu_parent)){
+                $menu[$content->table->menu_parent]['items'][] = [
+                            'label' => $content->table->name->es,
+                            'icon' => $content->table->icon,
+                            'to' => '/crud/'.$content->table->tablename,
+                            //'items' => [ $menu[$content->table->tablename]]
+                            ];
 
-        if($user->hasAnyRole(['developer'])){
+            }
+        }
+
+    //    dd($submenu);
+        /*
+
+        foreach ($files as $fileKey => $file) {
+            $content = json_decode(file_get_contents($file->getPathname()));
+            if(isset($content->table->menu_parent)){
+                //dd($content->table->menu_parent);
+                $submenu[$fileKey] = [ 
+                        'label' => $content->table->name->es,
+                        'icon' => $content->table->icon,
+                        'to' => '/crud/'.$content->table->tablename ];
+
+            }
+        }*/
+
+        
+
+        if($user->hasAnyRole(['developer'])  || $user->root == 1 ){
             $menu[] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
             
         }
-
-        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger', 'developer'])){
+        
+        /*
+        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger', 'developer']) || $user->root == 1){
             $menu[] = ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'];
 
 
-/*
             $menu[] = [ 'label' => 'Configuraciones', 'icon' => 'pi pi-cog', 
 
 
@@ -124,9 +181,9 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
                       ]
 
         ];
-*/
-        }
-
+    }
+    
+    */
 
 
         return($menu);

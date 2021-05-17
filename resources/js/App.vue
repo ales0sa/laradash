@@ -7,7 +7,7 @@
                 <div class="layout-logo">
                     <router-link to="/">
                         <picture v-if="!imgError">
-                            <img alt="Logo" :src="logo" @error="onImgError()" width="50px" />
+                            <img alt="Logo" :src="logo" @error="onImgError()" style="max-width: 100%" />
                         </picture>
                         <picture v-else>
                             

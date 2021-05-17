@@ -14,7 +14,16 @@
 
     <div class="p-formgrid p-grid">
     <div class="p-field p-col">
-<Dropdown v-model="uform.role" :options="sectores" optionLabel="name" optionValue="name" placeholder="Seleccione rol" />
+    <!-- <Dropdown v-model="uform.role" :options="sectores" optionLabel="name" optionValue="id" placeholder="Seleccione rol" />--->
+    <MultiSelect 
+    :value="uform.role"
+    display="chip"
+    v-model="selectedRoles" 
+    :options="sectores"
+    optionLabel="name"
+    optionValue="id"
+    placeholder="Seleccione rol"
+    />
 </div>
 
 </div>
@@ -42,10 +51,11 @@
 
 
 
-        <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
-        class="p-datatable-gridlines"
-                 :resizableColumns="false" columnResizeMode="fit"
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" :rowsPerPageOptions="[5,10,25]" >
+    <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
+                
+                :resizableColumns="true" columnResizeMode="fit"
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown" 
+                :rowsPerPageOptions="[10,25,50,100]">
 
 
         <template #header>
@@ -84,7 +94,7 @@
 
             
             <span class="p-buttonset">
-                <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
+                <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data)" />
                 <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm p-button-danger" @click="del(slotProps.data.id)" />
             </span>
         </template>
@@ -107,10 +117,10 @@ import Toast from 'primevue/toast';
         data() {
             return {
             uform: {
-                name: 'abc', 
-                username: 'abc', 
-                password: 'abc', 
-                role: 'root'
+                name: null,
+                username: null,
+                password: null,
+                role: null,
 
 
             },
@@ -121,6 +131,7 @@ import Toast from 'primevue/toast';
             deleteProductsDialog: false,
             product: {},
             selectedProducts: null,
+            selectedRoles: null,
             filters: {},
             submitted: false,
                 columns: [],
@@ -160,7 +171,8 @@ import Toast from 'primevue/toast';
     },
     methods:{
         openNew() {
-            this.product = {};
+            this.uform = {};
+            this.selectedRoles = null
             this.submitted = false;
             this.productDialog = true;
         },
@@ -180,6 +192,7 @@ import Toast from 'primevue/toast';
         },
         newUser(){
                 console.log(this.uform)
+                this.uform.role = this.selectedRoles
                 let formData = new FormData()
                 Object.keys(this.uform).forEach((key) => {
                     formData.append(key, this.uform[key]);
@@ -219,6 +232,9 @@ import Toast from 'primevue/toast';
         },
         edit(item) {
 
+            this.uform = {...item};
+            this.selectedRoles = item.roles.flatMap(x => x.id)
+            this.productDialog = true;
 
         },
         del(item) {

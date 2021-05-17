@@ -20,6 +20,8 @@ import Laralogs from './components/laralogs.vue';
 
 import CustomComponent from './components/crud/CustomComponent.vue';
 
+import error403 from './components/errors/403.vue';
+
 Vue.use(Router);
 
 
@@ -93,6 +95,12 @@ export default new Router({
 			path: '/grupos',
 			name: 'grupos',
 			component: CrudGrupos,
+			props: true
+		},
+		{
+			path: '/403',
+			name: '403',
+			component: error403,
 			props: true
 		},
 	],

@@ -13,7 +13,7 @@
         <Button label="Create JSON File" @click="generate()" />
 
         <div>
-        <pre>{{ jsonIdea }} </pre>
+            <textarea style="width: 100%; height: 500px;">{{ jsonIdea }}</textarea>
         </div>
 
         </div>
@@ -36,11 +36,11 @@ export default {
         jsonIdea: null,
 		tables: null,
         dbtypes: {
-                    "bigint": 'number',
+                    "bigint": 'bigInteger',
                     "string": 'text',
                     "text": 'textarea',
                     "integer": 'number',                    
-                    "biginteger": 'number',
+                    "biginteger": 'bigInteger',
                     "datetime": 'datetime',
                     "date": 'date',
                     "boolean": 'boolean'
@@ -106,13 +106,12 @@ export default {
                                 console.log(child)
                             }else{
                                 parsedInputs.push({
-                                isCollapsed: true,
-                               
+                                isCollapsed: true,                               
                                 columnname: child,
                                 icon: '',
                                 type: this.dbtypes[response.data.columns[child].type],
                                 visible: 1,
-                                gridcols: 3,
+                                gridcols: 12,
                                 visible_edit: 1,
                                 label: { es: child, en: child },
                                 unique: 0,
@@ -156,7 +155,7 @@ export default {
                                                 "slug": 0,
                                                 "slug_global": 0,
                                                 "icon": "pi pi-file",
-                                                 "whoCan": ['root']
+                                                "whoCan": ['root']
                             },
                             'inputs': parsedInputs
 

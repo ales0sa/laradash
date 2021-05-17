@@ -267,7 +267,8 @@ class DashboardServiceProvider extends ServiceProvider
             copy(__DIR__.'/vue-stubs/webpack.mix.js', base_path('webpack.mix.js'));
             copy(__DIR__.'/vue-stubs/dashboard.js', resource_path('js/dashboard.js'));
             //copy(__DIR__.'/vue-stubs/dashboard.js', public_path('js/dashboard.js'));
-
+            // #9d0b26
+            
             $bar->advance();
 
 
