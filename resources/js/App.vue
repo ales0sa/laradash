@@ -19,7 +19,8 @@
                 </div>
 
                 <AppProfile />
-                <AppMenu  :model="cm" @menuitem-click="onMenuItemClick"/>
+                
+                <AppMenu  :model="cm" @menuitem-click="onMenuItemClick"  />
             </div>
         </transition>
 
@@ -62,7 +63,7 @@ export default {
             staticMenuInactive: false,
             overlayMenuActive: true,
             mobileMenuActive: false,
-            cm: null,
+            cm: [],
             menu : [
                /* {label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/'},
                 {
@@ -97,6 +98,7 @@ export default {
         axios.get('/adm/whoami').then((response) => {
 
             this.authRoot = response.data.user.root
+            this.authGroup = response.data.user.roles
             console.log(response.data)
 
         });
@@ -123,12 +125,13 @@ export default {
 
         },
         checkGroup(val){
-            let grups = authGroup.map(group => group.id)
+            return true
+           /* let grups = authGroup.map(group => group.id)
             if(grups.includes(val) || grups.includes(1)){
                 return true
             }else{
                 return false
-            }
+            }*/
             
         },
         isUserAdmin(){

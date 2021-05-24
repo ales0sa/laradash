@@ -75,10 +75,10 @@ import ConfirmDialog from 'primevue/confirmdialog';
         data() {
             return {
             uform: {
-                name: 'abc', 
-                username: 'abc', 
-                password: 'abc', 
-                role: 'root'
+                name: '', 
+                username: '', 
+                password: '', 
+                role: ''
 
 
             },
@@ -87,7 +87,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
             productDialog: false,
             deleteProductDialog: false,
             deleteProductsDialog: false,
-            groups: {},
+            groups: [],
             selectedProducts: null,
             filters: {},
             submitted: false,
@@ -115,15 +115,15 @@ import ConfirmDialog from 'primevue/confirmdialog';
         created() {
 
             this.UserService = new UserService();
-
+            this.load()
         },
         mounted() {
 
-           this.UserService.getGroups().then(data => this.groups = data);
+          // this.UserService.getGroups().then(data => this.groups = data);
             //this.tablename = this.$route.params.table
             //this.UserService.getTable(this.tablename).then(data => this.inputs = data.inputs);
            // this.UserService.getData(this.tablename).then(data => this.data = data);
-           this.load()
+           //this.load()
 
     },
     methods:{
@@ -139,6 +139,8 @@ import ConfirmDialog from 'primevue/confirmdialog';
             this.inputs = [];
             this.columns = [];
             this.rels = [];
+            this.uform = [];
+
             this.UserService.getGroups().then(data => this.groups = data);
 
 
@@ -153,7 +155,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 
                 
 
-                axios.post('/adm/grupo/', formData).then((response) => {
+                axios.post('/adm/groups', formData).then((response) => {
                     this.loaded = 3
                     setTimeout(function(){
                         this.loaded = 1

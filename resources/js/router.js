@@ -22,8 +22,12 @@ import CustomComponent from './components/crud/CustomComponent.vue';
 import CustomView from './components/CustomView.vue';
 
 import error403 from './components/errors/403.vue';
+import error404 from './components/errors/404.vue';
+import error500 from './components/errors/500.vue';
 
-Vue.use(Router);
+import axios from './plugins/axios';
+
+Vue.use(Router, axios);
 
 
 export default new Router({
@@ -108,6 +112,18 @@ export default new Router({
 			path: '/403',
 			name: '403',
 			component: error403,
+			props: true
+		},
+		{
+			path: '/404',
+			name: '404',
+			component: error404,
+			props: true
+		},
+		{
+			path: '/500',
+			name: '500',
+			component: error500,
 			props: true
 		},
 	],

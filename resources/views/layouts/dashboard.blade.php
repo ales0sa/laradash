@@ -53,8 +53,7 @@
 
             window.logo            = '{{ Storage::url(__cf("header_logo")) }}'
             window.authUser        = {!! json_encode(Auth::user()); !!};
-            window.authPermissions = [1]
-            window.authGroup       = [1]
+
 
      </script>
 

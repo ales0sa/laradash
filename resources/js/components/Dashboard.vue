@@ -10,7 +10,7 @@
     export default {
         data() {
             return {
-                groups: this.$parent.authGroup.map(group => group.id),
+                //groups: this.$parent.authGroup.map(group => group.id),
             }
         },
         mounted() {

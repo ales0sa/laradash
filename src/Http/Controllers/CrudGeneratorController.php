@@ -28,16 +28,30 @@ class CrudGeneratorController extends Controller
 
     protected $user;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
-        
-     //   $this->middleware('auth:api');
+        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user();
+            //dd($this->user);
+            if($this->user->root == 1){
 
+                return $next($request);
+            }else{
+                return response()->json(['error' => 'Not authorized.'], 403);
+            }
 
-        //$user = Ales0sa\Laradash\Models\User::find(Auth::user()->id);
+        });
+
+       // $this->middleware('auth');
+        //$userId = auth()->guard('web');
+        //dd($userId);
+
+        //$user = User::find($request->user->id);
+        //$user = User::find(Auth::user()->id);
+        //dd($user);
         //dd(auth()->user());
         //dd(auth()->user());
-       //$user = User::find(Auth::user()->id);
 
         //$user = Auth::guard('web');
         //dd(Auth::guard('web')->user()->name);
@@ -45,7 +59,7 @@ class CrudGeneratorController extends Controller
         //dd($user);
       //$this->middleware(['role_or_permission:root|edit crud-generator']);
        //$this->middleware('role:root');
-       //$this->middleware(['role:developer']);
+      // $this->middleware(['role:developer']);
     }
 
     public function index()

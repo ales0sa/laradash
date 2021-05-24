@@ -122,8 +122,8 @@ Route::get('/adm/home', 'HomeController@index');
             Route::get ('/', 'PermissionController@index');
         });
         Route::group([
-            'prefix' => 'grupo',
-            'as' => '.grupo',
+            'prefix' => 'groups',
+            'as' => '.groups',
         ], function() {
             Route::get ('/', 'GrupoController@index');
             Route::get ('/create', 'GrupoController@create')->name('.create');

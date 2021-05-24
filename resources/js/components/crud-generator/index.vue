@@ -109,6 +109,7 @@
                                     <Checkbox v-model="table.generateUser" :binary="true" id="generateUser"/>
                                     <label for="generateUser"> GENERATE USER </label>
                                 </div>
+                                
                                 <div class="p-field-checkbox">                                    
                                     <Checkbox v-model="table.noActions" :binary="true" id="nobuttons"/>
                                     <label for="nobuttons"> NO CRUD BUTTONS </label>
