@@ -60,7 +60,7 @@
 
                                             </template>
 
-                                </Dropdown>
+                                        </Dropdown>
                             <label for="">Menu Icon</label>
                             </span>
                         </div>
@@ -78,6 +78,7 @@
                             <Button label="Fill labels" @click="fillTable()" />
                             <Button label="Set All Null/Not Null" @click="setAllNull()" />
                             <Button label="List/Unlist" @click="setList()" />
+                            <Button label="Collapse" @click="collapseAll()" />
                         </div>
                         <div class="p-col-3 p-mb-3"  v-for="langkey in Object.keys(languages)" :key="'Name' + langkey">
                                     <div class="p-float-label">
@@ -99,6 +100,30 @@
                                     </div>
                                 </div>
                          </div>
+                          <div class="p-formgroup-inline">
+                                <div class="p-field-checkbox">                                    
+                                    <Checkbox v-model="checkMigrate" :binary="true" id="migrate"/>
+                                    <label for="migrate"> MIGRATE </label>
+                                </div>
+                                <div class="p-field-checkbox">                                    
+                                    <Checkbox v-model="table.generateUser" :binary="true" id="generateUser"/>
+                                    <label for="generateUser"> GENERATE USER </label>
+                                </div>
+                                <div class="p-field-checkbox">                                    
+                                    <Checkbox v-model="table.noActions" :binary="true" id="nobuttons"/>
+                                    <label for="nobuttons"> NO CRUD BUTTONS </label>
+                                </div>
+                                <div class="p-field-checkbox">                                    
+                                    <Checkbox v-model="table.onlyForUser" :binary="true" id="created_by"/>
+                                    <label for="created_by"> SHOW ONLY FOR CREATOR </label>
+                                </div>
+                                <div class="p-field-checkbox">                                    
+                                    <Checkbox v-model="table.pdfButton" :binary="true" id="pdfbutton"/>
+                                    <label for="pdfbutton"> PDF BUTTON </label>
+                                </div>  
+                          </div>
+
+
                         <div class="p-col">
                             <div class="p-formgroup-inline">
 
@@ -222,7 +247,14 @@
                                         </div>
                                     </div>
                                     </div>
-
+                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('valuefrom')">
+                                    
+                                        <div class="p-float-label mb-3">
+                                            <InputText type="text" class="" v-model="input.valuefrom"/>
+                                            <label for="floatingInput"> VALUE FROM </label>
+                                        </div>
+                                    
+                                    </div>
                                     <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('valueoriginselector')">
 
                                         <SelectButton v-model="input.valueoriginselector" :options="seltypes"  />
@@ -349,6 +381,33 @@
                                             <label for="floatingInput">REFERENCE COLUMN</label>
                                         </div>
                                     </div>
+                                    <div class="col-md" v-if="inputParams(input).includes('icon')">
+                                        <div class="p-float-label">
+                                            <Dropdown v-model="input.icon" :options="icons" :filter="true" optionLabel="icon"
+                                         optionValue="icon" dataKey="icon" placeholder="Icon for adm menu" >
+
+                                            <template #value="slotProps">
+                                                <div class="country-item country-item-value" v-if="slotProps.value">
+                                                    <i :class="slotProps.value" /> {{ slotProps.value }}
+
+                                                </div>
+                                                <span v-else>
+                                                    
+                                                </span>
+                                            </template>
+                                            <template #option="slotProps">
+
+                                                    <i :class="slotProps.option.icon" /> {{ slotProps.option.icon }}
+
+                                            </template>
+
+                                        </Dropdown>
+
+                                            <label for="floatingInput">ICON</label>
+                                        </div>
+                                    </div>
+
+                                
 
 
                         </div>
@@ -445,8 +504,11 @@
                             'time',
                             'datetime',
                             'VueComponent',
+                            'VueLink',
                             'bigInteger',
-                            'subForm'
+                            'subForm',
+                            'color',
+                            'youTube'
 
                         ],
                 icons: [
@@ -1258,7 +1320,84 @@
 
             
         },
-        watch: {},
+        watch: {
+
+            'table.generateUser'(value) {
+                console.log(value)
+                    let index = this.inputs.findIndex(function(asd) {
+                    return asd.columnname == "username"
+                    });
+
+                    console.log(index)
+
+                if(value == true && index == -1){
+                let newInputs = [];
+                let oldInputs = this.inputs
+                
+                // push username, password, email
+                this.inputs.unshift({
+                    isCollapsed: false,
+                    columnname: 'username',
+                    icon: '',
+                    type: 'text',
+                    visible: 1,
+                    gridcols: 6,
+                    visible_edit: 1,
+                    translatable: 0,
+                    label: { es: 'User', en: '' },
+                    unique: 1,
+                    default: '',
+                    nullable: 0,
+                    validate: 1,
+
+                },{
+                    isCollapsed: false,
+                    columnname: 'password',
+                    icon: '',
+                    type: 'password',
+                    visible: 1,
+                    gridcols: 6,
+                    visible_edit: 1,
+                    translatable: 0,
+                    label: { es: 'Contraseña', en: 'Password', pt: 'Senha' },
+                    unique: 1,
+                    default: '',
+                    nullable: 0,
+                    validate: 1,
+
+                },{
+                    isCollapsed: false,
+                    columnname: 'email',
+                    icon: '',
+                    type: 'text',
+                    visible: 1,
+                    gridcols: 6,
+                    visible_edit: 1,
+                    translatable: 0,
+                    label: { es: 'Correo', en: 'Email', pt: 'Email' },
+                    unique: 1,
+                    default: '',
+                    nullable: 0,
+                    validate: 1,
+
+                }
+                
+                )
+
+                // set 
+
+
+
+                }
+
+                if(value == false && index >= 0){
+
+                    this.inputs.splice(0, 3)
+                    //console.log(this.inputs)
+                }
+
+            }
+        },
         methods: {
             addOption(input) {
                 if (!Array.isArray(input.options)) {
@@ -1354,6 +1493,7 @@
                 if (input.type == 'week') {
                     params.push('validate', 'label', 'nullable', 'validate')
                 }
+                
                 if (input.type == 'select') {
                     params.push('validate', 'label', 'default', 'nullable', 'validate', 'valueoriginselector', 'multiple')
                 }
@@ -1365,6 +1505,12 @@
                 }
                 if (input.type == 'subForm') {
                     params.push('listable', 'settable', 'validate', 'label', 'default', 'gridcols', 'nullable', 'tabledata', 'tablekeycolumn')
+                }
+                if (input.type == 'VueComponent') {
+                    params.push('referencecolumn')
+                }
+                if (input.type == 'VueLink') {
+                    params.push('icon')
                 }
                 //params.push('visible')
                 return params;
@@ -1407,6 +1553,15 @@
                 /*let tn = this.table.tablename
                 this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
                 this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)*/
+
+            },
+            collapseAll(){
+
+                this.inputs.forEach(element => {
+                    
+                    return element.isCollapsed = false
+                    
+                });
 
             },
             setAllNull(){

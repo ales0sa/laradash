@@ -10,8 +10,20 @@
         currency="ARS"
          v-model="val.value"   :id="input.columnname"
         v-else-if="input.type == 'money'"/>
+        
+        <Password
+         v-model="val.value"   :id="input.columnname"
+        v-else-if="input.type == 'password'"
+        weakLabel="Debil"
+        mediumLabel="Medio"
+        strongLabel="Fuerte"
+        promptLabel="Password"
 
-        <InputText type="text"   v-model="val.value"   :id="input.columnname" style="width: 100%" v-else/>
+        />
+
+        <InputText type="text"   v-model="val.value"
+        :id="input.columnname" style="width: 100%" v-else/>
+        
         <label :for="input.columnname">{{ input.label[lang()] }}</label>
 
 </span>

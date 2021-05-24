@@ -9,6 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Ales0sa\Laradash\Models\CrudBase;
 
+<?php if(isset($this->table->generateUser) && $this->table->generateUser): ?>
+use Ales0sa\Laradash\Models\User;
+<?php endif ?>
+
+
 class <?php print $className ?> extends Model
 {
 <?php if($this->table->softDeletes): ?>
@@ -38,5 +43,28 @@ if ($input->type == 'card-header') {
             $model->uuid = __uuid();
         });
 <?php endif ?>
+
+<?php if(isset($this->table->generateUser) && $this->table->generateUser): ?>
+        self::saved(function ($model) {
+            if(!User::where("username","=", $model->username)->exists())
+            {
+                $faker = \Faker\Factory::create();
+
+                $vigiuser = new User;
+                $vigiuser->name     = $model->username;
+                $vigiuser->username = $model->username;
+                $vigiuser->password = \Hash::make($model->password);
+                $vigiuser->email    = $faker->unique()->email;
+                $vigiuser->syncRoles($model->table);
+
+                $vigiuser->save();
+
+
+                
+            } 
+
+        });
+<?php endif ?>
+
     }
 }

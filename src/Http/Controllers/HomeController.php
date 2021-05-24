@@ -67,9 +67,14 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
     public function menu()
     {
         $menu = array();
-        $dirPath = __crudFolder();
-        $files = \File::allFiles($dirPath);
 
+        
+        $dirPath = __crudFolder();
+        $files = \File::files($dirPath);
+        
+        //dd($files);
+
+        
         /*$all_users_with_all_their_roles = User::with('roles')->get();
         $all_users_with_all_direct_permissions = User::with('permissions')->get();
         $all_roles_in_database = Role::all()->pluck('name');
@@ -81,6 +86,10 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
 
 
         foreach ($files as $fileKey => $file) {
+
+            
+            //dd($file->getPathname());
+            
             $content = json_decode(file_get_contents($file->getPathname()));
 
             //$submenu[$fileKey] = array();
@@ -132,7 +141,7 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         
         foreach ($files as $fileKey => $file) {
             $content = json_decode(file_get_contents($file->getPathname()));
-            if(isset($content->table->menu_parent)){
+            if(isset($content->table->menu_parent) && $content->table->menu_show){
                 $menu[$content->table->menu_parent]['items'][] = [
                             'label' => $content->table->name->es,
                             'icon' => $content->table->icon,
@@ -161,7 +170,7 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         
 
         if($user->hasAnyRole(['developer'])  || $user->root == 1 ){
-            $menu[] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
+            $menu['users'] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
             
         }
         
@@ -185,6 +194,17 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
     
     */
 
+        //$menu[] = ['label' => 'Formulas', 'icon' => 'pi pi-sitemap', 'to' => '/formulas'];
+        $cmPath     = $dirPath . '/menu/custom.json';
+        if (file_exists($cmPath)) {
+            $customMenu      = json_decode(file_get_contents($cmPath));
+            //$this->table  = $content->table;
+            //dd($customMenu);
+            $menu[] = $customMenu;
+
+            //$this->inputs = $content->inputs;
+
+        }
 
         return($menu);
 

@@ -180,6 +180,7 @@ class CrudGeneratorController extends Controller
          $dirPath = __crudFolder();
 
         $data     = json_decode($request->data);
+       // dd($data);
         $filePath = $dirPath . '/' . $data->table->tablename . '.json';
 
 
@@ -212,10 +213,11 @@ class CrudGeneratorController extends Controller
 
         (new Generator($data->table, $data->inputs))->crud();
         $stream = fopen("php://output", "w");
-
+        
         if($data->migrate == 0){
 
 
+            return response()->json([ 'status' => 'success', 'message' => 'Se guardo sin migrar.']);// 
 
         }else{
         
@@ -223,7 +225,8 @@ class CrudGeneratorController extends Controller
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
                 '--force' => true            
             ]);
-            
+            return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
+
         }
 
 
@@ -231,7 +234,6 @@ class CrudGeneratorController extends Controller
 
         //return Artisan::call('migrate:refresh --path=vendor/Ales0sa/dashboard/src/migrations/2020_11_23_000001_generate_crud_tables.php');
          
-            return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
 
          // ]);// redirect()->route('admin.crud-generator')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');
         /*

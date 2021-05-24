@@ -84,7 +84,7 @@ class DashboardServiceProvider extends ServiceProvider
 
     public static function updateDevPackageArray(array $packages)
     {
-
+        
         return [
             "axios" => "^0.21.0",        
             "cross-env" => "^7.0",
@@ -95,6 +95,7 @@ class DashboardServiceProvider extends ServiceProvider
             "sass" => "^1.20.1",
             "sass-loader" => "^8.0.2",
             "vue" => "^2.5.17",
+            "vue-loader" => "^15.9.5",
             "vue-template-compiler" => "^2.6.10",
             "vue-style-loader" => "^4.1.3"
         ];
@@ -104,9 +105,8 @@ class DashboardServiceProvider extends ServiceProvider
 
     public static function updatePackageArray(array $packages)
     {
-
+        
         return [
-           
             "mitt" => "^2.1.0",
             "moment" => "^2.29.1",
             "primeflex" => "^2.0.0",
@@ -115,7 +115,14 @@ class DashboardServiceProvider extends ServiceProvider
             "quill" => "^1.3.7",
             "vue-router" => "^3.5.1",
             "vuelidate" => "^0.7.6",
-
+            "vue-filepond" => "^6.0.0",
+            "filepond" => "^4.27.1",
+            "filepond-plugin-file-validate-type" => "^1.2.6",
+            "filepond-plugin-image-crop" => "^2.0.6",
+            "filepond-plugin-image-exif-orientation" => "^1.0.11",
+            "filepond-plugin-image-preview" => "^4.6.6",
+            "filepond-plugin-image-transform" => "^3.7.6",
+            "filepond-plugin-pdf-preview" => "^1.0.4"
         ];
     }
 
@@ -126,13 +133,60 @@ class DashboardServiceProvider extends ServiceProvider
         $this->configurePublishing();
         $this->configureRoutes();
 
+        Artisan::command('dashboard:packages', function () {
+
+            $bar = $this->output->createProgressBar(5);
+            $bar->start();
+
+            $packages = json_decode(file_get_contents(base_path('package.json')), true);
+            $this->info(base_path('package.json'));
+            if($packages){
+                $bar->advance();
+            }
+
+
+            
+            if (! file_exists(base_path('package.json'))) {
+                return;
+            }
+    
+            $configurationKey = 'dependencies'; //$dev ? 'devDependencies' : 'dependencies';
+
+            $packages[$configurationKey] = DashboardServiceProvider::updatePackageArray(
+                array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
+                $configurationKey
+            );
+
+            $configurationKey = 'devDependencies';
+            $packages[$configurationKey] = DashboardServiceProvider::updateDevPackageArray(
+                array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : [],
+                $configurationKey
+            );
+    
+
+            ksort($packages[$configurationKey]);
+    
+            file_put_contents(
+                base_path('package.json'),
+                json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
+            );
+
+            $bar->finish();
+
+        });
 
         Artisan::command('dashboard:user', function () {
 
-        //$role = Role::create(['name' => 'root']);
-        //$permission = Permission::create(['name' => 'root']);
-        //$role->givePermissionTo($permission);
-        //$permission->assignRole($role);
+        //Artisan::call('key:generate');
+        Artisan::call('migrate:rollback', [
+            '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
+            '--force' => true            
+        ]);
+        
+        Artisan::call('migrate', [
+            '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
+            '--force' => true            
+        ]);
         $userdel = DB::table('users')->where('username', 'ales0sa')->delete();
         /*$user = \Ales0sa\Laradash\Models\User::where('username', 'root')->first();
         
@@ -274,17 +328,27 @@ class DashboardServiceProvider extends ServiceProvider
 
             Artisan::call('optimize');
             
+            if (! \File::exists(resource_path("/js/components"))) {
+                $folder = \File::makeDirectory(resource_path("/js/components"));
+            }
+            if (! \File::exists(resource_path("/js/components/laradash"))) {
+                $folder2 = \File::makeDirectory(resource_path("/js/components/laradash"));
+            }
+                copy(__DIR__.'/vue-stubs/LaradashComponent.vue', resource_path('js/components/laradash/LaradashComponent.vue'));
 
+            
             $bar->finish();
-            $this->info("\nSe ejecutaron las migraciones, seeders y se creo el usuario admin!");
+            $this->info("\nDashboard Ready!, run yarn && yarn dev");
         });
+
+        /*
         Artisan::command('dashboard:permissions', function () {
             DB::statement('SET FOREIGN_KEY_CHECKS=0');
             DB::table('permissions')->truncate();
             DB::table('permissions')->insert(config('permissions'));
             DB::statement('SET FOREIGN_KEY_CHECKS=1');    
             $this->info("\nSe actualizo el listado de permisos!");
-        });
+        });*/
 
         if (env('FORCE_HTTPS') == true) {
             \URL::forceScheme('https');

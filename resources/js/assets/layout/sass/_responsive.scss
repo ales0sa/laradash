@@ -95,3 +95,15 @@
         overflow: hidden;
     }
 }
+
+
+@media (max-width: 640px) {
+    .layout-topbar-profile 
+    {
+        .p-button-label {
+            display: none;
+        }
+    }
+    
+    
+}

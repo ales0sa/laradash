@@ -1,5 +1,6 @@
 <template>
-    <div :class="'p-field  p-col-12 p-md-' + input.gridcols" v-if="input.type !== 'bigInteger' && input.visible_edit == 1" >
+    <div :class="'p-field  p-col-12 p-md-' + input.gridcols" 
+        v-if="input.type !== 'bigInteger' && input.visible_edit == 1" >
 
 
 
@@ -20,6 +21,10 @@
 
         <InputDate :value="value" :input="input" v-if="layout[input.type] == 'date'" ></InputDate>
 
+
+        <InputDate :value="value" :input="input" v-if="layout[input.type] == 'time'" ></InputDate>
+
+
         <Editor v-model="value.value" :value="value" :input="input" v-if="layout[input.type] == 'textarea'" editorStyle="height: 320px; margin-bottom: 20px;"/> 
 
 
@@ -27,12 +32,16 @@
         
         <InputImage v-if="layout[input.type] == 'file'" mode="basic" name="demo[]" 
                     v-model="value.value" :value="value" :input="input"
+                    :tablename="this.$parent.tablename"
                     @myUploader="myUploader"
         />
 
+        <InputColor  :value="value" :input="input" v-if="layout[input.type] == 'color'" ></InputColor>
+
         <div  v-if="layout[input.type] == 'VueComponent'" >  
 
-            <CustomComponent :input="input" />
+            
+            <CustomComponent :value="this.$parent.content[input.referencecolumn]" :input="input" @setValue="setValue"/>
 
         </div>
 
@@ -46,6 +55,7 @@
     import InputBoolean from './InputBoolean'
     import InputCheckbox from './InputCheckbox'
     import InputImage from './InputImage'
+    import InputColor from './InputColor'
     import SubForm     from './SubForm'
     import CustomComponent     from './CustomComponent'
 
@@ -78,6 +88,7 @@
             InputBoolean,
             InputCheckbox,
             InputImage,
+            InputColor,
             SubForm,
             CustomComponent
         },
@@ -103,7 +114,8 @@
                     "checkbox": 'checkbox',
                     "file": 'file',
                     "subForm": 'subForm',
-                    "VueComponent": "VueComponent"
+                    "VueComponent": "VueComponent",
+                    "color": "color"
                 }
             }
         },
@@ -119,12 +131,16 @@
 
         },
         methods: {
-        myUploader(event) {
+        myUploader(event, colnam) {
             //event.files == files to upload
-            console.log(event, 'rec. en layout')
-            this.$emit('myUploader', event);
+            console.log(event, colnam,'rec. en layout')
+            this.$emit('myUploader', event, colnam);
+        },
+        setValue(data){
+            console.log('get in input layout')
+            this.$emit('setValue', data)
         }
-
+        
         },
         computed: {
         }

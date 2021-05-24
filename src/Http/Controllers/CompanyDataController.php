@@ -50,14 +50,14 @@ class CompanyDataController extends Controller
 
                     } else {
 
-                        $var_value = Str::replaceFirst('/storage/', '', $var_value);
+                        $var_value = Str::replaceFirst('/storage/', '/config_vars/', $var_value);
                         /*if (!Storage::exists($var_value) && Str::startsWith($var_value, '/storage/')) {
                         }*/
 
                         //if (Storage::exists($var_value)) {
 
                             $content[$var_key] = [
-                                'url'  => 'storage/'.$var_value,//asset(Storage::url($var_value)),
+                                'url'  => $var_value,//asset(Storage::url($var_value)),
                                 'path' => $var_value,
                                 'type' => 'image'//Storage::mimeType($var_value)
                             ];
@@ -129,7 +129,7 @@ class CompanyDataController extends Controller
         foreach ($keys as $key) {
             if(array_key_exists($key, $all) && $all[$key] != null){
                 $var = ConfigVar::firstOrNew(['config_key' => $key]);
-                dump($all[$key]);
+                //dump($all[$key]);
                 $var->config_value = $all[$key];
                 $var->save();
             }

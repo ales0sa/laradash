@@ -1,5 +1,6 @@
 <template>
 	<div class="layout-menu-container">
+
 		<AppSubmenu :items="model" class="layout-menu" :root="true" @menuitem-click="onMenuItemClick" />
 	</div>
 </template>
@@ -9,13 +10,19 @@ import AppSubmenu from './AppSubmenu';
 
 export default {
 	props: {
-		model: Array
+		model: {
+			type: Object,
+			default: []
+		},
 	},
     methods: {
         onMenuItemClick(event) {
             this.$emit('menuitem-click', event);
         }
     },
+	created() {
+		console.log(this.model)
+	},
 	components: {
 		'AppSubmenu': AppSubmenu
 	}

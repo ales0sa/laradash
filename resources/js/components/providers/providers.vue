@@ -40,7 +40,10 @@
        </template>
 
 
-        <Column bodyClass=""  v-for="col of columns" :field="col.field" :header="col.header" :key="col.field" sortable>
+        <Column bodyClass="" v-for="col of columns" :field="col.field" 
+                :header="col.header" :key="col.field" sortable
+                filterMatchMode="contains"
+                >
 
                 <template #filter>
 
@@ -77,10 +80,22 @@
                         <span class="p-error" v-html="slotProps.data[col.field]" />
                     </div>
                 </template>
+                <template  #body="slotProps" v-else-if="col.type == 'textarea'">
+                    <div class="">
+                        
+                        <span class="" v-html="slotProps.data[col.field]" />
+                    </div>
+                </template>
                 <template  #body="slotProps" v-else-if="col.type == 'money'">
                     <div class="">
                         $
                         <span class="" v-html="slotProps.data[col.field]" />
+                    </div>
+                </template>
+
+                <template  #body="slotProps" v-else-if="col.type == 'color'" >
+                    <div class="p-badge" :style="'text-transform: uppercase; background: #' + slotProps.data[col.field]" >
+                        #{{slotProps.data[col.field]}}
                     </div>
                 </template>
 
@@ -89,7 +104,7 @@
                     <div v-if="checkFileType(slotProps.data[col.field]) == 'image'">
                        <a target="_blank" :href="slotProps.data[col.field]">
                            
-                           <img :src="'/storage/'+slotProps.data[col.field]" v-if="slotProps.data[col.field]"
+                           <img :src="slotProps.data[col.field]" v-if="slotProps.data[col.field]"
                             @error="setAltImg"
                             class="product-image"
                            />
@@ -160,16 +175,28 @@
                 
         </Column>
 
-        <Column v-if="columns.length >= 1" headerStyle="">
-        <template #body="slotProps">
+        <Column v-if="columns.length >= 1 && !table.noActions" headerStyle="width: 8em;">
+            <template #body="slotProps">
+                <span class="p-buttonset">
+                <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
 
-            <span class="p-buttonset">
-            <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
-            <Button icon="pi pi-copy" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="dupe(slotProps.data.id)" />
-            <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
-            </span>
-        </template>
-    </Column>
+                <!---
+                <Button icon="pi pi-copy" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="dupe(slotProps.data.id)" />
+                -->
+
+                <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
+                
+                <Button class="p-button-outlined p-button-raised p-button-sm
+                "
+                v-for="links in customLinks"
+                :key="links.columname"
+                :icon="links.icon"
+                @click="cusLink(slotProps.data.id, links.columnname)" />
+
+
+                </span>
+            </template>
+        </Column>
 
 </DataTable>
 
@@ -178,16 +205,16 @@
 
 <script>
 
-import CrudService from './../../service/CrudService';
+    import CrudService from './../../service/CrudService';
+    import ConfirmDialog from 'primevue/confirmdialog';
 
-import ConfirmDialog from 'primevue/confirmdialog';
-import axios from 'axios'
+    import axios from 'axios'
+
     export default {
-
-
 
         data() {
             return {
+                table: [],
                 columns: [],
                 loading: true,
                 data: [],
@@ -195,6 +222,7 @@ import axios from 'axios'
                 rels:  [],
                 filters: {},
                 tablename: this.$route.params.table,
+                customLinks: [],
                 title: ''
             }
             
@@ -203,7 +231,11 @@ import axios from 'axios'
         watch:{ 
             '$route.params.table': function (table){
 
-                this.load()
+                if(!this.loading){
+
+                    this.load()
+
+                }
 
             },
 
@@ -227,6 +259,15 @@ import axios from 'axios'
 
  
                     }
+
+                    if(this.inputs[index].type == 'VueLink'){
+                        console.log(this.inputs[index]['columnname'])
+                        this.customLinks.push({
+                            columnname: this.inputs[index]['columnname'],
+                            icon: this.inputs[index]['icon']
+                        })
+                    }
+
                     
                 }
 
@@ -250,7 +291,7 @@ import axios from 'axios'
 
     },
     methods:{
-                checkFileType(file){
+        checkFileType(file){
             
             if(file == null){
                 return 'file'
@@ -281,8 +322,6 @@ import axios from 'axios'
                 
             }
 
-
-
         },
         splitMe(string){
             if(string){
@@ -306,8 +345,6 @@ import axios from 'axios'
           window.open("/storage/"+file.replace('public/','storage/'), "_blank");    
         },
         getKeyByValue(object, value) { 
-
-
             
             if(!value || value == null || value == '' || value == ""){
                  return ''
@@ -326,23 +363,24 @@ import axios from 'axios'
             this.inputs = [];
             this.columns = [];
             this.rels = [];
-
+            this.customLinks = [];
 
             this.tablename = this.$route.params.table
 
             setTimeout(() => {
 
             this.CrudService.getTable(this.tablename).then(data => { 
-                this.title = data.table.name.es
-                this.inputs = data.inputs
-                this.rels   = data.relations
-                this.data = data.data
+                this.title   = data.table.name.es
+                this.table   = data.table
+                this.inputs  = data.inputs
+                this.rels    = data.relations
+                this.data    = data.data
                 this.loading = false;
              }).catch(error => 
              {
 
                  console.log(error)
-                   let path = '/error';
+                    let path = '/error';
                     switch (error.response.status) {
                         case 401: path = '/login'; break;
                         case 404: path = '/404'; break;
@@ -359,6 +397,10 @@ import axios from 'axios'
            // console.log(this.rels)
             //this.CrudService.getTable(this.tablename).then(data => this.data = data.data);
             //this.loading = false;
+        },
+        cusLink(item, link){
+
+            this.$router.push({ name: 'VueComp', params: { id: item, vc: link }})
         },
         edit(item) {
 

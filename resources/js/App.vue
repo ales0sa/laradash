@@ -7,7 +7,7 @@
                 <div class="layout-logo">
                     <router-link to="/">
                         <picture v-if="!imgError">
-                            <img alt="Logo" :src="logo" @error="onImgError()" style="max-width: 100%" />
+                            <img alt="Logo" :src="'/logo.png'" @error="onImgError()" style="max-width: 100%" />
                         </picture>
                         <picture v-else>
                             
@@ -19,12 +19,14 @@
                 </div>
 
                 <AppProfile />
-                <AppMenu :model="cm" @menuitem-click="onMenuItemClick"/>
+                <AppMenu  :model="cm" @menuitem-click="onMenuItemClick"/>
             </div>
         </transition>
 
 		<div class="layout-main">
-			<router-view />
+            <transition name="fade" mode="out-in">
+			    <router-view />
+            </transition>
 		</div>
 
 
@@ -48,6 +50,7 @@ export default {
     data() {
         return {
             logo: window.logo,
+            transitionName: null,
             auth: 1,
             imgError: false,
             authUser: window.authUser,
@@ -59,10 +62,7 @@ export default {
             staticMenuInactive: false,
             overlayMenuActive: true,
             mobileMenuActive: false,
-            cm: [
-
-
-            ],
+            cm: null,
             menu : [
                /* {label: 'Inicio', icon: 'pi pi-fw pi-home', to: '/'},
                 {
@@ -77,19 +77,22 @@ export default {
         }
     },
     watch: {
-        $route() {
+        $route(to, from) {
+            const toDepth = to.path.split('/').length
+            const fromDepth = from.path.split('/').length
+            this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
+ 
             this.menuActive = false;
             //this.$toast.removeAllGroups();
         }
     },
     mounted(){
-    EventBus.$on('reloadMenu', (payload) => {
-      this.reloadMenu()
-    });
-
+        EventBus.$on('reloadMenu', (payload) => {
+        this.reloadMenu()
+        });
     },
     created(){
-        this.cm = this.menu;
+        //this.cm = this.menu;
         
         axios.get('/adm/whoami').then((response) => {
 
@@ -102,8 +105,8 @@ export default {
         
         this.CrudService = new CrudService()
         this.CrudService.getMenu().then(data => this.cm = data).then( data => {
-             let list = this.cm//.filter((x, i, a) => this.menu.indexOf(x) == i)
-             this.menu = this.cm.concat(this.cm)
+             //let list = this.cm//.filter((x, i, a) => this.menu.indexOf(x) == i)
+             this.cm = data //list //this.cm.concat(this.cm)
 
         });
 
@@ -113,8 +116,8 @@ export default {
         reloadMenu(){
 
         this.CrudService.getMenu().then(data => this.cm = data).then( data => {
-             let list = this.menu//.filter((x, i, a) => this.cm.indexOf(x) == i)
-             this.menu = this.cm.concat(this.cm)
+             //let list = this.menu//.filter((x, i, a) => this.cm.indexOf(x) == i)
+             this.cm = data //this.cm.concat(this.cm)
 
         });
 
@@ -129,8 +132,6 @@ export default {
             
         },
         isUserAdmin(){
-
-
             return false;
         },
         onImgError() {
@@ -254,4 +255,16 @@ export default {
 
 <style lang="scss">
 @import './App.scss';
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>

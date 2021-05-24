@@ -1,11 +1,6 @@
 
 <template>
-<!--<div class="p-fileupload p-fileupload-advanced p-component">--->
-<div class="">
-   
-        <label style="left: 0.429rem;
-    color: #383636;
-    text-transform: uppercase; font-weight: bolder; margin-bottom: 5px; margin-left: 5px;"> {{ input.label.es }}</label>
+<div class="p-fileupload p-fileupload-advanced p-component">
 
     <FilePond
         name="test"
@@ -20,13 +15,7 @@
         image-crop-aspect-ratio="1"
         :allowImageCrop="true"
         v-on:init="loadFiles"
-        @removefile="remove()"
-        :allowRemove="checkRemove"
-        :allowRevert="false"
-        :allowProcess="checkUpload"
-        :server="{  process, revert,  restore, load, fetch }"
-        data-pdf-preview-height="320"  
-        data-pdf-component-extra-params="toolbar=0&navpanes=0&scrollbar=0&view=fitH"
+        :server="myServer"
         />
 <!---
         <FileUpload name="demo[]" 
@@ -80,20 +69,15 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
-import FilePondPluginPdfPreview from "filepond-plugin-pdf-preview";
+
 const FilePond = vueFilePond(
   FilePondPluginFileValidateType,
   FilePondPluginImagePreview,
   FilePondPluginImageCrop,
-  FilePondPluginImageTransform,
-  FilePondPluginPdfPreview
+  FilePondPluginImageTransform
 );
     export default {
         props: {
-            tablename:{
-                type: String,
-                default: {}
-            },
             input: {
                 type: Object,
                 default: {}
@@ -106,100 +90,33 @@ const FilePond = vueFilePond(
                 type: Number,
                 default: 100
             },
-
+             myServer: {
+                url: 'url-to-your-api'
+            }
         },
         components: {
             FilePond
         },
         data(){
-            return {
-                checkLocal: true,
-                checkRemove: true,
-                checkUpload: true,
+            return{
                 myFiles: [ 
                     
                 ],
                 fileTypes: ['image/*', 'application/pdf'],
-                myServer: {
-                    url: 'url-to-your-api'
-                }
-
             }
         },
         created() {
-            console.log(this.value)
-            if(this.value){
-                this.checkRemove = true
-                this.checkUpload = false
-                this.myFiles = this.value
-            }
         },
         mounted () {
-
+          this.myFiles = this.value
         },
         watch: {
 
 
         },
         methods: {
-            process(fieldName, file, metadata, load, error, progress, abort) {
-                console.log("process start");
-                //this.$emit('myUploader', file, this.input.columnname);
-                        const formData = new FormData()
-                        formData.append(this.input.columnname, file, file.name)
-                        // const CancelToken = axios.CancelToken
-                        // const source = CancelToken.source()
-
-                        axios({
-                            method: 'POST',
-                            url: '/adm/crud/' + this.$route.params.table + '/' + this.$route.params.id + '/upload/' + this.input.columnname,
-                            data: formData,
-                            // 'csrf-token': '<CSRF-TOKEN>',
-                            // cancelToken: source.token,
-                            onUploadProgress: (e) => {
-                                progress(e.lengthComputable, e.loaded, e.total)
-                            }
-                        }).then(response => {
-                            // passing the file id to FilePond
-                            load(response.file)
-                        }).catch((thrown) => {
-                            if (axios.isCancel(thrown)) {
-                                console.log('Request canceled', thrown.message)
-                            } else {
-                                // handle error
-                            }
-                        })
-
-            },
-            load(uniqueFileId, load, error) {
-            // error();
-            //console.log('delete?')
-            console.log('load')
-            },
-
-            fetch(url, load, error, progress, abort, headers) {
-                //error("Local files only");
-                console.log('fetching')
-            },
-
-            restore(uniqueFileId, load, error, progress, abort, headers) {
-            // error();
-            //console.log('delete?')
-                console.log('restore')
-            },
-            revert: (uniqueFileId, load, error) => {
-            
-            // Should remove the earlier created temp file here
-            // ...
-            console.log('revert')
-            // Can call the error method if something is wrong, should exit after
-            //error('oh my goodness');
-
-            // Should call the load method when done, no parameters required
-            load();
-            },
             loadFiles(){
-                console.log('loading files')
+                console.log('wololo')
             },
             clearFiles(){
                 console.log('clear files')
@@ -209,16 +126,8 @@ const FilePond = vueFilePond(
                 return ext[1]
             },
           remove(){
-            console.log(this.$refs.pond.getFiles().length)
-            this.loaded = 0
-            //this.checkLocal = true
-            if(this.checkUpload){
-                
-                return false
-            }else {
-                this.checkUpload = true
-            }
-            
+
+
             this.$confirm.require({
                 message: 'Seguro ?',
                 header: 'Eliminar foto',
@@ -230,14 +139,11 @@ const FilePond = vueFilePond(
                 accept: () => {
                     //callback to execute when user confirms the action
 
-                axios.delete('/adm/crud/' + this.$route.params.table + '/' + this.$route.params.id + '/clean/' + this.input.columnname).then((response) => {
+                axios.get('/adm/crud/' + this.$route.params.table + '/' + this.$route.params.id + '/clean/' + this.input.columnname).then((response) => {
                     setTimeout(() => {
+                        this.file = null
                         //this.load()
-                        //this.value = null
                         this.loaded = 1
-                        //this.myFiles = null
-                        console.log(response)
-
                     }, 1000);
                 }).catch((error) => {
 
@@ -247,14 +153,7 @@ const FilePond = vueFilePond(
 
                 },
                 reject: () => {
-                    console.log('cancelo borrado')
                     //callback to execute when user rejects the action
-                    //this.myFiles = this.value
-                    if(this.value){
-
-                        this.$refs.pond.addFile(this.value)
-
-                    }
                 }
             });
 
@@ -263,12 +162,11 @@ const FilePond = vueFilePond(
           },
         handleFilePondInit(event) {
             //console.log(event)
-            //this.$emit('myUploader', event, this.input.columnname);
-        },
+            this.$emit('myUploader', event, this.input.columnname);
+        }
 
         },
         computed: {
-
           chooseLabel(){
 
             if(this.file == "" || this.file == null){
@@ -284,6 +182,40 @@ const FilePond = vueFilePond(
 </script>
 
 <style>
+.p-fileupload-content {
+    position: relative;
+}
+.p-fileupload-row {
+    display: flex;
+    align-items: center;
+}
+.p-fileupload-row > div {
+    flex: 1 1 auto;
+    width: 25%;
+}
+.p-fileupload-row > div:last-child {
+    text-align: right;
+}
+.p-fileupload-content .p-progressbar {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.p-button.p-fileupload-choose {
+    position: relative;
+    overflow: hidden;
+}
+.p-button.p-fileupload-choose input[type=file] {
+    display: none;
+}
+.p-fileupload-choose.p-fileupload-choose-selected input[type=file] {
+    display: none;
+}
+.p-fluid .p-fileupload .p-button {
+    width: auto;
+}
+
 .filepond--credits {
     display: none;
 }

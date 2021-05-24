@@ -19,6 +19,7 @@ import CrudDB from './components/crud-generator/fromdb.vue';
 import Laralogs from './components/laralogs.vue';
 
 import CustomComponent from './components/crud/CustomComponent.vue';
+import CustomView from './components/CustomView.vue';
 
 import error403 from './components/errors/403.vue';
 
@@ -32,6 +33,12 @@ export default new Router({
 			name: 'dashboard',
 			component: Dashboard
 		},
+		{
+			path: '/custom/:vc/:id?',
+			name: 'VueComp',
+			component: CustomView,
+			props: true
+        },
 		{
 			path: '/company-data',
 			name: 'webconfig',

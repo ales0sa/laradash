@@ -15,6 +15,11 @@ use Illuminate\Support\Str;
 use Ales0sa\Laradash\Models\User;
 use Illuminate\Support\Facades\Schema;
 
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Cache;
+
+use Illuminate\Support\Facades\Crypt;
+
 class CrudController extends Controller
 {
     private $model;
@@ -167,14 +172,11 @@ class CrudController extends Controller
         try {
 
             if ($input->type == 'file') {
-
-
-
-
                 if(isset($data[$input->columnname])){
 
-                    $path = $data[$input->columnname]->store($this->tablename);
-                    $item->{$input->columnname} = $path;
+                    $path = $data[$input->columnname]->store($this->tablename, 'public');
+                    // dd($path);
+                    $item->{$input->columnname} = '/storage/'.$path;
 
                 }else{
                     
@@ -215,7 +217,8 @@ class CrudController extends Controller
                 if (array_key_exists($input->columnname, $data)) {
 
 
-
+                    //dd($data);
+                  if($data[$input->columnname]){
                     foreach ($data[$input->columnname] as $subFormKey =>  $subFormItem) {
 
                         //if ( array_key_exists('id', $subFormItem) ) {
@@ -241,19 +244,23 @@ class CrudController extends Controller
                         $subItem->deleted_at = null;
                         $subItem->save();
                     }
+                  }
                 }
             } catch (\Throwable $th) {
+                //echo $input->columnname;
                 dd($th);
 
             }
 
             return true;
         }
-        if ($input->type == 'password') {
-            $item->{$input->columnname} = bcrypt($data[$input->columnname]);
+
+        /*if ($input->type == 'password') {
+            //dd('password');
+            $item->{$input->columnname} = \Hash::make($data[$input->columnname]);
             $item->save();
             return true;
-        }
+        }*/
 
         if ($input->type == 'boolean') {
 
@@ -265,116 +272,14 @@ class CrudController extends Controller
             $item->save();
             return true;
         }
-
         
+
         $item->{$input->columnname} = $data[$input->columnname];
 
 
 
         
     }
-
-/*
-    public function data($tablename, $id = false)
-    {
-
-        $content   = null;
-        $relations = [];
-        $languages = [];
-        $subForm   = [];
-        $galleries = [];
-        $item      = null;
-
-        foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-            $flag = $key;
-            if($key == 'pt'){
-                $flag = 'br';
-            }
-            if($key == 'en') {
-                $flag = 'us';
-            }
-
-            $languages[] = [ 'key' => $value['name'], 'value' => $key, 'flag' => $flag];
-        }
-
-        if ($id) {
-
-            if($this->table->singlepage == 1){
-
-                $item = $this->model::where('id', $id)->firstOrCreate();
-
-            }else{
-
-                $item = $this->model::where('id', $id)->firstOrFail();
-                //dd($item);
-            }
-
-            foreach ($this->inputs as $inputKey => $input) {
-                $content[$input->columnname] = $item->{$input->columnname};
-                if($input->translatable){
-
-                    foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-                        if($key !== 'es'){
-                            $content[$input->columnname.'_'.$key] = $item->{$input->columnname.'_'.$key};
-                        }
-                    }
-
-                }
-
-            }    
-        }
-/*
-        foreach ($this->inputs as $inputKey => $input) {
-            
-            if ($input->type == 'select' && $input->valueoriginselector == 'table' 
-                ||
-                $input->type == 'checkbox' && $input->valueoriginselector == 'table' 
-                ) {
-                $relations[$input->tabledata] = DB::table($input->tabledata)
-                                ->whereNull('deleted_at')
-                                ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
-            }
-
-        }    
-
-
-        foreach ($this->inputs as $inputKey => $input) {
-
-
-            $results = $this->getInput(
-                $id,
-                $input,
-                $content,
-                $relations,
-                $galleries,
-                $subForm,
-                $item
-            );
-
-            $input     = $results['input'];
-            $content   = $results['content'];
-            $relations = $results['relations'];
-            $subForm   = $results['subForm'];
-
-
-        }
-
-        //// filtrar inputs
-
-
-
-        return response()->json([
-            'languages' => $languages,
-            'locale'    => App::getLocale(),
-            'tablename' => $this->tablename,
-            'table'     => $this->table,
-            'inputs'    => $this->inputs,
-            'relations' => $relations,
-            'subForm'   => $subForm,
-            'content'   => $content
-        ]);
-    }
-*/
 
 
 public function data($tablename, $id = false)
@@ -393,6 +298,10 @@ public function data($tablename, $id = false)
         if($this->table->singlepage == 1){
 
             $item = $this->model::first();
+            if(!$item){
+                $item = new $this->model;
+                $item->save();
+            }
 
         }else{
 
@@ -416,6 +325,7 @@ public function data($tablename, $id = false)
     foreach ($this->inputs as $inputKey => $input) {
 
 
+
         $results = $this->getInput(
             $id,
             $input,
@@ -425,6 +335,8 @@ public function data($tablename, $id = false)
             $subForm,
             $item
         );
+
+
         $input     = $results['input'];
         $content   = $results['content'];
         $relations = $results['relations'];
@@ -458,7 +370,7 @@ public function data($tablename, $id = false)
     foreach ($this->inputs as $inputKey => $input) {
         
        
-        if ($input->type == 'textarea' || $input->type == 'text'){
+        if ($input->type == 'textarea' ){ //|| $input->type == 'text'
             $textareas[] = $input->columnname;
         }
         
@@ -509,7 +421,45 @@ public function data($tablename, $id = false)
         $userId = auth()->user()->id;
         $user   = User::find($userId);
 
-        $data = $this->model::get()->toArray();
+
+
+        $visible_columns = collect($this->inputs);
+
+        $clean = $visible_columns->filter(function ($value, $key) {
+            return $value->visible == true 
+                && $value->type !== 'subForm'
+                && $value->type !== 'VueLink';
+        });
+
+
+        $plucked = $clean->pluck('columnname');
+        
+        $plucked[] = 'id';
+
+        if(isset($this->table->onlyForUser) && $this->table->onlyForUser){
+
+            $data = $this->model::where('created_by', $userId)->get($plucked->all(), 'id')->toArray();
+
+        }else{
+
+            $data = $this->model::get($plucked->all(), 'id')->toArray();
+
+        }
+
+
+        //dd($clean);
+        
+
+        /*if(Cache::has($tablename)){
+            
+            $data = Cache::get($tablename);
+
+        }else{
+
+            $data = $this->model::get()->toArray();
+
+        }*/
+
 
         //dd($user->getRoleNames());
         //dd($user->getPermissionsViaRoles());
@@ -590,10 +540,13 @@ public function data($tablename, $id = false)
         $languages = [ 'es' => 'Español' ];
         $textareas = array();
         
+        
+//        dd($this->table);
+
         foreach ($this->inputs as $inputKey => $input) {
             
            
-            if ($input->type == 'textarea' || $input->type == 'text'){
+            if ($input->type == 'textarea' ){ //|| $input->type == 'text'
                 $textareas[] = $input->columnname;
             }
             
@@ -673,56 +626,66 @@ public function data($tablename, $id = false)
     public function store(Request $request, $tablename, $id = false)
     {
 
-        $validHelper = array();
+            $validHelper = array();
 
-        if($id){
-            $item       = $this->model::where('id', $id)->firstOrFail();
-            $action     = 'edit';
-        } else {
-            $item       = new $this->model;
-            $action     = 'create';
-        }
+            if($id){
+                $item       = $this->model::where('id', $id)->firstOrFail();
+                $action     = 'edit';
+            } else {
+                $item       = new $this->model;
+                $action     = 'create';
+            }
 
-        foreach ($this->inputs as $inputKey => $input) {
+            foreach ($this->inputs as $inputKey => $input) {
 
-            if( !$input->nullable){
+                if( !$input->nullable){
 
-            
-            
-            if($input->type == 'number' || $input->type == 'money'){
+                
+                
+                if($input->type == 'number' || $input->type == 'money'){
 
-                $validHelper[$input->columnname] = 'numeric';
+                    $validHelper[$input->columnname] = 'numeric';
+
+                }
+
+                if(!$input->nullable && $action == 'create'){
+
+                    $validHelper[$input->columnname] = 'required';
+                
+                }
 
             }
 
-            if(!$input->nullable && $action == 'create'){
-
-                $validHelper[$input->columnname] = 'required';
-              
-            }
-
-        }
-
-
-
-           
-           
         }
 
         $validatedData = $request->validate($validHelper);
 
-        //dd($validHelper);
-        
             foreach ($this->inputs as $inputKey => $input) {
 
-                if($request[$input->columnname] !== 'null'){
 
-                    $this->attachInput($item, $input, $request->all());
+                
+
+                if($request[$input->columnname] !== 'null'){
+                    
+                    if ($input->type == 'VueComponent' || $input->type == 'VueLink') {
+                    
+        
+                    }else{
+    
+                        $this->attachInput($item, $input, $request->all());
+
+                    }
                     
                 }
             
             }
             
+            if(isset($this->table->onlyForUser) && $this->table->onlyForUser){
+
+                $item->created_by = auth()->user()->id;
+
+            }
+
             $item->save();
 
             return response()->json(['status' => 'success', 'message' => 'Se ' . $action . ' con éxito.',
@@ -730,6 +693,26 @@ public function data($tablename, $id = false)
 
 
 
+    }
+
+    public function upload($tablename, $id, $column, Request $request)
+    {
+        $item = $this->model::find($id);
+        
+        $path = $request->{$column}->store($this->tablename, 'public');
+        // dd($path);
+        $item->{$column} = '/storage/'.$path;
+
+        $item->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Upload correct.',
+        'file' => $item->{$column} ]);
+        
+
+        //dd($request->all());
+        /*$item->save();
+            */
+        
     }
 
 

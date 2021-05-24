@@ -1,7 +1,6 @@
 <template>
   <div>
-    
-    <component :is="currentEditForm" @setValue="setValue" :input="input" :value="value.value" />
+    <component :is="currentEditForm" />
   </div>
 </template>
 <script>
@@ -10,39 +9,40 @@ export default {
     props: {
             input: {
                 type: Object,
-                default: {}
+                default: () => {}
             },
-            value: {
-                type: Object,
-                default: {}
-            }
+
     },
   data() {
     return {
       componentToDisplay: null,
     };
   },
-
   computed: {
     currentEditForm: function() {
       if (this.componentToDisplay) {
-        return () => import(`./../../../../../../../resources/js/components/laradash/`+ this.input.columnname +`.vue`);
+        return () => import(`./../../../../../../resources/js/components/laradash/`+ this.$route.params.vc +`.vue`);
       }
       return null;
     }
   },
   created() {
-    
+      
+  },
+    watch: {
+        $route(to, from) {
+          this.componentToDisplay = null
+          console.log(to)
+          console.log(from)
+          this.launchEditForm(to.params.vc)
+        }
   },
   mounted()
   {
-    this.launchEditForm(this.input.columnname)
+    this.componentToDisplay = null
+    this.launchEditForm(this.$route.params.vc)
   },
   methods: {
-    setValue(data){
-      console.log('set value in customcopmonent')
-      this.$emit('setValue', data)
-    },
     launchEditForm(fileName) {
       this.componentToDisplay = fileName;
     }

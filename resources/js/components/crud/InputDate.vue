@@ -1,10 +1,24 @@
 <template>
-    <div class="form-floating mb-3" v-if="input.visible_edit == 1" >
-        <label class="form-label">{{ input.label[lang()] }}</label>
-        <input type="date" class="form-control" v-model="value.value" :placeholder="input.label[lang()]" >
+        <span class="p-float-label p-mt-3">
+            
+        <Calendar :id="input.columnname" v-model="val.value" 
+            v-if="input.type == 'date'"
+        />
+
+        <InputMask v-model="val.value" mask="99:99"
+            placeholder="HH:MM" 
+            slotChar="_"
+            v-else-if="input.type == 'time'"
+            />
+
+        <Calendar :id="input.columnname" v-model="val.value" 
+            v-if="input.type == 'datetime'"
+        />
+
+        <label :for="input.columnname">{{ input.label[lang()] }}</label>
 
 
-    </div>
+    </span>
 </template>
 <script>
 
@@ -22,6 +36,7 @@
         components: {},
         data(){
             return{
+                val: this.value,
                 columna: null,
                 cuit: null,
                 disabled: false,
@@ -29,7 +44,8 @@
             }
         },
         created() {
-
+            //this.val.value = '00:00:00'
+            //this.val = this.value.value
         },
         mounted () {},
       watch: {

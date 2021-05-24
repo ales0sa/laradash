@@ -21,7 +21,7 @@ class GenerateCrudTables extends Migration
     public function up()
     {
         $dirPath = __crudFolder();
-        $files = File::allFiles($dirPath);
+        $files = File::files($dirPath);
         foreach ($files as $fileKey => $file) {
             $content = json_decode(file_get_contents($file->getPathname()));
             if (Schema::hasTable($content->table->tablename)) {
@@ -81,6 +81,10 @@ class GenerateCrudTables extends Migration
                
             }else{
 
+           /* if($input->type = 'VueComponent'){
+                continue;
+            }*/
+
 
             if (Schema::hasColumn($content->table->tablename, $input->columnname)) {
                 $change = true;
@@ -137,6 +141,9 @@ class GenerateCrudTables extends Migration
             if($input->type == 'date') {
                 $col = $table->datetime($input->columnname);
             }
+            if($input->type == 'time') {
+                $col = $table->time($input->columnname);
+            }
             if($input->type == 'number' || $input->type == 'money') {
                 $col = $table->double($input->columnname);
             }
@@ -153,6 +160,10 @@ class GenerateCrudTables extends Migration
                 }
             }
             if($input->type == 'checkbox') {
+                $col = $table->text($input->columnname)->nullable();
+                //$col = $table->jsonb($input->columnname);
+            }
+            if($input->type == 'VueComponent') {
                 $col = $table->text($input->columnname)->nullable();
                 //$col = $table->jsonb($input->columnname);
             }
@@ -189,6 +200,7 @@ class GenerateCrudTables extends Migration
                 && $value !== 'created_at' 
                 && $value !== 'updated_at' 
                 && $value !== 'uuid' 
+                && $value !== 'created_by' 
                 && !in_array($value, $cols)) {
 
                 $table->dropColumn($value);
@@ -206,6 +218,17 @@ class GenerateCrudTables extends Migration
 
             if(Schema::hasColumn($content->table->tablename, 'uuid')){
                 $table->dropColumn('uuid');
+            }
+
+        }
+
+        if (isset($content->table->onlyForUser) && $content->table->onlyForUser) {
+
+            if(!Schema::hasColumn($content->table->tablename, 'created_by')){
+               
+                $table->bigInteger('created_by')->nullable();
+
+            }else{
             }
 
         }

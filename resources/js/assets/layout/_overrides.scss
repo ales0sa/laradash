@@ -44,3 +44,12 @@ $buttonHoverBg: $mainColorDark;
 	border: 1px solid $mainColorLight;
 }
 
+.p-fieldset .p-fieldset-legend {
+    padding: 0.5rem 0.5rem;
+    border: 1px solid $mainColorDark;
+	text-transform: uppercase;
+    color: #fff;
+    background: $mainColorLight;
+    font-weight: 700;
+    border-radius: 3px;
+}

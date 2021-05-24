@@ -58,6 +58,7 @@
                                      :lang="selectedlang.value"
                                      :subForm="subForm"
                                      @myUploader="addFile"
+                                     @setValue="setValue"
                                      >
                         </InputLayout>
 
@@ -210,10 +211,31 @@
         watch: {
         },
         methods: {
-            addFile(event){
-                //console.log(event, 'recibido en index.vue')
-                this.files = event.files
-                //console.log(this.files)
+            setValue(data){
+                console.log('set value in index crud')
+                console.log(data)
+                console.log(this.content)
+
+                    for (var field in data) {
+                        console.log(field)
+                        if(this.content[field]){
+
+                            this.content[field].value = data[field]
+
+                        }
+
+                        /*if ( this.content.hasOwnProperty(prop) ) {
+                            console.log(this.content[prop])
+                        }*/
+                    }
+            },
+            addFile(event, colname){
+                console.log(event, colname, 'recibido en index.vue')
+                var key = colname;
+                var xas =  {[colname]:event};
+                this.files.push(xas)
+                
+                console.log(this.files)
             },
             sendForm() {
 
@@ -242,8 +264,10 @@
             attachInput(formData, input, content) {
 
                 
-                if (input.type == 'subForm') {
-                    //console.log(content)
+                if (input.type == 'subForm' && content.value !== "") {
+                    console.log(content)
+
+
                     content.value.forEach((item, index) => {
                         let subFormData = new FormData()
                         this.subForm[input.columnname].inputs.forEach(subInput => {
@@ -256,6 +280,8 @@
                             formData.append(input.columnname + '[' + index + '][' + pair[0] + ']', pair[1])
                         });
                     });
+
+
                 } else {
                     formData.append(input.columnname, content.value);
                 }
@@ -264,27 +290,28 @@
                 let formData = new FormData()
                 var subForm    = {}
                 let subFormOld = this.subForm
+    
                 if(this.files){
-                    this.files.forEach(file => { 
-
-                        formData.append('file', file);
-
-                    })
-
+                    this.files.forEach((obj) => {
+                    Object.entries(obj).forEach(([key, value]) => {
+                       // console.log(`${key} ${value}`);
+                       formData.append(key, value);
+                    });
+                    });
                 }
-
+//                return 1;
 
 
                 this.inputs.forEach(input => {
                     //console.log(this.content[input.columnname])
-                    console.log(this.content)
+                   //console.log(this.content)
                     if(input.type == 'file'){
+                        console.log(this.files[input.columnname])
+                       // this.files.forEach(file => { 
 
-                        this.files.forEach(file => { 
+                            //formData.append(input.columnname, this.files[input.columnname]);
 
-                            formData.append(input.columnname, file);
-
-                        })
+                       // })
 
                     }else{
 

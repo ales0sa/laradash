@@ -10,7 +10,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 import './assets/layout/layout.scss';
 
-
+import ColorPicker from 'primevue/colorpicker';
 import Listbox from 'primevue/listbox';
 import Skeleton from 'primevue/skeleton';
 import Password from 'primevue/password';
@@ -63,6 +63,7 @@ window.Vue.use(ToastService);
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 
+window.Vue.component('ColorPicker', ColorPicker );
 window.Vue.component('Message', Message );
 window.Vue.component('Skeleton', Skeleton );
 window.Vue.component('ProgressSpinner', ProgressSpinner);
@@ -130,6 +131,18 @@ Vue.component('file-manager', require('./components/file-manager').default);
 
 
 import router from './router';
+
+
+import vueFilePond from 'vue-filepond';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview, FilePondPluginImageCrop);
+Vue.component('filePond', FilePond);
 
 
 new Vue({

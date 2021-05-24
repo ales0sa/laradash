@@ -74,7 +74,8 @@ Route::get('/adm/home', 'HomeController@index');
             Route::get ('/{tablename}/create', 'CrudController@create')->name('.create');
             Route::post('/{tablename}/{id?}', 'CrudController@store')->name('.store');
             Route::get ('/{tablename}/{id}/edit', 'CrudController@edit')->name('.edit');
-            Route::get ('/{tablename}/{id}/clean/{col}', 'CrudController@clean')->name('.clean');
+            Route::delete ('/{tablename}/{id}/clean/{col}', 'CrudController@clean')->name('.clean');
+            Route::post ('/{tablename}/{id}/upload/{col}', 'CrudController@upload')->name('.upload');
             //
             Route::get ('/{tablename}/{id}/delete', 'CrudController@destroy')->name('.destroy');
             Route::get ('/{tablename}/trash', 'CrudController@trash')->name('.trash');
