@@ -281,6 +281,15 @@ class CrudController extends Controller
         
     }
 
+    public function sr($tablename, $id)
+    {
+        //return 'in dev';
+        $item = $this->model::where('id', $id)->firstOrFail();
+
+        return ['data' => $item];
+
+    }
+
 
 public function data($tablename, $id = false)
 {

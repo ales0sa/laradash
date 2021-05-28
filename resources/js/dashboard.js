@@ -10,6 +10,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 import './assets/layout/layout.scss';
 
+
+import PrimeVue from 'primevue/config';
+
 import ColorPicker from 'primevue/colorpicker';
 import Listbox from 'primevue/listbox';
 import Skeleton from 'primevue/skeleton';
@@ -59,7 +62,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 window.Vue.use(ConfirmationService);
 window.Vue.use(ToastService);
 //window.Vue.use(Message);
-
+window.Vue.use(PrimeVue)
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 

@@ -11,7 +11,10 @@
         <Toast position="top-right" />
 
 
-        <div class="col-md-12">
+
+        <div class="p-col-12" >
+
+        <div class="" style="position: absolute; z-index: 999; background: grey; opacity:0; width: 100%;">
             <div class="row justify-content-center" v-if="loaded == 0">
                 <h3><center><i class="fas fa-sync fa-spin"></i><br>Cargando</center></h3>
             </div>
@@ -19,7 +22,8 @@
                 <h3>Guardando</h3>
 
             <center>
-                <ProgressSpinner style="width:50px;height:50px" strokeWidth="8" fill="#EEEEEE" animationDuration=".5s"/>
+                <ProgressSpinner style="width:50px;height:50px" strokeWidth="8"
+                 fill="#EEEEEE" animationDuration=".5s"/>
             </center>
 
                 
@@ -29,7 +33,6 @@
             </div>
         </div>
 
-        <div class="p-col-12" v-if="loaded == 1">
 
 <!-------
 
@@ -334,19 +337,19 @@
                 axios.post('/adm/crud/' + this.tablename + edcheck, formData).then((response) => {
                     this.loaded = 2
                     setTimeout(() => {
-                        //this.loaded = 1
-                        
+                        if(response.data.status == 'success' && response.data.action == 'create'){
+                               this.$toast.add({severity:'success', summary: 'Created!', detail: '', life: 3000})
+                               this.loaded = 1
+                               this.$router.back();
+                        }
                         if(response.data.status == 'success' && response.data.action == 'edit'){
-
-
-                                this.$toast.add({severity:'success', summary: 'Editado!', detail: 'Se actualizo correctamente', life: 3000})
-
+                                this.$toast.add({severity:'success', summary: 'Edited!', detail: '', life: 3000})
                                 this.loaded = 1
+                           //     this.$router.back();
+                        }
 
-                                this.$router.back();
+                        }, 1000);
                             /*if(response.data.content) {
-
-
                                 response.data.inputs.forEach(input => {
 
                                     if(input.type !== 'subForm'){
@@ -357,13 +360,10 @@
 
                                 });
 
-
-
                                 this.$toast.add({severity:'success', summary: 'Editado!', detail: 'Se actualizo correctamente', life: 3000})
 
                                 this.loaded = 1
-                                }*/
-
+                                }
 
                         }else{
                             
@@ -374,12 +374,12 @@
 
                         }
                          
-                    }, 1000);
+                    
 
-
+*/
 
                 }).catch((error) => {
-                    if (error.response.data.message == 'CSRF token mismatch.') {
+                   /*if (error.response.data.message == 'CSRF token mismatch.') {
                         csrf.refresh()
                         .then(() => {
                             //console.log('csrf problem')
@@ -404,7 +404,7 @@
                             this.$toast.add({severity:'error', summary: 'Error', detail: errorData[item][0], life: 5000})
                             }
                         )
-                    }
+                    }*/
 
                     this.loaded = 1
                 })

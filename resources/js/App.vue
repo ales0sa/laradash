@@ -89,7 +89,13 @@ export default {
     },
     mounted(){
         EventBus.$on('reloadMenu', (payload) => {
-        this.reloadMenu()
+            this.reloadMenu()
+        });
+        EventBus.$on('axiosSuccess', (payload) => {
+            //this.$toast.add({severity:'success', summary: 'Success', detail: payload.message, life: 3000})
+        });
+        EventBus.$on('axiosError', (payload) => {
+            this.$toast.add({severity:'error', summary: 'Error', detail: payload.message, life: 3000})
         });
     },
     created(){

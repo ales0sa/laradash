@@ -3,7 +3,6 @@
         v-if="input.type !== 'bigInteger' && input.visible_edit == 1" >
 
 
-
         <InputTextDash  :value="value" :input="input" v-if="layout[input.type] == 'basic'" ></InputTextDash>
 
 
@@ -19,13 +18,22 @@
         <InputBoolean v-model="value"  v-if="layout[input.type] == 'boolean'"
         :relations="relations" :value="value" :input="input" />
 
-        <InputDate :value="value" :input="input" v-if="layout[input.type] == 'date'" ></InputDate>
+        <InputDate :value="value" :input="input" v-if="layout[input.type] == 'datetime'"
+         ></InputDate>
 
 
-        <InputDate :value="value" :input="input" v-if="layout[input.type] == 'time'" ></InputDate>
-
-
-        <Editor v-model="value.value" :value="value" :input="input" v-if="layout[input.type] == 'textarea'" editorStyle="height: 320px; margin-bottom: 20px;"/> 
+        <Editor v-model="value.value" :value="value" 
+            :input="input" v-if="layout[input.type] == 'textarea'"
+            editorStyle="height: 320px; margin-bottom: 20px;"> 
+            	<template #toolbar>
+                    <span style="font-weight: bolder; text-transform: uppercase;"> {{ input.label[labellang()] }}</span>
+                    <span class="ql-formats">
+                        <button class="ql-bold"></button>
+                        <button class="ql-italic"></button>
+                        <button class="ql-underline"></button>
+                    </span>
+                </template>
+        </Editor>
 
 
         <SubForm :relations="relations" :value="value" :subForm="subForm" :input="input" v-if="layout[input.type] == 'subForm'"></SubForm>
@@ -105,10 +113,9 @@
                     "money": 'basic',
                     "password": 'basic',
                     "boolean": 'boolean',
-                    "date": 'date',
-                    "time": 'date',
-                    "datetime": 'date',
-                    "week": 'date',
+                    "datetime": 'datetime',
+                    "time": 'datetime',
+                    "date": 'datetime',
                     "select": 'select',
                     "radio": 'radio',
                     "checkbox": 'checkbox',
@@ -131,15 +138,18 @@
 
         },
         methods: {
-        myUploader(event, colnam) {
-            //event.files == files to upload
-            console.log(event, colnam,'rec. en layout')
-            this.$emit('myUploader', event, colnam);
-        },
-        setValue(data){
-            console.log('get in input layout')
-            this.$emit('setValue', data)
-        }
+            labellang(){
+                return document.documentElement.lang
+            },
+            myUploader(event, colnam) {
+                //event.files == files to upload
+                console.log(event, colnam,'rec. en layout')
+                this.$emit('myUploader', event, colnam);
+            },
+            setValue(data){
+                console.log('get in input layout')
+                this.$emit('setValue', data)
+            }
         
         },
         computed: {

@@ -138,11 +138,14 @@ class GenerateCrudTables extends Migration
 
                 $col = $table->longText($input->columnname);
             }
+            if($input->type == 'datetime') {
+                $col = $table->dateTime($input->columnname);
+            }
             if($input->type == 'date') {
-                $col = $table->datetime($input->columnname);
+                $col = $table->dateTime($input->columnname);
             }
             if($input->type == 'time') {
-                $col = $table->time($input->columnname);
+                $col = $table->time($input->columnname, $precicion = 0);
             }
             if($input->type == 'number' || $input->type == 'money') {
                 $col = $table->double($input->columnname);

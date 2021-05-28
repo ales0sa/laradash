@@ -83,6 +83,8 @@ Route::get('/adm/home', 'HomeController@index');
             //
             Route::get ('/{tablename}/data/{id?}', 'CrudController@data')->name('.data');
             Route::get ('/{tablename}/{id}/copy', 'CrudController@copy')->name('.copy');
+            // single row
+            Route::get ('/{tablename}/{id}/data', 'CrudController@sr')->name('.sr');
         });
 
         Route::group([
@@ -191,5 +193,6 @@ Route::get('/adm/home', 'HomeController@index');
             Route::get ('/', 'CompanyDataController@index');
             Route::post('/update', 'CompanyDataController@update')->name('.update');
             Route::get('/api/data', 'CompanyDataController@data')->name('.data');
+            
         });
     });

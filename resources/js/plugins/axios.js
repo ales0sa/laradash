@@ -1,6 +1,7 @@
 // /src/plugins/axios.js
 import Vue from 'vue';
 import axios from 'axios';
+import EventBus from '../service/event-bus';
 
 axios.interceptors.request.use(
   (request) => {
@@ -18,24 +19,28 @@ axios.interceptors.response.use(
   (response) => {
     const now = Date.now();
     console.info(`Api Call ${response.config.url} took ${now - response.config.config.start}ms`);
+    //EventBus.$emit('axiosSuccess', response);
     return response;
   },
   (error) => { 
-    if(error.response.data.exception = "Illuminate\\Database\\QueryException"){
-      if(error.response.data.message.startsWith('SQLSTATE[23000]')){
-        console.log('FALTA COMPLETAR ALGO')
-      }
-    }
-    //if(error.)
-    let path = '/error';
+    
+    console.log('error', error)
+    let path = '/adm/#/error';
+
+
     switch (error.response.status) {
-        case 401: path = '/adm/login'; break; // unauthorized
-        case 404: path = '/adm/#/404'; break; // not found
-        case 403: path = '/adm/#/403'; break; // not privileges for section
-        case 500: path = '/adm/#/500'; break; // not privileges for section
+        case 401: path = '/adm/login'; window.location = path; break; // unauthorized
+        case 404: path = '/adm/#/404'; window.location = path; break; // not found
+        case 403: path = '/adm/#/403'; window.location = path; break; // not privileges for section
+        case 422: path = '/adm/#/422'; window.location = path; break; // error in fields
+        case 500: path = '/adm/#/500'; window.location = path; break; // server error
     }
     //Vue.$router.push(path);
-    window.location = path
+    if(path = '/adm/#/422'){
+        let msg = error.response.data
+        EventBus.$emit('axiosError', msg);
+    }
+
   }
 );
 

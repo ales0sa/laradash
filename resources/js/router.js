@@ -1,10 +1,5 @@
 import Vue from 'vue';
-/*
-import ConfirmationService from 'primevue/confirmationservice';
-Vue.use(ConfirmationService);
-import ConfirmDialog from 'primevue/confirmdialog';
-Vue.component(ConfirmDialog)
-*/
+
 import Router from 'vue-router'
 import Dashboard from './components/Dashboard.vue';
 import Crud from './components/providers/providers.vue';

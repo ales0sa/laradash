@@ -11,6 +11,8 @@ use Ales0sa\Laradash\Models\CrudBase;
 
 <?php if(isset($this->table->generateUser) && $this->table->generateUser): ?>
 use Ales0sa\Laradash\Models\User;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 <?php endif ?>
 
 
@@ -33,8 +35,14 @@ if ($input->type == 'card-header') {
 ?>
         '<?php print $input->columnname ?>',
 <?php endforeach ?>
+
+<?php
+//        'kkkk'  => 'date:d-m-Y',
+//        'xxx' => 'datetime:d-m-Y H:00',
+?>
     ];
     protected $casts = [
+
     ];
     public static function boot() {
         parent::boot();
@@ -48,18 +56,22 @@ if ($input->type == 'card-header') {
         self::saved(function ($model) {
             if(!User::where("username","=", $model->username)->exists())
             {
-                $faker = \Faker\Factory::create();
+                
 
-                $vigiuser = new User;
-                $vigiuser->name     = $model->username;
-                $vigiuser->username = $model->username;
-                $vigiuser->password = \Hash::make($model->password);
-                $vigiuser->email    = $faker->unique()->email;
-                $vigiuser->syncRoles($model->table);
+                $newUser = new User;
+                $newUser->name     = $model->name;
+                $newUser->username = $model->username;
+                $newUser->password = \Hash::make($model->password);
+                $newUser->email    = $model->username.'@laradash.com';
 
-                $vigiuser->save();
+                $role = \DB::table('roles')->where('name', $model->table)->first();
 
+                if(!$role){                
+                    $newrole = Role::create(['name' => $model->table]);
+                }
+                    $newUser->syncRoles($model->table);
 
+                $newUser->save();
                 
             } 
 
