@@ -1,21 +1,4 @@
-@php
-    if (!$assets_version) {
-        if (config('app.debug')){
-            $assets_version = hash('md5', rand());
-        } else {
-            $assets_version = '2';
-        }
-    }
-    if (isset($_COOKIE["sidebarToggleStatus"])) {
-        if ($_COOKIE["sidebarToggleStatus"] == 'show') {
-            $sidebarToggleHide = false;
-        } else {
-            $sidebarToggleHide = true;
-        }
-    } else {
-        $sidebarToggleHide = false;
-    }
-@endphp
+
 <!DOCTYPE html>
 <html lang="{{ App::getLocale() }}">
 

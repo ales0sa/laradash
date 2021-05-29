@@ -177,7 +177,6 @@ class DashboardServiceProvider extends ServiceProvider
 
         Artisan::command('dashboard:user', function () {
 
-        //Artisan::call('key:generate');
         Artisan::call('migrate:rollback', [
             '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
             '--force' => true            
@@ -187,16 +186,7 @@ class DashboardServiceProvider extends ServiceProvider
             '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
             '--force' => true            
         ]);
-        $userdel = DB::table('users')->where('username', 'ales0sa')->delete();
-        /*$user = \Ales0sa\Laradash\Models\User::where('username', 'root')->first();
-        
-        if($user){
-            $user->forceDelete();
 
-        }*/
-            
-        //
-           
         $user = User::create([
            // 'uuid'     => __uuid(),
             'name'     => 'Alejandro Sosa',
@@ -228,8 +218,13 @@ class DashboardServiceProvider extends ServiceProvider
 
         Artisan::command('dashboard:init', function () {
 
-            $bar = $this->output->createProgressBar(5);
+            $bar = $this->output->createProgressBar(10);
+
             $bar->start();
+
+            Artisan::call('migrate');
+            $this->info("Migrate executed.");
+            $bar->advance();
 
             if ($this->confirm('Config .env DB Access?')) {
 
@@ -248,24 +243,79 @@ class DashboardServiceProvider extends ServiceProvider
 
             if($env_update){
                 $this->info("Modify .env succesfully.");
-                Artisan::call('key:generate');
+                Artisan::call('key:generate');                
+                $bar->advance();
             } else {
-                // Do something else
+                
+                $bar->advance();
             }
 
             }
-            /*
-            try {
-
-            } catch (\Throwable $th) {
-                $this->info($th);
-            }
-            */
 
 
-            // more code
+            Artisan::call('migrate:rollback', [
+                '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
+                '--force' => true            
+            ]);
+                            
+            $bar->advance();
+
+            Artisan::call('migrate', [
+                '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
+                '--force' => true            
+            ]);
+                
+            $bar->advance();
+            $this->info("Role/Permission Table Created.");
+
+
+                
+            $pmail = $this->ask('Your Email?');
+            $pnam = $this->ask('Your Name?');
+            $pusr = $this->ask('Your Username?');
+            $ppss = $this->ask('Your Password?');
+//            $this->info("If an user exists with this username or email gonna be replaced.");
+
+            $user = User::firstOrNew(['email' =>  $pmail]);
+
+            $user->name = $pnam;
+            $user->username = $pusr;
+            $user->password = bcrypt($ppss);
+            $user->root = 1;
+
+            $user->save();
             
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            DB::table('role_has_permissions')->truncate();
+            DB::table('model_has_roles')->truncate();
+            DB::table('model_has_permissions')->truncate();
+            DB::table('roles')->truncate();
+            DB::table('permissions')->truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
+            $this->info("Permission Table Cleaned.");
+                
+            $bar->advance();
+
+
+            $role1 = Role::create(['name' => 'developer']);
+            $this->info("Developer Role Created.");
+
+
+            if($user){
+
+                $bar->advance();
+                $user->assignRole($role1);
+
+            }else{
+
+                $bar->advance();
+                
+            }
+
+
+
+            
 
             $bar->advance();
             Artisan::call('storage:link');
@@ -273,21 +323,7 @@ class DashboardServiceProvider extends ServiceProvider
 
             $bar->advance();
 
-            /*Artisan::call('migrate:refresh', [
-                '--seed' => false
-            ]);*/
 
-            $bar->advance();
-
-
-            /*
-            DB::table('users')->insert([
-                'name'     => 'Ale Sosa',
-                'username' => 'admin',
-                'email'    => 'admin@donsistema.com',
-                'password' => bcrypt('admin'),
-                'root'     => 1,
-            ]);*/
 
             $bar->advance();
             
@@ -334,11 +370,16 @@ class DashboardServiceProvider extends ServiceProvider
             if (! \File::exists(resource_path("/js/components/laradash"))) {
                 $folder2 = \File::makeDirectory(resource_path("/js/components/laradash"));
             }
-                copy(__DIR__.'/vue-stubs/LaradashComponent.vue', resource_path('js/components/laradash/LaradashComponent.vue'));
+            if (! \File::exists(public_path("/js"))) {
+                $folder2 = \File::makeDirectory(public_path("/js"));
+            }
 
+            copy(__DIR__.'/vue-stubs/compiled/dashboard.js', public_path('js/dashboard.js'));
+            copy(__DIR__.'/vue-stubs/compiled/resources_js_components_laradash_LaradashComponent_vue.js', public_path('js/resources_js_components_laradash_LaradashComponent_vue.js'));
+            
             
             $bar->finish();
-            $this->info("\nDashboard Ready!, run yarn && yarn dev");
+            $this->info("\nDashboard Ready! go to: ".env('APP_URL')."/adm/login");
         });
 
         /*
