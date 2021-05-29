@@ -229,7 +229,7 @@ class DashboardServiceProvider extends ServiceProvider
             if ($this->confirm('Config .env DB Access?')) {
 
             // php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
-            //$dbhost = $this->ask('Database Host? (localhost)');
+            $dbhost = $this->ask('Database Host? (127.0.0.1)');
             $dbname = $this->ask('Database Name?');
             $dbuser = $this->ask('Database User?');
             $dbpass = $this->secret('Database Password?');
@@ -238,7 +238,7 @@ class DashboardServiceProvider extends ServiceProvider
                 'DB_DATABASE'   => $dbname ? $dbname : 'laravel',
                 'DB_USERNAME'   => $dbuser ? $dbuser : 'root',
                 'DB_PASSWORD'   => $dbpass ? $dbpass : 'password',
-                'DB_HOST'       => '127.0.0.1' //'localhost'
+                'DB_HOST'       => $dbhost ? $dbhost : '127.0.0.1' //'localhost'
             ]);
 
             if($env_update){
