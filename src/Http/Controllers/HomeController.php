@@ -72,14 +72,6 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         $dirPath = __crudFolder();
         $files = \File::files($dirPath);
         
-        //dd($files);
-
-        
-        /*$all_users_with_all_their_roles = User::with('roles')->get();
-        $all_users_with_all_direct_permissions = User::with('permissions')->get();
-        $all_roles_in_database = Role::all()->pluck('name');
-        $users_without_any_roles = User::doesntHave('roles')->get();
-        $all_roles_except_a_and_b = Role::whereNotIn('name', ['role A', 'role B'])->get();*/
         $userId = auth()->user()->id;
         $user = User::find($userId);
         $submenu = [];
@@ -141,7 +133,9 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         
         foreach ($files as $fileKey => $file) {
             $content = json_decode(file_get_contents($file->getPathname()));
-            if(isset($content->table->menu_parent) && $content->table->menu_show){
+            if(isset($content->table->menu_parent) && $content->table->menu_show
+            && (isset($content->table->whoCan) && $user->hasAnyRole([$content->table->whoCan]) || $user->root == 1 )
+            ){
                 $menu[$content->table->menu_parent]['items'][] = [
                             'label' => $content->table->name->es,
                             'icon' => $content->table->icon,
@@ -152,21 +146,6 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
             }
         }
 
-    //    dd($submenu);
-        /*
-
-        foreach ($files as $fileKey => $file) {
-            $content = json_decode(file_get_contents($file->getPathname()));
-            if(isset($content->table->menu_parent)){
-                //dd($content->table->menu_parent);
-                $submenu[$fileKey] = [ 
-                        'label' => $content->table->name->es,
-                        'icon' => $content->table->icon,
-                        'to' => '/crud/'.$content->table->tablename ];
-
-            }
-        }*/
-
         
 
         if($user->hasAnyRole(['developer'])  || $user->root == 1 ){
@@ -174,27 +153,6 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
             
         }
         
-        /*
-        if($user->hasAnyRole(['root', 'webmaster', 'admin', 'blogger', 'developer']) || $user->root == 1){
-            $menu[] = ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'];
-
-
-            $menu[] = [ 'label' => 'Configuraciones', 'icon' => 'pi pi-cog', 
-
-
-            'items' => [ 
-
-                          ['label' => 'Sitio web', 'icon' => 'pi pi-globe', 'to' => '/company-data'],
-                          //['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users']
-
-                      ]
-
-        ];
-    }
-    
-    */
-
-        //$menu[] = ['label' => 'Formulas', 'icon' => 'pi pi-sitemap', 'to' => '/formulas'];
         $cmPath     = $dirPath . '/menu/custom.json';
         if (file_exists($cmPath)) {
             $customMenu      = json_decode(file_get_contents($cmPath));

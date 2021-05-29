@@ -1,7 +1,6 @@
 <template>
   <div>
-    
-    <component :is="currentEditForm" @setValue="setValue" :input="input" :value="value.value" />
+      <component :is="currentEditForm" @setValue="setValue" :input="input" :value="value.value" />
   </div>
 </template>
 <script>
