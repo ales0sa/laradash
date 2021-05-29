@@ -132,6 +132,7 @@ class DashboardServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'Dashboard');
         $this->configurePublishing();
         $this->configureRoutes();
+        /*
 
         Artisan::command('dashboard:packages', function () {
 
@@ -214,7 +215,7 @@ class DashboardServiceProvider extends ServiceProvider
 
         $this->info("\nSe creo el usuario!");
 
-        });
+        });*/
 
         Artisan::command('dashboard:init', function () {
 
@@ -245,15 +246,19 @@ class DashboardServiceProvider extends ServiceProvider
                 $bar->advance();
             } else {
                 
-                $bar->advance();
+
             }
+
+            }else{
+
+                $bar->advance();
 
             }
 
             Artisan::call('migrate');
             $this->info("Migrate executed.");
             $bar->advance();
-            
+
             Artisan::call('migrate:rollback', [
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
                 '--force' => true            
