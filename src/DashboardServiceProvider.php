@@ -222,9 +222,7 @@ class DashboardServiceProvider extends ServiceProvider
 
             $bar->start();
 
-            Artisan::call('migrate');
-            $this->info("Migrate executed.");
-            $bar->advance();
+
 
             if ($this->confirm('Config .env DB Access?')) {
 
@@ -252,7 +250,10 @@ class DashboardServiceProvider extends ServiceProvider
 
             }
 
-
+            Artisan::call('migrate');
+            $this->info("Migrate executed.");
+            $bar->advance();
+            
             Artisan::call('migrate:rollback', [
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2021_05_07_055206_create_permission_tables.php',
                 '--force' => true            
