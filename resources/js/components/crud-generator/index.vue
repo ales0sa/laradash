@@ -1,1742 +1,2222 @@
 <template>
-    <div class="row">
-        <ConfirmDialog></ConfirmDialog>
+  <div class="row">
+    <ConfirmDialog></ConfirmDialog>
 
-        <Toast position="top-right" />
+    <Toast position="top-right" />
 
-
-        <div class="col-md-12">
-            <div class="row justify-content-center" v-if="loaded == 0">
-                <h3><center><i class="fas fa-sync fa-spin"></i><br>Cargando</center></h3>
-            </div>
-            <div class="row justify-content-center" v-if="loaded == 2">
-                <h3><center><i class="fas fa-sync fa-spin"></i><br>Guardando</center></h3>
-            </div>
-            <div class="row justify-content-center" v-if="loaded == 3">
-                <div class="col-xl-12 col-md-12 mb-12">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Mensaje</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    Se ha guardado el <strong>Contenido</strong> con éxito
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-comment fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="col-md-12">
+      <div class="row justify-content-center" v-if="loaded == 0">
+        <h3>
+          <center><i class="fas fa-sync fa-spin"></i><br />Cargando</center>
+        </h3>
+      </div>
+      <div class="row justify-content-center" v-if="loaded == 2">
+        <h3>
+          <center><i class="fas fa-sync fa-spin"></i><br />Guardando</center>
+        </h3>
+      </div>
+      <div class="row justify-content-center" v-if="loaded == 3">
+        <div class="col-xl-12 col-md-12 mb-12">
+          <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                  <div
+                    class="
+                      text-xs
+                      font-weight-bold
+                      text-success text-uppercase
+                      mb-1
+                    "
+                  >
+                    Mensaje
+                  </div>
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">
+                    Se ha guardado el <strong>Contenido</strong> con éxito
+                  </div>
                 </div>
+                <div class="col-auto">
+                  <i class="fas fa-comment fa-2x text-gray-300"></i>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        <div class="p-col-md-12" v-if="loaded == 1">
-            <div class="card">
-                <h5 class="p-mb-5">
-                    CRUD: {{ table.tablename }}
-                </h5>
-                <div class="card-body pb-0">
-                    <div class="p-grid p-formgrid">
-                        <div class="p-col-3 p-mb-5">
-                            <span class="p-float-label">
-
-                                        <Dropdown v-model="table.icon" :options="icons" :filter="true" optionLabel="icon"
-                                         optionValue="icon" dataKey="icon" placeholder="Icon for adm menu" >
-
-                                            <template #value="slotProps">
-                                                <div class="country-item country-item-value" v-if="slotProps.value">
-                                                    <i :class="slotProps.value" /> {{ slotProps.value }}
-
-                                                </div>
-                                                <span v-else>
-                                                    
-                                                </span>
-                                            </template>
-                                            <template #option="slotProps">
-
-                                                    <i :class="slotProps.option.icon" /> {{ slotProps.option.icon }}
-
-                                            </template>
-
-                                        </Dropdown>
-                            <label for="">Menu Icon</label>
-                            </span>
-                        </div>
-                        <div class="p-col-12 p-md-4 ">
-
-                            <div class="p-float-label ">
-                                <InputText type="text" v-model="table.tablename" 
-                                :class="{'p-invalid': validationErrors.tablename && submitted}" 
-                                />
-                                <label for="">Table name {{ this.validationErrors['tablename'] }} </label>
-                            </div>
-                                
-                        </div>
-                        <div class="p-col-12 p-md-4 ">
-                            <Button label="Fill labels" @click="fillTable()" />
-                            <Button label="Set All Null/Not Null" @click="setAllNull()" />
-                            <Button label="List/Unlist" @click="setList()" />
-                            <Button label="Collapse" @click="collapseAll()" />
-                        </div>
-                        <div class="p-col-3 p-mb-3"  v-for="langkey in Object.keys(languages)" :key="'Name' + langkey">
-                                    <div class="p-float-label">
-                                        <InputText type="text" class="" v-model="table.name[langkey]"/>
-                                        <label for="floatingInput">Name: {{ languages[langkey] }}</label>
-                                    </div>
-                                </div>
-   
-                       
-                        <div class="p-col-4 p-mb-3" >
-                                    <div class="p-field p-float-label">
-                                        <MultiSelect v-model="table.whoCan" 
-                                         id="multiselect"
-                                        :options="groups"
-                                            optionLabel="name" optionValue="name"
-                                     
-                                        />
-                                         <label for="multiselect"> Who can see: </label>
-                                    </div>
-                                </div>
-                         </div>
-                          <div class="p-formgroup-inline">
-                                <div class="p-field-checkbox">                                    
-                                    <Checkbox v-model="checkMigrate" :binary="true" id="migrate"/>
-                                    <label for="migrate"> MIGRATE </label>
-                                </div>
-                                <div class="p-field-checkbox">                                    
-                                    <Checkbox v-model="table.generateUser" :binary="true" id="generateUser"/>
-                                    <label for="generateUser"> GENERATE USER </label>
-                                </div>
-                                
-                                <div class="p-field-checkbox">                                    
-                                    <Checkbox v-model="table.noActions" :binary="true" id="nobuttons"/>
-                                    <label for="nobuttons"> NO CRUD BUTTONS </label>
-                                </div>
-                                <div class="p-field-checkbox">                                    
-                                    <Checkbox v-model="table.onlyForUser" :binary="true" id="created_by"/>
-                                    <label for="created_by"> SHOW ONLY FOR CREATOR </label>
-                                </div>
-                                <div class="p-field-checkbox">                                    
-                                    <Checkbox v-model="table.pdfButton" :binary="true" id="pdfbutton"/>
-                                    <label for="pdfbutton"> PDF BUTTON </label>
-                                </div>  
-                          </div>
-
-
-                        <div class="p-col">
-                            <div class="p-formgroup-inline">
-
-                                <div class="p-field-checkbox">
-                                    
-                                    <Checkbox v-model="table.id" :binary="true" id="rowid"/>
-                                    <label for="rowid"> ID </label>
-                                </div>
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.singlepage" :binary="true" id="singlepage" />
-                                    <label for="singlepage"> SINGLE PAGE </label>
-
-                                </div>
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.uuid" :binary="true"  id="uuid"/>
-                                    <label for="uuid"> UUID </label>
-
-                                </div>
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.timestamps" :binary="true"  id="timestamps"/>
-                                    <label for="timestamps"> TIMESTAMPS </label>
-
-                                </div>
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.softDeletes" :binary="true" id="softdel" />
-                                    <label for="softdel"> SOFTDELETES </label>
-
-                                </div>
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.slug" :binary="true" id="slug" />
-                                    <label for="slug"> SLUG </label>
-
-                                </div>
-
-                                <div class="p-field p-col" v-if="table.slug == 1">
-                                    <div class="p-float-label">
-                                        <select class="form-select" id="slug_global" v-model="table.slug_global">
-                                            <option value="1">Yes</option>
-                                            <option value="0">No</option>
-                                        </select>
-                                        <label for="slug_global">SLUG GLOBAL</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-col-12">
-                                <div class="p-field-checkbox">
-                                    <Checkbox v-model="table.menu_show" :binary="true" id="menu" />
-                                    <label for="menu"> MENU </label>
-
-
-                                </div>
-
-                                <div class="p-field" v-if="table.menu_show">
-
-                                    <Dropdown v-model="table.menu_parent" :options="menues" id="menu_parent" />
-
-                                    <label for="menu"> MENU PARENT </label>
-
-                                </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="card p-fluid">
-
-
-
-                <div :class="'p-mt-2 '+input.gridcols" v-for="( input, inputKey ) in inputs" :key="inputKey">
-
-<Panel  :toggleable="true" :collapsed="!input['isCollapsed']">
-
-    <template #header >
-       <p v-if="input.columnname"> {{ input.columnname }}</p>
-       <p v-else>   </p>
-    </template>
-
-    <template #icons>
-
-        <Button icon="pi pi-arrow-up" class="p-button-rounded p-button-secondary" @click="inputUp(inputKey)" v-if="inputKey > 0"></Button>
-                <Button icon="pi pi-arrow-down" class="p-button-rounded p-button-secondary" @click="inputDown(inputKey)" v-if="inputKey < ( inputs.length - 1 ) && inputs.length > 1"></Button>
-                <Button class="p-button-rounded p-button-danger" icon="pi pi-times" @click="rmInput(inputKey)"></Button>
-         
-    </template>
-
-
-    <div class="">
-                        <div class="p-fluid p-formgrid p-grid">
-                            <div class="p-field p-col-5 p-mt-3 p-mb-3">
-                                <div class="p-float-label">
-                                    <InputText type="text" class="" v-model="input.columnname"/>
-                                    <label for="floatingInput">Column name</label>
-                                </div>
-                            <Button label="Fill" @click="fillColumn(input)" />
-                            </div>
-                            <div class="p-field p-col-5 p-mb-3 p-mt-3">
-                                <div class="p-float-label">
-                                    <Dropdown v-model="input.type" :options="itypes">
-                                        
-                                    </Dropdown>
-
-                                </div>
-                            </div>
-
-                            <div class="p-field p-col-2  p-mb-3 p-mt-3">
-                                
-                                        <div class="p-float-label">
-                                            
-                                            <InputNumber id="minmax-buttons" v-model="input.gridcols" mode="decimal" showButtons :min="1" :max="12" />
-                                            <label for="floatingInput">GRID COLS</label>
-                                        </div>
-                            </div>
+      </div>
+    </div>
     
-                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('label')">
-                                    <div  v-for="langkey in Object.keys(languages)" :key="'Label' + langkey" >
-                                        <div class="p-float-label mb-3">
-                                            <InputText type="text" class="" v-model="input.label[langkey]"/>
-                                            <label for="floatingInput">Label: {{ languages[langkey] }}</label>
-                                        </div>
-                                    </div>
-                                    </div>
-                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('valuefrom')">
-                                    
-                                        <div class="p-float-label mb-3">
-                                            <InputText type="text" class="" v-model="input.valuefrom"/>
-                                            <label for="floatingInput"> VALUE FROM </label>
-                                        </div>
-                                    
-                                    </div>
-                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('valueoriginselector')">
-
-                                        <SelectButton v-model="input.valueoriginselector" :options="seltypes"  />
-                                    </div>
-                                    <div class="p-field p-col-2 p-mb-3 p-mt-3" v-if="inputParams(input).includes('default')">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.default"/>
-                                            <label for="floatingInput">DEFAULT VALUE</label>
-                                        </div>
-                                    </div>
-                        <div class="p-col-12">
-                            <div class="p-formgroup-inline">
-
-                                <div class="p-field-checkbox">
-                                        
-                                            <Checkbox v-model="input.visible" :binary="true" />
-                                            <label for="binary">LIST</label>
-                                        </div>
-                              
-                                   
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.visible_edit" :binary="true" />
-                                            <label for="binary">EDIT</label>
-                                        </div>
-                                   
-                                    
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.validate" :binary="true" />
-                                            <label for="binary">VALID</label>
-                                        </div>
-                                    
-                                   
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.unique" :binary="true" />
-                                            <label for="binary">UNIQUE</label>
-                                        </div>
-                         
-                                    <div class="" v-if="inputParams(input).includes('multiple')">
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.multiple" :binary="true" />
-                                            <label for="binary">MULTIPLE</label>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="" v-if="inputParams(input).includes('translatable')">
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.translatable" :binary="true" />
-                                            <label for="binary">TRANSLATABLE</label>
-                                        </div>
-                                    </div>
-                                    <div  v-if="inputParams(input).includes('nullable')">
-                                        <div class="p-field-checkbox">
-                                            <Checkbox v-model="input.nullable" :binary="true" />
-                                            <label for="binary">NULL</label>
-
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-
-
-                                    <div class="p-col-3" v-if="inputParams(input).includes('max')">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.max"/>
-                                            <label for="floatingInput">MAX</label>
-                                        </div>
-                                    </div>
-                                    <div class="p-col-3" v-if="inputParams(input).includes('min')">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.min"/>
-                                            <label for="floatingInput">MIN</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="p-col-12" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'values'">
-                                        <div v-if="Array.isArray(input.options)">
-                                            <div class="p-grid" v-for="(option, optionKey) in input.options" :key="input.columnname + optionKey">
-                                                <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                                                    <div class="p-float-label">
-                                                        <InputText type="text" class="" v-model="option.key"/>
-                                                        <label for="floatingInput">KEY</label>
-                                                    </div>
-                                                </div>
-                                                <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                                                    <div class="p-float-label">
-                                                        <InputText type="text" class="" v-model="option.text"/>
-                                                        <label for="floatingInput">TEXT</label>
-                                                    </div>
-                                                </div>
-                                                <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                                                                <Button class="p-button-rounded p-button-danger" icon="pi pi-times"
-                                                     @click="removeOption(input, optionKey)" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="d-sm-flex align-items-center justify-content-center mt-3">
-                                           <Button icon="pi pi-plus" class="p-button-rounded p-button-success"
-                                           @click="addOption(input)" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' || input.type == 'subForm'">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.tabledata"/>
-                                            <label for="floatingInput">TABLE DATA</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' || input.type == 'subForm'">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.tablekeycolumn"/>
-                                            <label for="floatingInput">TABLE KEY COlUMN</label>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="col-md" v-if="inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table' ">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.tabletextcolumn"/>
-                                            <label for="floatingInput">TABLE TEXT COlUMN</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('referencecolumn')">
-                                        <div class="p-float-label">
-                                            <InputText type="text" class="" v-model="input.referencecolumn"/>
-                                            <label for="floatingInput">REFERENCE COLUMN</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md" v-if="inputParams(input).includes('icon')">
-                                        <div class="p-float-label">
-                                            <Dropdown v-model="input.icon" :options="icons" :filter="true" optionLabel="icon"
-                                         optionValue="icon" dataKey="icon" placeholder="Icon for adm menu" >
-
-                                            <template #value="slotProps">
-                                                <div class="country-item country-item-value" v-if="slotProps.value">
-                                                    <i :class="slotProps.value" /> {{ slotProps.value }}
-
-                                                </div>
-                                                <span v-else>
-                                                    
-                                                </span>
-                                            </template>
-                                            <template #option="slotProps">
-
-                                                    <i :class="slotProps.option.icon" /> {{ slotProps.option.icon }}
-
-                                            </template>
-
-                                        </Dropdown>
-
-                                            <label for="floatingInput">ICON</label>
-                                        </div>
-                                    </div>
-
-                                
-
-
-                        </div>
+    <div class="p-grid">
+      <div class="p-col-6" v-if="loaded == 1">
+      <div class="card">
+        <h5 class="p-mb-5">CRUD: {{ table.tablename }}</h5>
+        <div class="card-body pb-0">
+          <div class="p-grid p-formgrid">
+            <div class="p-col-3 p-mb-5">
+              <span class="p-float-label">
+                <Dropdown
+                  v-model="table.icon"
+                  :options="icons"
+                  :filter="true"
+                  optionLabel="icon"
+                  optionValue="icon"
+                  dataKey="icon"
+                  placeholder="Icon for adm menu"
+                >
+                  <template #value="slotProps">
+                    <div
+                      class="country-item country-item-value"
+                      v-if="slotProps.value"
+                    >
+                      <i :class="slotProps.value" /> {{ slotProps.value }}
                     </div>
-</Panel>
-
-
-                    
-                </div>
-                <div class="d-sm-flex align-items-center justify-content-center mt-3">
-                    <Button type="button" @click="addInput()" label="Nuevo campo">
-                        
-                    </Button>
-                </div>
+                    <span v-else> </span>
+                  </template>
+                  <template #option="slotProps">
+                    <i :class="slotProps.option.icon" />
+                    {{ slotProps.option.icon }}
+                  </template>
+                </Dropdown>
+                <label for="">Menu Icon</label>
+              </span>
             </div>
-            <div class="d-sm-flex align-items-center justify-content-between mt-4">                
-                <Button type="button" @click="sendForm()" class="btn btn-lg btn-primary" label="GUARDAR" icon="pi pi-save">
-                </Button>
+            <div class="p-col-12 p-md-4">
+              <div class="p-float-label">
+                <InputText
+                  type="text"
+                  v-model="table.tablename"
+                  :class="{
+                    'p-invalid': validationErrors.tablename && submitted,
+                  }"
+                />
+                <label for=""
+                  >Table name {{ this.validationErrors["tablename"] }}
+                </label>
+              </div>
             </div>
+            <div class="p-col-12 p-md-4">
+              <Button label="Fill labels" @click="fillTable()" />
+              <Button label="Set All Null/Not Null" @click="setAllNull()" />
+              <Button label="List/Unlist" @click="setList()" />
+              <Button label="Collapse" @click="collapseAll()" />
+            </div>
+            <div
+              class="p-col-3 p-mb-3"
+              v-for="langkey in Object.keys(languages)"
+              :key="'Name' + langkey"
+            >
+              <div class="p-float-label">
+                <InputText type="text" class="" v-model="table.name[langkey]" />
+                <label for="floatingInput"
+                  >Name: {{ languages[langkey] }}</label
+                >
+              </div>
+            </div>
+
+            <div class="p-col-4 p-mb-3">
+              <div class="p-field p-float-label">
+                <MultiSelect
+                  v-model="table.whoCan"
+                  id="multiselect"
+                  :options="groups"
+                  optionLabel="name"
+                  optionValue="name"
+                />
+                <label for="multiselect"> Who can see: </label>
+              </div>
+            </div>
+          </div>
+          <div class="p-formgroup-inline">
+            <div class="p-field-checkbox">
+              <Checkbox v-model="checkMigrate" :binary="true" id="migrate" />
+              <label for="migrate"> MIGRATE </label>
+            </div>
+            <div class="p-field-checkbox">
+              <Checkbox
+                v-model="table.generateUser"
+                :binary="true"
+                id="generateUser"
+              />
+              <label for="generateUser"> GENERATE USER </label>
+            </div>
+
+            <div class="p-field-checkbox">
+              <Checkbox
+                v-model="table.noActions"
+                :binary="true"
+                id="nobuttons"
+              />
+              <label for="nobuttons"> NO CRUD BUTTONS </label>
+            </div>
+            <div class="p-field-checkbox">
+              <Checkbox
+                v-model="table.onlyForUser"
+                :binary="true"
+                id="created_by"
+              />
+              <label for="created_by"> SHOW ONLY FOR CREATOR </label>
+            </div>
+            <div class="p-field-checkbox">
+              <Checkbox
+                v-model="table.pdfButton"
+                :binary="true"
+                id="pdfbutton"
+              />
+              <label for="pdfbutton"> PDF BUTTON </label>
+            </div>
+          </div>
+
+          <div class="p-col">
+            <div class="p-formgroup-inline">
+              <div class="p-field-checkbox">
+                <Checkbox v-model="table.id" :binary="true" id="rowid" />
+                <label for="rowid"> ID </label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.singlepage"
+                  :binary="true"
+                  id="singlepage"
+                />
+                <label for="singlepage"> SINGLE PAGE </label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox v-model="table.uuid" :binary="true" id="uuid" />
+                <label for="uuid"> UUID </label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.timestamps"
+                  :binary="true"
+                  id="timestamps"
+                />
+                <label for="timestamps"> TIMESTAMPS </label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.softDeletes"
+                  :binary="true"
+                  id="softdel"
+                />
+                <label for="softdel"> SOFTDELETES </label>
+              </div>
+              <div class="p-field-checkbox">
+                <Checkbox v-model="table.slug" :binary="true" id="slug" />
+                <label for="slug"> SLUG </label>
+              </div>
+
+              <div class="p-field p-col" v-if="table.slug == 1">
+                <div class="p-float-label">
+                  <select
+                    class="form-select"
+                    id="slug_global"
+                    v-model="table.slug_global"
+                  >
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                  </select>
+                  <label for="slug_global">SLUG GLOBAL</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-col-12">
+            <div class="p-field-checkbox">
+              <Checkbox v-model="table.menu_show" :binary="true" id="menu" />
+              <label for="menu"> MENU </label>
+            </div>
+
+            <div class="p-field" v-if="table.menu_show">
+              <Dropdown
+                v-model="table.menu_parent"
+                :options="menues"
+                id="menu_parent"
+              />
+
+              <label for="menu"> MENU PARENT </label>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+      
+      <div class="p-field p-col-6 p-md-6 p-pr-0">
+        <div class="card p-fluid" style="height: 100%">
+	          <h5> INPUT / COLUMN EDITOR </h5>
+        </div>
+      </div>
+<div class="p-field p-col-6 p-md-6 p-pr-0">
+        <div class="card p-fluid">
+	<h5>LIST PREVIEW</h5>
+	<DataTable :value="inputs">
+		<Column :field="input.columnname" :header="input.label.es" v-for="(input, inputKey) in inputs.filter(
+                (item) => !(item.visible !== 1)
+              )" :key="inputKey">
+			<template #body>
+				<Skeleton></Skeleton>
+			</template>
+		</Column>
+	</DataTable>
+ </div> </div>
 
-    
+
+
+      <div class="p-field p-col-12 p-md-6 p-pr-0">
+        <div class="card p-fluid">
+          <div class="p-d-flex">
+            <h5>FORM PREVIEW</h5>
+            <Button
+              type="button"
+              @click="addInput()"
+              style="height: 26px"
+              icon="pi pi-plus"
+              class="p-ml-auto p-button-sm p-button-primary"
+            />
+          </div>
+
+          <div class="p-grid">
+            <div
+             :class="'form_preview_over p-col-' + input.gridcols"
+              v-for="(input, inputKey) in inputs.filter(
+                (item) => !(item.visible_edit !== 1)
+              )"
+              :key="input.columnname"
+              @click="selectedInputKey = inputKey"
+            ><div class="p-d-flex p-jc-around"
+             :class="''"
+             >
+              <Button
+                  icon="pi pi-arrow-left"
+                  class="p-button-secondary"
+                  style=" height: 1.9rem;"
+                  @click="inputUp(inputKey)"
+                  v-if="inputKey > 0"
+                ></Button>
+                <Button
+                  icon="pi pi-minus"
+                  class="p-button-info"
+                  style=" height: 1.9rem;"
+                  @click="inputs[inputKey].gridcols -=1"
+                  v-if="inputs[inputKey].gridcols > 1"
+                ></Button>
+                <div
+                  class="p-mb-1 p-skeleton p-component p-text-center"
+                  style="width: 100%; height: 2rem; line-height:2rem"
+                >
+                  
+                
+                <small
+                    style="
+                      font-size: 0.85rem;
+                      text-transform: uppercase;
+                      font-weight: bolder;
+                    "
+                  >
+                    {{ input.columnname }}
+
+                  </small>
+                     
+
+                </div>
+                <Button
+                  icon="pi pi-plus"
+                  class="p-button-info"
+                  style=" height: 1.9rem;"
+                  @click="inputs[inputKey].gridcols +=1"
+                  v-if="inputs[inputKey].gridcols < 12"
+                ></Button>
+               <Button
+                  icon="pi pi-arrow-right"
+                  class="p-button-secondary"
+                  style=" height: 1.9rem;"
+                  @click="inputDown(inputKey)"
+                  v-if="inputKey !== (inputs.filter(
+                (item) => !(item.visible_edit !== 1)
+              ).length - 1) "
+                ></Button>
+            </div>
+
+              <!---
+            <div :id="'dgHover'+inputKey" :ref="'dgHover'+inputKey"> 
+            <div v-if="dragging == 1" @drop='onDrop(inputKey)' > 
+
+     <small
+                style="
+                  font-size: 0.7rem;
+                  color: black;
+                  text-transform: uppercase;
+                  font-weight: bolder;
+                "
+              >
+                {{ input.columnname }}
+              </small>
+              <div
+                class="p-mb-1 p-skeleton p-component"
+                style="width: 100%; height: 1rem"
+                             
+              >
+               
+              </div>
+
+    </div>
+    <div draggable
+                @dragstart='startDrag(inputKey);'
+        @dragover.prevent
+      @dragenter.prevent v-else>
+                <small
+                style="
+                  font-size: 0.7rem;
+                  text-transform: uppercase;
+                  font-weight: bolder;
+                "
+              >
+                {{ input.columnname }}
+              </small>
+              <div
+                class="p-mb-1 p-skeleton p-component"
+                style="width: 100%; height: 1rem"
+                             
+              >
+
+
+              </div>
+</div>
+            </div>--->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="p-field p-col-12 p-md-6 p-pr-0">
+        <div class="card p-shadow-3 p-fluid">
+          <div class="p-d-flex">
+            <h5 v-if="selectedInputKey">INPUT: {{ inputs[selectedInputKey].columnname}}</h5>
+            <Button
+              class="p-button-rounded p-button-danger"
+              icon="pi pi-times"
+              @click="rmInput(selectedInputKey)"
+            ></Button>
+          </div>
+          <div v-if="!selectedInputJson">TO DO...</div>
+          <div v-if="selectedInputJson">
+            <textarea
+              @input="updateInput($event.target.value, selectedInputKey)"
+              v-html="selectedInput"
+              style="width: 100%; height: 350px"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-fluid">
+      <div
+        :class="'p-mt-2 ' + input.gridcols"
+        v-for="(input, inputKey) in inputs"
+        :key="inputKey"
+      >
+        <Panel :toggleable="true" :collapsed="!input['isCollapsed']">
+          <template #header class="p-d-flex">
+            <div v-if="input.columnname">{{ input.columnname }}</div>
+            <div v-else></div>
+
+            <!--- <div class=" " style="width: 32%;">   
+                <InputNumber id="minmax-buttons" v-model="input.gridcols" mode="decimal" showButtons 
+                :min="1" :max="12"
+                 />
+           </div> ------>
+          </template>
+
+          <template #icons>
+            <Button
+              icon="pi pi-arrow-up"
+              class="p-button-rounded p-button-secondary"
+              @click="inputUp(inputKey)"
+              v-if="inputKey > 0"
+            ></Button>
+            <Button
+              icon="pi pi-arrow-down"
+              class="p-button-rounded p-button-secondary"
+              @click="inputDown(inputKey)"
+              v-if="inputKey < inputs.length - 1 && inputs.length > 1"
+            ></Button>
+            <Button
+              class="p-button-rounded p-button-danger"
+              icon="pi pi-times"
+              @click="rmInput(inputKey)"
+            ></Button>
+          </template>
+
+          <div class="">
+            <div class="p-fluid p-formgrid p-grid">
+              <div class="p-field p-col-5 p-mt-3 p-mb-3">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.columnname" />
+                  <label for="floatingInput">Column name</label>
+                </div>
+                <Button label="Fill" @click="fillColumn(input)" />
+              </div>
+              <div class="p-field p-col-5 p-mb-3 p-mt-3">
+                <div class="p-float-label">
+                  <Dropdown v-model="input.type" :options="itypes"> </Dropdown>
+                </div>
+              </div>
+
+              <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                <div class="p-float-label">
+                  <InputNumber
+                    :id="'gcld_' + input.columnname"
+                    v-model="input.gridcols"
+                    mode="decimal"
+                    showButtons
+                    :min="1"
+                    :max="12"
+                  />
+                  <label :for="'gcld_' + input.columnname">GRID COLS</label>
+                </div>
+              </div>
+
+              <div
+                class="p-field p-col-2 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('label')"
+              >
+                <div
+                  v-for="langkey in Object.keys(languages)"
+                  :key="'Label' + langkey"
+                >
+                  <div class="p-float-label mb-3">
+                    <InputText
+                      type="text"
+                      class=""
+                      v-model="input.label[langkey]"
+                    />
+                    <label for="floatingInput"
+                      >Label: {{ languages[langkey] }}</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="p-field p-col-2 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('valuefrom')"
+              >
+                <div class="p-float-label mb-3">
+                  <InputText type="text" class="" v-model="input.valuefrom" />
+                  <label for="floatingInput"> VALUE FROM </label>
+                </div>
+              </div>
+              <div
+                class="p-field p-col-2 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('valueoriginselector')"
+              >
+                <SelectButton
+                  v-model="input.valueoriginselector"
+                  :options="seltypes"
+                />
+              </div>
+              <div
+                class="p-field p-col-2 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('default')"
+              >
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.default" />
+                  <label for="floatingInput">DEFAULT VALUE</label>
+                </div>
+              </div>
+              <div class="p-col-12">
+                <div class="p-formgroup-inline">
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.visible" :binary="true" />
+                    <label for="binary">LIST</label>
+                  </div>
+
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.visible_edit" :binary="true" />
+                    <label for="binary">EDIT</label>
+                  </div>
+
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.validate" :binary="true" />
+                    <label for="binary">VALID</label>
+                  </div>
+
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.unique" :binary="true" />
+                    <label for="binary">UNIQUE</label>
+                  </div>
+
+                  <div class="" v-if="inputParams(input).includes('multiple')">
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.multiple" :binary="true" />
+                      <label for="binary">MULTIPLE</label>
+                    </div>
+                  </div>
+
+                  <div
+                    class=""
+                    v-if="inputParams(input).includes('translatable')"
+                  >
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.translatable" :binary="true" />
+                      <label for="binary">TRANSLATABLE</label>
+                    </div>
+                  </div>
+                  <div v-if="inputParams(input).includes('nullable')">
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.nullable" :binary="true" />
+                      <label for="binary">NULL</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-col-3" v-if="inputParams(input).includes('max')">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.max" />
+                  <label for="floatingInput">MAX</label>
+                </div>
+              </div>
+              <div class="p-col-3" v-if="inputParams(input).includes('min')">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.min" />
+                  <label for="floatingInput">MIN</label>
+                </div>
+              </div>
+
+              <div
+                class="p-col-12"
+                v-if="
+                  inputParams(input).includes('valueoriginselector') &&
+                  input.valueoriginselector == 'values'
+                "
+              >
+                <div v-if="Array.isArray(input.options)">
+                  <div
+                    class="p-grid"
+                    v-for="(option, optionKey) in input.options"
+                    :key="input.columnname + optionKey"
+                  >
+                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                      <div class="p-float-label">
+                        <InputText type="text" class="" v-model="option.key" />
+                        <label for="floatingInput">KEY</label>
+                      </div>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                      <div class="p-float-label">
+                        <InputText type="text" class="" v-model="option.text" />
+                        <label for="floatingInput">TEXT</label>
+                      </div>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                      <Button
+                        class="p-button-rounded p-button-danger"
+                        icon="pi pi-times"
+                        @click="removeOption(input, optionKey)"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="
+                    d-sm-flex
+                    align-items-center
+                    justify-content-center
+                    mt-3
+                  "
+                >
+                  <Button
+                    icon="pi pi-plus"
+                    class="p-button-rounded p-button-success"
+                    @click="addOption(input)"
+                  />
+                </div>
+              </div>
+              <div
+                class="col-md"
+                v-if="
+                  (inputParams(input).includes('valueoriginselector') &&
+                    input.valueoriginselector == 'table') ||
+                  input.type == 'subForm'
+                "
+              >
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.tabledata" />
+                  <label for="floatingInput">TABLE DATA</label>
+                </div>
+              </div>
+              <div
+                class="col-md"
+                v-if="
+                  (inputParams(input).includes('valueoriginselector') &&
+                    input.valueoriginselector == 'table') ||
+                  input.type == 'subForm'
+                "
+              >
+                <div class="p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.tablekeycolumn"
+                  />
+                  <label for="floatingInput">TABLE KEY COlUMN</label>
+                </div>
+              </div>
+
+              <div
+                class="col-md"
+                v-if="
+                  inputParams(input).includes('valueoriginselector') &&
+                  input.valueoriginselector == 'table'
+                "
+              >
+                <div class="p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.tabletextcolumn"
+                  />
+                  <label for="floatingInput">TABLE TEXT COlUMN</label>
+                </div>
+              </div>
+              <div
+                class="col-md"
+                v-if="inputParams(input).includes('referencecolumn')"
+              >
+                <div class="p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.referencecolumn"
+                  />
+                  <label for="floatingInput">REFERENCE COLUMN</label>
+                </div>
+              </div>
+              <div class="col-md" v-if="inputParams(input).includes('icon')">
+                <div class="p-float-label">
+                  <Dropdown
+                    v-model="input.icon"
+                    :options="icons"
+                    :filter="true"
+                    optionLabel="icon"
+                    optionValue="icon"
+                    dataKey="icon"
+                    placeholder="Icon for adm menu"
+                  >
+                    <template #value="slotProps">
+                      <div
+                        class="country-item country-item-value"
+                        v-if="slotProps.value"
+                      >
+                        <i :class="slotProps.value" /> {{ slotProps.value }}
+                      </div>
+                      <span v-else> </span>
+                    </template>
+                    <template #option="slotProps">
+                      <i :class="slotProps.option.icon" />
+                      {{ slotProps.option.icon }}
+                    </template>
+                  </Dropdown>
+
+                  <label for="floatingInput">ICON</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Panel>
+      </div>
+      <div
+        class="d-sm-flex align-items-center justify-content-center mt-3"
+      ></div>
+    </div>
+    <div class="d-sm-flex align-items-center justify-content-between mt-4">
+      <Button
+        type="button"
+        @click="sendForm()"
+        class="btn btn-lg btn-primary"
+        label="GUARDAR"
+        icon="pi pi-save"
+      >
+      </Button>
+    </div>
+  </div>
 </template>
 <script>
-    import axios from 'axios'
-    import EventBus from './../../service/event-bus';
+import axios from "axios";
+import EventBus from "./../../service/event-bus";
 
-    import ConfirmationService from 'primevue/confirmationservice';
-    import ConfirmDialog from 'primevue/confirmdialog';
+import ConfirmationService from "primevue/confirmationservice";
+import ConfirmDialog from "primevue/confirmdialog";
 
-    var publicPATH = document.head.querySelector('meta[name="public-path"]').content;
-    export default {
-        props: {
-            formName: {
-                type: String,
-                default: 'Form'
-            },
-            urlData: {
-                type: String,
-                default: ''
-            },
-            urlBack: {
-                type: String,
-                default: ''
-            },
-            urlAction: {
-                type: String,
-                default: ''
-            }
+var publicPATH = document.head.querySelector(
+  'meta[name="public-path"]'
+).content;
+export default {
+  props: {
+    formName: {
+      type: String,
+      default: "Form",
+    },
+    urlData: {
+      type: String,
+      default: "",
+    },
+    urlBack: {
+      type: String,
+      default: "",
+    },
+    urlAction: {
+      type: String,
+      default: "",
+    },
+  },
+  components: {},
+  data() {
+    return {
+      dragging: false,
+      selectedInput: null,
+      selectedInputJson: false,
+      selectedInputKey: null,
+      checkMigrate: 0,
+      menues: null,
+      tables: null,
+      languages: {},
+      submitted: false,
+      validationErrors: {},
+      table: {
+        icon: "pi pi-angle-double-right",
+        singlepage: false,
+        id: 1,
+        uuid: 0,
+        tablename: "",
+        name: { es: "", en: "" },
+        timestamps: 1,
+        softDeletes: 1,
+        menu_show: 1,
+        slug: 0,
+        slug_global: 0,
+      },
+      jsonfiles: [],
+      inputs: [],
+      loaded: 0,
+      groups: [],
+      seltypes: ["table", "values"],
+      itypes: [
+        "text",
+        "textarea",
+        "boolean",
+        "select",
+        "radio",
+        "checkbox",
+        "file",
+        "icon",
+        "email",
+        "url",
+        "tel",
+        "number",
+        "money",
+        "password",
+        "date",
+        "time",
+        "datetime",
+        "VueComponent",
+        "VueLink",
+        "bigInteger",
+        "subForm",
+        "color",
+        "youTube",
+      ],
+      icons: [
+        { icon: "pi pi-align-center" },
+        { icon: "pi pi-align-justify" },
+        { icon: "pi pi-align-left" },
+        { icon: "pi pi-align-right" },
+        { icon: "pi pi-android" },
+        { icon: "pi pi-angle-double-down" },
+        { icon: "pi pi-angle-double-left" },
+        { icon: "pi pi-angle-double-right" },
+        { icon: "pi pi-angle-double-up" },
+        { icon: "pi pi-angle-down" },
+        { icon: "pi pi-angle-left" },
+        { icon: "pi pi-angle-right" },
+        { icon: "pi pi-angle-up" },
+        { icon: "pi pi-apple" },
+        { icon: "pi pi-arrow-circle-down" },
+        { icon: "pi pi-arrow-circle-left" },
+        { icon: "pi pi-arrow-circle-right" },
+        { icon: "pi pi-arrow-circle-up" },
+        { icon: "pi pi-arrow-down" },
+        { icon: "pi pi-arrow-left" },
+        { icon: "pi pi-arrow-right" },
+        { icon: "pi pi-arrow-up" },
+        { icon: "pi pi-backward" },
+        { icon: "pi pi-ban" },
+        { icon: "pi pi-bars" },
+        { icon: "pi pi-bell" },
+        { icon: "pi pi-bookmark" },
+        { icon: "pi pi-briefcase" },
+        { icon: "pi pi-calendar" },
+        { icon: "pi pi-calendar-minus" },
+        { icon: "pi pi-calendar-plus" },
+        { icon: "pi pi-calendar-times" },
+        { icon: "pi pi-camera" },
+        { icon: "pi pi-caret-down" },
+        { icon: "pi pi-caret-left" },
+        { icon: "pi pi-caret-right" },
+        { icon: "pi pi-caret-up" },
+        { icon: "pi pi-chart-bar" },
+        { icon: "pi pi-chart-line" },
+        { icon: "pi pi-check" },
+        { icon: "pi pi-check-circle" },
+        { icon: "pi pi-check-square" },
+        { icon: "pi pi-chevron-circle-down" },
+        { icon: "pi pi-chevron-circle-left" },
+        { icon: "pi pi-chevron-circle-right" },
+        { icon: "pi pi-chevron-circle-up" },
+        { icon: "pi pi-chevron-down" },
+        { icon: "pi pi-chevron-left" },
+        { icon: "pi pi-chevron-right" },
+        { icon: "pi pi-chevron-up" },
+        { icon: "pi pi-circle-off" },
+        { icon: "pi pi-circle-on" },
+        { icon: "pi pi-clock" },
+        { icon: "pi pi-clone" },
+        { icon: "pi pi-cloud" },
+        { icon: "pi pi-cloud-download" },
+        { icon: "pi pi-cloud-upload" },
+        { icon: "pi pi-cog" },
+        { icon: "pi pi-comment" },
+        { icon: "pi pi-comments" },
+        { icon: "pi pi-compass" },
+        { icon: "pi pi-copy" },
+        { icon: "pi pi-desktop" },
+        { icon: "pi pi-directions" },
+        { icon: "pi pi-directions-alt" },
+        { icon: "pi pi-dollar" },
+        { icon: "pi pi-download" },
+        { icon: "pi pi-eject" },
+        { icon: "pi pi-ellipsis-h" },
+        { icon: "pi pi-ellipsis-v" },
+        { icon: "pi pi-envelope" },
+        { icon: "pi pi-exclamation-circle" },
+        { icon: "pi pi-exclamation-triangle" },
+        { icon: "pi pi-external-link" },
+        { icon: "pi pi-eye" },
+        { icon: "pi pi-eye-slash" },
+        { icon: "pi pi-facebook" },
+        { icon: "pi pi-fast-backward" },
+        { icon: "pi pi-fast-forward" },
+        { icon: "pi pi-file" },
+        { icon: "pi pi-file-excel" },
+        { icon: "pi pi-file-o" },
+        { icon: "pi pi-file-pdf" },
+        { icon: "pi pi-filter" },
+        { icon: "pi pi-folder" },
+        { icon: "pi pi-folder-open" },
+        { icon: "pi pi-forward" },
+        { icon: "pi pi-github" },
+        { icon: "pi pi-globe" },
+        { icon: "pi pi-google" },
+        { icon: "pi pi-heart" },
+        { icon: "pi pi-home" },
+        { icon: "pi pi-id-card" },
+        { icon: "pi pi-image" },
+        { icon: "pi pi-images" },
+        { icon: "pi pi-inbox" },
+        { icon: "pi pi-info" },
+        { icon: "pi pi-info-circle" },
+        { icon: "pi pi-key" },
+        { icon: "pi pi-list" },
+        { icon: "pi pi-lock" },
+        { icon: "pi pi-lock-open" },
+        { icon: "pi pi-map-marker" },
+        { icon: "pi pi-microsoft" },
+        { icon: "pi pi-minus" },
+        { icon: "pi pi-minus-circle" },
+        { icon: "pi pi-mobile" },
+        { icon: "pi pi-money-bill" },
+        { icon: "pi pi-palette" },
+        { icon: "pi pi-paperclip" },
+        { icon: "pi pi-pause" },
+        { icon: "pi pi-pencil" },
+        { icon: "pi pi-play" },
+        { icon: "pi pi-plus" },
+        { icon: "pi pi-plus-circle" },
+        { icon: "pi pi-power-off" },
+        { icon: "pi pi-print" },
+        { icon: "pi pi-question" },
+        { icon: "pi pi-question-circle" },
+        { icon: "pi pi-refresh" },
+        { icon: "pi pi-replay" },
+        { icon: "pi pi-reply" },
+        { icon: "pi pi-save" },
+        { icon: "pi pi-search" },
+        { icon: "pi pi-search-minus" },
+        { icon: "pi pi-search-plus" },
+        { icon: "pi pi-share-alt" },
+        { icon: "pi pi-shopping-cart" },
+        { icon: "pi pi-sign-in" },
+        { icon: "pi pi-sign-out" },
+        { icon: "pi pi-sitemap" },
+        { icon: "pi pi-sliders-h" },
+        { icon: "pi pi-sliders-v" },
+        { icon: "pi pi-sort" },
+        { icon: "pi pi-sort-alpha-down" },
+        { icon: "pi pi-sort-alpha-down-alt" },
+        { icon: "pi pi-sort-alpha-up" },
+        { icon: "pi pi-sort-alpha-up-alt" },
+        { icon: "pi pi-sort-alt" },
+        { icon: "pi pi-sort-amount-down" },
+        { icon: "pi pi-sort-amount-down-alt" },
+        { icon: "pi pi-sort-amount-up" },
+        { icon: "pi pi-sort-amount-up-alt" },
+        { icon: "pi pi-sort-down" },
+        { icon: "pi pi-sort-numeric-down" },
+        { icon: "pi pi-sort-numeric-down-alt" },
+        { icon: "pi pi-sort-numeric-up" },
+        { icon: "pi pi-sort-numeric-up-alt" },
+        { icon: "pi pi-sort-up" },
+        { icon: "pi pi-spinner" },
+        { icon: "pi pi-star" },
+        { icon: "pi pi-star-o" },
+        { icon: "pi pi-step-backward" },
+        { icon: "pi pi-step-backward-alt" },
+        { icon: "pi pi-step-forward" },
+        { icon: "pi pi-step-forward-alt" },
+        { icon: "pi pi-table" },
+        { icon: "pi pi-tablet" },
+        { icon: "pi pi-tag" },
+        { icon: "pi pi-tags" },
+        { icon: "pi pi-th-large" },
+        { icon: "pi pi-thumbs-down" },
+        { icon: "pi pi-thumbs-up" },
+        { icon: "pi pi-ticket" },
+        { icon: "pi pi-times" },
+        { icon: "pi pi-times-circle" },
+        { icon: "pi pi-trash" },
+        { icon: "pi pi-twitter" },
+        { icon: "pi pi-undo" },
+        { icon: "pi pi-unlock" },
+        { icon: "pi pi-upload" },
+        { icon: "pi pi-user" },
+        { icon: "pi pi-user-edit" },
+        { icon: "pi pi-user-minus" },
+        { icon: "pi pi-user-plus" },
+        { icon: "pi pi-users" },
+        { icon: "pi pi-video" },
+        { icon: "pi pi-volume-down" },
+        { icon: "pi pi-volume-off" },
+        { icon: "pi pi-volume-up" },
+        { icon: "pi pi-wifi" },
+        { icon: "pi pi-window-maximize" },
+        { icon: "fa fa-500px" },
+        { icon: "fa fa-adjust" },
+        { icon: "fa fa-adn" },
+        { icon: "fa fa-align-center" },
+        { icon: "fa fa-align-justify" },
+        { icon: "fa fa-align-left" },
+        { icon: "fa fa-align-right" },
+        { icon: "fa fa-amazon" },
+        { icon: "fa fa-ambulance" },
+        { icon: "fa fa-anchor" },
+        { icon: "fa fa-android" },
+        { icon: "fa fa-angellist" },
+        { icon: "fa fa-angle-double-down" },
+        { icon: "fa fa-angle-double-left" },
+        { icon: "fa fa-angle-double-right" },
+        { icon: "fa fa-angle-double-up" },
+        { icon: "fa fa-angle-down" },
+        { icon: "fa fa-angle-left" },
+        { icon: "fa fa-angle-right" },
+        { icon: "fa fa-angle-up" },
+        { icon: "fa fa-apple" },
+        { icon: "fa fa-archive" },
+        { icon: "fa fa-area-chart" },
+        { icon: "fa fa-arrow-circle-down" },
+        { icon: "fa fa-arrow-circle-left" },
+        { icon: "fa fa-arrow-circle-o-down" },
+        { icon: "fa fa-arrow-circle-o-left" },
+        { icon: "fa fa-arrow-circle-o-right" },
+        { icon: "fa fa-arrow-circle-o-up" },
+        { icon: "fa fa-arrow-circle-right" },
+        { icon: "fa fa-arrow-circle-up" },
+        { icon: "fa fa-arrow-down" },
+        { icon: "fa fa-arrow-left" },
+        { icon: "fa fa-arrow-right" },
+        { icon: "fa fa-arrow-up" },
+        { icon: "fa fa-arrows" },
+        { icon: "fa fa-arrows-alt" },
+        { icon: "fa fa-arrows-h" },
+        { icon: "fa fa-arrows-v" },
+        { icon: "fa fa-asterisk" },
+        { icon: "fa fa-at" },
+        { icon: "fa fa-backward" },
+        { icon: "fa fa-balance-scale" },
+        { icon: "fa fa-ban" },
+        { icon: "fa fa-bar-chart" },
+        { icon: "fa fa-barcode" },
+        { icon: "fa fa-bars" },
+        { icon: "fa fa-battery-empty" },
+        { icon: "fa fa-battery-full" },
+        { icon: "fa fa-battery-half" },
+        { icon: "fa fa-battery-quarter" },
+        { icon: "fa fa-battery-three-quarters" },
+        { icon: "fa fa-bed" },
+        { icon: "fa fa-beer" },
+        { icon: "fa fa-behance" },
+        { icon: "fa fa-behance-square" },
+        { icon: "fa fa-bell" },
+        { icon: "fa fa-bell-o" },
+        { icon: "fa fa-bell-slash" },
+        { icon: "fa fa-bell-slash-o" },
+        { icon: "fa fa-bicycle" },
+        { icon: "fa fa-binoculars" },
+        { icon: "fa fa-birthday-cake" },
+        { icon: "fa fa-bitbucket" },
+        { icon: "fa fa-bitbucket-square" },
+        { icon: "fa fa-black-tie" },
+        { icon: "fa fa-bold" },
+        { icon: "fa fa-bolt" },
+        { icon: "fa fa-bomb" },
+        { icon: "fa fa-book" },
+        { icon: "fa fa-bookmark" },
+        { icon: "fa fa-bookmark-o" },
+        { icon: "fa fa-briefcase" },
+        { icon: "fa fa-btc" },
+        { icon: "fa fa-bug" },
+        { icon: "fa fa-building" },
+        { icon: "fa fa-building-o" },
+        { icon: "fa fa-bullhorn" },
+        { icon: "fa fa-bullseye" },
+        { icon: "fa fa-bus" },
+        { icon: "fa fa-buysellads" },
+        { icon: "fa fa-calculator" },
+        { icon: "fa fa-calendar" },
+        { icon: "fa fa-calendar-check-o" },
+        { icon: "fa fa-calendar-minus-o" },
+        { icon: "fa fa-calendar-o" },
+        { icon: "fa fa-calendar-plus-o" },
+        { icon: "fa fa-calendar-times-o" },
+        { icon: "fa fa-camera" },
+        { icon: "fa fa-camera-retro" },
+        { icon: "fa fa-car" },
+        { icon: "fa fa-caret-down" },
+        { icon: "fa fa-caret-left" },
+        { icon: "fa fa-caret-right" },
+        { icon: "fa fa-caret-square-o-down" },
+        { icon: "fa fa-caret-square-o-left" },
+        { icon: "fa fa-caret-square-o-right" },
+        { icon: "fa fa-caret-square-o-up" },
+        { icon: "fa fa-caret-up" },
+        { icon: "fa fa-cart-arrow-down" },
+        { icon: "fa fa-cart-plus" },
+        { icon: "fa fa-cc" },
+        { icon: "fa fa-cc-amex" },
+        { icon: "fa fa-cc-diners-club" },
+        { icon: "fa fa-cc-discover" },
+        { icon: "fa fa-cc-jcb" },
+        { icon: "fa fa-cc-mastercard" },
+        { icon: "fa fa-cc-paypal" },
+        { icon: "fa fa-cc-stripe" },
+        { icon: "fa fa-cc-visa" },
+        { icon: "fa fa-certificate" },
+        { icon: "fa fa-chain-broken" },
+        { icon: "fa fa-check" },
+        { icon: "fa fa-check-circle" },
+        { icon: "fa fa-check-circle-o" },
+        { icon: "fa fa-check-square" },
+        { icon: "fa fa-check-square-o" },
+        { icon: "fa fa-chevron-circle-down" },
+        { icon: "fa fa-chevron-circle-left" },
+        { icon: "fa fa-chevron-circle-right" },
+        { icon: "fa fa-chevron-circle-up" },
+        { icon: "fa fa-chevron-down" },
+        { icon: "fa fa-chevron-left" },
+        { icon: "fa fa-chevron-right" },
+        { icon: "fa fa-chevron-up" },
+        { icon: "fa fa-child" },
+        { icon: "fa fa-chrome" },
+        { icon: "fa fa-circle" },
+        { icon: "fa fa-circle-o" },
+        { icon: "fa fa-circle-o-notch" },
+        { icon: "fa fa-circle-thin" },
+        { icon: "fa fa-clipboard" },
+        { icon: "fa fa-clock-o" },
+        { icon: "fa fa-clone" },
+        { icon: "fa fa-cloud" },
+        { icon: "fa fa-cloud-download" },
+        { icon: "fa fa-cloud-upload" },
+        { icon: "fa fa-code" },
+        { icon: "fa fa-code-fork" },
+        { icon: "fa fa-codepen" },
+        { icon: "fa fa-coffee" },
+        { icon: "fa fa-cog" },
+        { icon: "fa fa-cogs" },
+        { icon: "fa fa-columns" },
+        { icon: "fa fa-comment" },
+        { icon: "fa fa-comment-o" },
+        { icon: "fa fa-commenting" },
+        { icon: "fa fa-commenting-o" },
+        { icon: "fa fa-comments" },
+        { icon: "fa fa-comments-o" },
+        { icon: "fa fa-compass" },
+        { icon: "fa fa-compress" },
+        { icon: "fa fa-connectdevelop" },
+        { icon: "fa fa-contao" },
+        { icon: "fa fa-copyright" },
+        { icon: "fa fa-creative-commons" },
+        { icon: "fa fa-credit-card" },
+        { icon: "fa fa-crop" },
+        { icon: "fa fa-crosshairs" },
+        { icon: "fa fa-css3" },
+        { icon: "fa fa-cube" },
+        { icon: "fa fa-cubes" },
+        { icon: "fa fa-cutlery" },
+        { icon: "fa fa-dashcube" },
+        { icon: "fa fa-database" },
+        { icon: "fa fa-delicious" },
+        { icon: "fa fa-desktop" },
+        { icon: "fa fa-deviantart" },
+        { icon: "fa fa-diamond" },
+        { icon: "fa fa-digg" },
+        { icon: "fa fa-dot-circle-o" },
+        { icon: "fa fa-download" },
+        { icon: "fa fa-dribbble" },
+        { icon: "fa fa-dropbox" },
+        { icon: "fa fa-drupal" },
+        { icon: "fa fa-eject" },
+        { icon: "fa fa-ellipsis-h" },
+        { icon: "fa fa-ellipsis-v" },
+        { icon: "fa fa-empire" },
+        { icon: "fa fa-envelope" },
+        { icon: "fa fa-envelope-o" },
+        { icon: "fa fa-envelope-square" },
+        { icon: "fa fa-eraser" },
+        { icon: "fa fa-eur" },
+        { icon: "fa fa-exchange" },
+        { icon: "fa fa-exclamation" },
+        { icon: "fa fa-exclamation-circle" },
+        { icon: "fa fa-exclamation-triangle" },
+        { icon: "fa fa-expand" },
+        { icon: "fa fa-expeditedssl" },
+        { icon: "fa fa-external-link" },
+        { icon: "fa fa-external-link-square" },
+        { icon: "fa fa-eye" },
+        { icon: "fa fa-eye-slash" },
+        { icon: "fa fa-eyedropper" },
+        { icon: "fa fa-facebook" },
+        { icon: "fa fa-facebook-official" },
+        { icon: "fa fa-facebook-square" },
+        { icon: "fa fa-fast-backward" },
+        { icon: "fa fa-fast-forward" },
+        { icon: "fa fa-fax" },
+        { icon: "fa fa-female" },
+        { icon: "fa fa-fighter-jet" },
+        { icon: "fa fa-file" },
+        { icon: "fa fa-file-archive-o" },
+        { icon: "fa fa-file-audio-o" },
+        { icon: "fa fa-file-code-o" },
+        { icon: "fa fa-file-excel-o" },
+        { icon: "fa fa-file-image-o" },
+        { icon: "fa fa-file-o" },
+        { icon: "fa fa-file-pdf-o" },
+        { icon: "fa fa-file-powerpoint-o" },
+        { icon: "fa fa-file-text" },
+        { icon: "fa fa-file-text-o" },
+        { icon: "fa fa-file-video-o" },
+        { icon: "fa fa-file-word-o" },
+        { icon: "fa fa-files-o" },
+        { icon: "fa fa-film" },
+        { icon: "fa fa-filter" },
+        { icon: "fa fa-fire" },
+        { icon: "fa fa-fire-extinguisher" },
+        { icon: "fa fa-firefox" },
+        { icon: "fa fa-flag" },
+        { icon: "fa fa-flag-checkered" },
+        { icon: "fa fa-flag-o" },
+        { icon: "fa fa-flask" },
+        { icon: "fa fa-flickr" },
+        { icon: "fa fa-floppy-o" },
+        { icon: "fa fa-folder" },
+        { icon: "fa fa-folder-o" },
+        { icon: "fa fa-folder-open" },
+        { icon: "fa fa-folder-open-o" },
+        { icon: "fa fa-font" },
+        { icon: "fa fa-fonticons" },
+        { icon: "fa fa-forumbee" },
+        { icon: "fa fa-forward" },
+        { icon: "fa fa-foursquare" },
+        { icon: "fa fa-frown-o" },
+        { icon: "fa fa-futbol-o" },
+        { icon: "fa fa-gamepad" },
+        { icon: "fa fa-gavel" },
+        { icon: "fa fa-gbp" },
+        { icon: "fa fa-genderless" },
+        { icon: "fa fa-get-pocket" },
+        { icon: "fa fa-gg" },
+        { icon: "fa fa-gg-circle" },
+        { icon: "fa fa-gift" },
+        { icon: "fa fa-git" },
+        { icon: "fa fa-git-square" },
+        { icon: "fa fa-github" },
+        { icon: "fa fa-github-alt" },
+        { icon: "fa fa-github-square" },
+        { icon: "fa fa-glass" },
+        { icon: "fa fa-globe" },
+        { icon: "fa fa-google" },
+        { icon: "fa fa-google-plus" },
+        { icon: "fa fa-google-plus-square" },
+        { icon: "fa fa-google-wallet" },
+        { icon: "fa fa-graduation-cap" },
+        { icon: "fa fa-gratipay" },
+        { icon: "fa fa-h-square" },
+        { icon: "fa fa-hacker-news" },
+        { icon: "fa fa-hand-lizard-o" },
+        { icon: "fa fa-hand-o-down" },
+        { icon: "fa fa-hand-o-left" },
+        { icon: "fa fa-hand-o-right" },
+        { icon: "fa fa-hand-o-up" },
+        { icon: "fa fa-hand-paper-o" },
+        { icon: "fa fa-hand-peace-o" },
+        { icon: "fa fa-hand-pointer-o" },
+        { icon: "fa fa-hand-rock-o" },
+        { icon: "fa fa-hand-scissors-o" },
+        { icon: "fa fa-hand-spock-o" },
+        { icon: "fa fa-hdd-o" },
+        { icon: "fa fa-header" },
+        { icon: "fa fa-headphones" },
+        { icon: "fa fa-heart" },
+        { icon: "fa fa-heart-o" },
+        { icon: "fa fa-heartbeat" },
+        { icon: "fa fa-history" },
+        { icon: "fa fa-home" },
+        { icon: "fa fa-hospital-o" },
+        { icon: "fa fa-hourglass" },
+        { icon: "fa fa-hourglass-end" },
+        { icon: "fa fa-hourglass-half" },
+        { icon: "fa fa-hourglass-o" },
+        { icon: "fa fa-hourglass-start" },
+        { icon: "fa fa-houzz" },
+        { icon: "fa fa-html5" },
+        { icon: "fa fa-i-cursor" },
+        { icon: "fa fa-ils" },
+        { icon: "fa fa-inbox" },
+        { icon: "fa fa-indent" },
+        { icon: "fa fa-industry" },
+        { icon: "fa fa-info" },
+        { icon: "fa fa-info-circle" },
+        { icon: "fa fa-inr" },
+        { icon: "fa fa-instagram" },
+        { icon: "fa fa-internet-explorer" },
+        { icon: "fa fa-ioxhost" },
+        { icon: "fa fa-italic" },
+        { icon: "fa fa-joomla" },
+        { icon: "fa fa-jpy" },
+        { icon: "fa fa-jsfiddle" },
+        { icon: "fa fa-key" },
+        { icon: "fa fa-keyboard-o" },
+        { icon: "fa fa-krw" },
+        { icon: "fa fa-language" },
+        { icon: "fa fa-laptop" },
+        { icon: "fa fa-lastfm" },
+        { icon: "fa fa-lastfm-square" },
+        { icon: "fa fa-leaf" },
+        { icon: "fa fa-leanpub" },
+        { icon: "fa fa-lemon-o" },
+        { icon: "fa fa-level-down" },
+        { icon: "fa fa-level-up" },
+        { icon: "fa fa-life-ring" },
+        { icon: "fa fa-lightbulb-o" },
+        { icon: "fa fa-line-chart" },
+        { icon: "fa fa-link" },
+        { icon: "fa fa-linkedin" },
+        { icon: "fa fa-linkedin-square" },
+        { icon: "fa fa-linux" },
+        { icon: "fa fa-list" },
+        { icon: "fa fa-list-alt" },
+        { icon: "fa fa-list-ol" },
+        { icon: "fa fa-list-ul" },
+        { icon: "fa fa-location-arrow" },
+        { icon: "fa fa-lock" },
+        { icon: "fa fa-long-arrow-down" },
+        { icon: "fa fa-long-arrow-left" },
+        { icon: "fa fa-long-arrow-right" },
+        { icon: "fa fa-long-arrow-up" },
+        { icon: "fa fa-magic" },
+        { icon: "fa fa-magnet" },
+        { icon: "fa fa-male" },
+        { icon: "fa fa-map" },
+        { icon: "fa fa-map-marker" },
+        { icon: "fa fa-map-o" },
+        { icon: "fa fa-map-pin" },
+        { icon: "fa fa-map-signs" },
+        { icon: "fa fa-mars" },
+        { icon: "fa fa-mars-double" },
+        { icon: "fa fa-mars-stroke" },
+        { icon: "fa fa-mars-stroke-h" },
+        { icon: "fa fa-mars-stroke-v" },
+        { icon: "fa fa-maxcdn" },
+        { icon: "fa fa-meanpath" },
+        { icon: "fa fa-medium" },
+        { icon: "fa fa-medkit" },
+        { icon: "fa fa-meh-o" },
+        { icon: "fa fa-mercury" },
+        { icon: "fa fa-microphone" },
+        { icon: "fa fa-microphone-slash" },
+        { icon: "fa fa-minus" },
+        { icon: "fa fa-minus-circle" },
+        { icon: "fa fa-minus-square" },
+        { icon: "fa fa-minus-square-o" },
+        { icon: "fa fa-mobile" },
+        { icon: "fa fa-money" },
+        { icon: "fa fa-moon-o" },
+        { icon: "fa fa-motorcycle" },
+        { icon: "fa fa-mouse-pointer" },
+        { icon: "fa fa-music" },
+        { icon: "fa fa-neuter" },
+        { icon: "fa fa-newspaper-o" },
+        { icon: "fa fa-object-group" },
+        { icon: "fa fa-object-ungroup" },
+        { icon: "fa fa-odnoklassniki" },
+        { icon: "fa fa-odnoklassniki-square" },
+        { icon: "fa fa-opencart" },
+        { icon: "fa fa-openid" },
+        { icon: "fa fa-opera" },
+        { icon: "fa fa-optin-monster" },
+        { icon: "fa fa-outdent" },
+        { icon: "fa fa-pagelines" },
+        { icon: "fa fa-paint-brush" },
+        { icon: "fa fa-paper-plane" },
+        { icon: "fa fa-paper-plane-o" },
+        { icon: "fa fa-paperclip" },
+        { icon: "fa fa-paragraph" },
+        { icon: "fa fa-pause" },
+        { icon: "fa fa-paw" },
+        { icon: "fa fa-paypal" },
+        { icon: "fa fa-pencil" },
+        { icon: "fa fa-pencil-square" },
+        { icon: "fa fa-pencil-square-o" },
+        { icon: "fa fa-phone" },
+        { icon: "fa fa-phone-square" },
+        { icon: "fa fa-picture-o" },
+        { icon: "fa fa-pie-chart" },
+        { icon: "fa fa-pied-piper" },
+        { icon: "fa fa-pied-piper-alt" },
+        { icon: "fa fa-pinterest" },
+        { icon: "fa fa-pinterest-p" },
+        { icon: "fa fa-pinterest-square" },
+        { icon: "fa fa-plane" },
+        { icon: "fa fa-play" },
+        { icon: "fa fa-play-circle" },
+        { icon: "fa fa-play-circle-o" },
+        { icon: "fa fa-plug" },
+        { icon: "fa fa-plus" },
+        { icon: "fa fa-plus-circle" },
+        { icon: "fa fa-plus-square" },
+        { icon: "fa fa-plus-square-o" },
+        { icon: "fa fa-power-off" },
+        { icon: "fa fa-print" },
+        { icon: "fa fa-puzzle-piece" },
+        { icon: "fa fa-qq" },
+        { icon: "fa fa-qrcode" },
+        { icon: "fa fa-question" },
+        { icon: "fa fa-question-circle" },
+        { icon: "fa fa-quote-left" },
+        { icon: "fa fa-quote-right" },
+        { icon: "fa fa-random" },
+        { icon: "fa fa-rebel" },
+        { icon: "fa fa-recycle" },
+        { icon: "fa fa-reddit" },
+        { icon: "fa fa-reddit-square" },
+        { icon: "fa fa-refresh" },
+        { icon: "fa fa-registered" },
+        { icon: "fa fa-renren" },
+        { icon: "fa fa-repeat" },
+        { icon: "fa fa-reply" },
+        { icon: "fa fa-reply-all" },
+        { icon: "fa fa-retweet" },
+        { icon: "fa fa-road" },
+        { icon: "fa fa-rocket" },
+        { icon: "fa fa-rss" },
+        { icon: "fa fa-rss-square" },
+        { icon: "fa fa-rub" },
+        { icon: "fa fa-safari" },
+        { icon: "fa fa-scissors" },
+        { icon: "fa fa-search" },
+        { icon: "fa fa-search-minus" },
+        { icon: "fa fa-search-plus" },
+        { icon: "fa fa-sellsy" },
+        { icon: "fa fa-server" },
+        { icon: "fa fa-share" },
+        { icon: "fa fa-share-alt" },
+        { icon: "fa fa-share-alt-square" },
+        { icon: "fa fa-share-square" },
+        { icon: "fa fa-share-square-o" },
+        { icon: "fa fa-shield" },
+        { icon: "fa fa-ship" },
+        { icon: "fa fa-shirtsinbulk" },
+        { icon: "fa fa-shopping-cart" },
+        { icon: "fa fa-sign-in" },
+        { icon: "fa fa-sign-out" },
+        { icon: "fa fa-signal" },
+        { icon: "fa fa-simplybuilt" },
+        { icon: "fa fa-sitemap" },
+        { icon: "fa fa-skyatlas" },
+        { icon: "fa fa-skype" },
+        { icon: "fa fa-slack" },
+        { icon: "fa fa-sliders" },
+        { icon: "fa fa-slideshare" },
+        { icon: "fa fa-smile-o" },
+        { icon: "fa fa-sort" },
+        { icon: "fa fa-sort-alpha-asc" },
+        { icon: "fa fa-sort-alpha-desc" },
+        { icon: "fa fa-sort-amount-asc" },
+        { icon: "fa fa-sort-amount-desc" },
+        { icon: "fa fa-sort-asc" },
+        { icon: "fa fa-sort-desc" },
+        { icon: "fa fa-sort-numeric-asc" },
+        { icon: "fa fa-sort-numeric-desc" },
+        { icon: "fa fa-soundcloud" },
+        { icon: "fa fa-space-shuttle" },
+        { icon: "fa fa-spinner" },
+        { icon: "fa fa-spoon" },
+        { icon: "fa fa-spotify" },
+        { icon: "fa fa-square" },
+        { icon: "fa fa-square-o" },
+        { icon: "fa fa-stack-exchange" },
+        { icon: "fa fa-stack-overflow" },
+        { icon: "fa fa-star" },
+        { icon: "fa fa-star-half" },
+        { icon: "fa fa-star-half-o" },
+        { icon: "fa fa-star-o" },
+        { icon: "fa fa-steam" },
+        { icon: "fa fa-steam-square" },
+        { icon: "fa fa-step-backward" },
+        { icon: "fa fa-step-forward" },
+        { icon: "fa fa-stethoscope" },
+        { icon: "fa fa-sticky-note" },
+        { icon: "fa fa-sticky-note-o" },
+        { icon: "fa fa-stop" },
+        { icon: "fa fa-street-view" },
+        { icon: "fa fa-strikethrough" },
+        { icon: "fa fa-stumbleupon" },
+        { icon: "fa fa-stumbleupon-circle" },
+        { icon: "fa fa-subscript" },
+        { icon: "fa fa-subway" },
+        { icon: "fa fa-suitcase" },
+        { icon: "fa fa-sun-o" },
+        { icon: "fa fa-superscript" },
+        { icon: "fa fa-table" },
+        { icon: "fa fa-tablet" },
+        { icon: "fa fa-tachometer" },
+        { icon: "fa fa-tag" },
+        { icon: "fa fa-tags" },
+        { icon: "fa fa-tasks" },
+        { icon: "fa fa-taxi" },
+        { icon: "fa fa-television" },
+        { icon: "fa fa-tencent-weibo" },
+        { icon: "fa fa-terminal" },
+        { icon: "fa fa-text-height" },
+        { icon: "fa fa-text-width" },
+        { icon: "fa fa-th" },
+        { icon: "fa fa-th-large" },
+        { icon: "fa fa-th-list" },
+        { icon: "fa fa-thumb-tack" },
+        { icon: "fa fa-thumbs-down" },
+        { icon: "fa fa-thumbs-o-down" },
+        { icon: "fa fa-thumbs-o-up" },
+        { icon: "fa fa-thumbs-up" },
+        { icon: "fa fa-ticket" },
+        { icon: "fa fa-times" },
+        { icon: "fa fa-times-circle" },
+        { icon: "fa fa-times-circle-o" },
+        { icon: "fa fa-tint" },
+        { icon: "fa fa-toggle-off" },
+        { icon: "fa fa-toggle-on" },
+        { icon: "fa fa-trademark" },
+        { icon: "fa fa-train" },
+        { icon: "fa fa-transgender" },
+        { icon: "fa fa-transgender-alt" },
+        { icon: "fa fa-trash" },
+        { icon: "fa fa-trash-o" },
+        { icon: "fa fa-tree" },
+        { icon: "fa fa-trello" },
+        { icon: "fa fa-tripadvisor" },
+        { icon: "fa fa-trophy" },
+        { icon: "fa fa-truck" },
+        { icon: "fa fa-try" },
+        { icon: "fa fa-tty" },
+        { icon: "fa fa-tumblr" },
+        { icon: "fa fa-tumblr-square" },
+        { icon: "fa fa-twitch" },
+        { icon: "fa fa-twitter" },
+        { icon: "fa fa-twitter-square" },
+        { icon: "fa fa-umbrella" },
+        { icon: "fa fa-underline" },
+        { icon: "fa fa-undo" },
+        { icon: "fa fa-university" },
+        { icon: "fa fa-unlock" },
+        { icon: "fa fa-unlock-alt" },
+        { icon: "fa fa-upload" },
+        { icon: "fa fa-usd" },
+        { icon: "fa fa-user" },
+        { icon: "fa fa-user-md" },
+        { icon: "fa fa-user-plus" },
+        { icon: "fa fa-user-secret" },
+        { icon: "fa fa-user-times" },
+        { icon: "fa fa-users" },
+        { icon: "fa fa-venus" },
+        { icon: "fa fa-venus-double" },
+        { icon: "fa fa-venus-mars" },
+        { icon: "fa fa-viacoin" },
+        { icon: "fa fa-video-camera" },
+        { icon: "fa fa-vimeo" },
+        { icon: "fa fa-vimeo-square" },
+        { icon: "fa fa-vine" },
+        { icon: "fa fa-vk" },
+        { icon: "fa fa-volume-down" },
+        { icon: "fa fa-volume-off" },
+        { icon: "fa fa-volume-up" },
+        { icon: "fa fa-weibo" },
+        { icon: "fa fa-weixin" },
+        { icon: "fa fa-whatsapp" },
+        { icon: "fa fa-wheelchair" },
+        { icon: "fa fa-wifi" },
+        { icon: "fa fa-wikipedia-w" },
+        { icon: "fa fa-windows" },
+        { icon: "fa fa-wordpress" },
+        { icon: "fa fa-wrench" },
+        { icon: "fa fa-xing" },
+        { icon: "fa fa-xing-square" },
+        { icon: "fa fa-y-combinator" },
+        { icon: "fa fa-yahoo" },
+        { icon: "fa fa-yelp" },
+        { icon: "fa fa-youtube" },
+        { icon: "fa fa-youtube-play" },
+        { icon: "fa fa-youtube-square" },
+      ],
+    };
+  },
+  created() {
+    console.log("Loading tables...");
+
+    axios.get("/adm/dbtables").then((response) => {
+      if (response.data.status == "success") {
+        this.tables = Object.values(response.data.tables);
+        this.jsonfiles = Object.values(response.data.jsonfiles);
+      }
+    });
+
+    this.$nextTick(() => {
+      axios
+        .get("/adm/crud-generator/api/data/" + this.$route.params.file)
+        .then((response) => {
+          this.languages = response.data.languages;
+          this.groups = response.data.groups;
+          if (response.data.content) {
+            this.table = response.data.content.table;
+            this.inputs = response.data.content.inputs;
+          }
+          this.loaded = 1;
+
+          let menues = this.jsonfiles; //this.$parent.cm
+
+          this.menues = menues; //menues.flatMap(x => x.label)
+        });
+    });
+  },
+  mounted() {},
+  watch: {
+    "inputs.length"() {},
+    "table.generateUser"(value) {
+      console.log(value);
+      let index = this.inputs.findIndex(function (asd) {
+        return asd.columnname == "username";
+      });
+
+      console.log(index);
+
+      if (value == true && index == -1) {
+        let newInputs = [];
+        let oldInputs = this.inputs;
+
+        // push username, password, email
+        this.inputs.unshift(
+          {
+            isCollapsed: false,
+            columnname: "username",
+            icon: "",
+            type: "text",
+            visible: 1,
+            gridcols: 6,
+            visible_edit: 1,
+            translatable: 0,
+            label: { es: "User", en: "" },
+            unique: 1,
+            default: "",
+            nullable: 0,
+            validate: 1,
+          },
+          {
+            isCollapsed: false,
+            columnname: "password",
+            icon: "",
+            type: "password",
+            visible: 1,
+            gridcols: 6,
+            visible_edit: 1,
+            translatable: 0,
+            label: { es: "Contraseña", en: "Password", pt: "Senha" },
+            unique: 1,
+            default: "",
+            nullable: 0,
+            validate: 1,
+          },
+          {
+            isCollapsed: false,
+            columnname: "name",
+            icon: "",
+            type: "text",
+            visible: 1,
+            gridcols: 6,
+            visible_edit: 1,
+            translatable: 0,
+            label: { es: "Nombre", en: "Name", pt: "Nome" },
+            unique: 1,
+            default: "",
+            nullable: 0,
+            validate: 1,
+          },
+          {
+            isCollapsed: false,
+            columnname: "email",
+            icon: "",
+            type: "text",
+            visible: 1,
+            gridcols: 6,
+            visible_edit: 1,
+            translatable: 0,
+            label: { es: "Correo", en: "Email", pt: "Email" },
+            unique: 1,
+            default: "",
+            nullable: 0,
+            validate: 1,
+          }
+        );
+
+        // set
+      }
+
+      if (value == false && index >= 0) {
+        this.inputs.splice(0, 4);
+        //console.log(this.inputs)
+      }
+    },
+  },
+  methods: {
+    onDragHover(evt, index) {
+      console.log(index);
+
+      //this.arraymove(this.inputs, this.selectedInputKey, index)
+      //this.dragging = 1
+    },
+    startDrag(fromIndex) {
+      this.dragging = true;
+      this.selectedInputKey = fromIndex;
+      /* evt.dataTransfer.dropEffect = 'move'
+      evt.dataTransfer.effectAllowed = 'move'
+      evt.dataTransfer.setData('itemID', item.columnname)*/
+    },
+    onDrop(toIndex) {
+      this.dragging = false;
+      // console.log(toIndex)
+      //this.arraymove(this.inputs,  toIndex, this.selectedInputKey)
+
+      // this.inputs.splice(this.selectedInputKey, );
+    },
+    arraymove(arr, fromIndex, toIndex) {
+      var element = arr[fromIndex];
+      arr.splice(fromIndex, 1);
+      arr.splice(toIndex, 0, element);
+      this.dragging = false;
+    },
+    addOption(input) {
+      if (!Array.isArray(input.options)) {
+        this.$set(input, "options", []);
+        // input.options = Vue.observable([])
+      }
+      input.options.push({
+        key: "",
+        text: "",
+      });
+    },
+    removeOption(input, key) {
+      input.options.splice(key, 1);
+    },
+    languagesKeys() {
+      this.languages.keys;
+    },
+
+    selectInput(inputKey) {
+      this.selectedInput = this.inputs[inputKey];
+      this.selectedInputKey = inputKey;
+    },
+    updateInput(value, inputKey) {
+      // console.log('jsonmodified',value)
+      // console.log('actualinput', this.inputs[inputKey])
+      // this.inputs[inputKey] = JSON.parse(value)
+    },
+    addInput() {
+      this.checkMigrate = 1;
+
+      let getlenght = this.inputs.length + 1;
+
+      this.inputs.push({
+        isCollapsed: true,
+        columnname: "input_" + getlenght,
+        icon: "",
+        type: "text",
+        visible: 1,
+        gridcols: 3,
+        visible_edit: 1,
+        label: { es:  "input_" + getlenght, en: "input_" + getlenght },
+        unique: 0,
+        default: "",
+        nullable: 1,
+        validate: 1,
+        max: "",
+        min: "",
+        tabledata: "",
+        tablekeycolumn: "",
+        tabletextcolumn: "",
+        translatable: 0,
+        multiple: false,
+      });
+    },
+    inputParams(input) {
+      let params = [];
+      if (input.type == "text") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min",
+          "translatable"
+        );
+      }
+      if (input.type == "icon") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min",
+          "translatable"
+        );
+      }
+      if (input.type == "textarea") {
+        params.push(
+          "validate",
+          "label",
+          "default",
+          "nullable",
+          "validate",
+          "translatable"
+        );
+      }
+      if (input.type == "email") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "url") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "tel") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "number") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "money") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "password") {
+        params.push(
+          "validate",
+          "label",
+          "unique",
+          "default",
+          "nullable",
+          "validate",
+          "max",
+          "min"
+        );
+      }
+      if (input.type == "boolean") {
+        params.push("label", "default");
+      }
+      if (input.type == "multimedia_file") {
+        params.push("listable", "validate", "label", "nullable");
+      }
+      if (input.type == "file") {
+        params.push("listable", "validate", "label", "nullable");
+      }
+      if (input.type == "gallery") {
+        params.push("listable", "validate", "label", "nullable");
+      }
+      if (input.type == "date") {
+        params.push("validate", "label", "nullable", "validate");
+      }
+      if (input.type == "time") {
+        params.push("validate", "label", "nullable", "validate");
+      }
+      if (input.type == "datetime") {
+        params.push("validate", "label", "nullable", "validate");
+      }
+      if (input.type == "week") {
+        params.push("validate", "label", "nullable", "validate");
+      }
+
+      if (input.type == "select") {
+        params.push(
+          "validate",
+          "label",
+          "default",
+          "nullable",
+          "validate",
+          "valueoriginselector",
+          "multiple"
+        );
+      }
+      if (input.type == "radio") {
+        params.push(
+          "validate",
+          "label",
+          "default",
+          "nullable",
+          "validate",
+          "valueoriginselector"
+        );
+      }
+      if (input.type == "checkbox") {
+        params.push(
+          "validate",
+          "label",
+          "default",
+          "nullable",
+          "validate",
+          "valueoriginselector"
+        );
+      }
+      if (input.type == "subForm") {
+        params.push(
+          "listable",
+          "settable",
+          "validate",
+          "label",
+          "default",
+          "gridcols",
+          "nullable",
+          "tabledata",
+          "tablekeycolumn"
+        );
+      }
+      if (input.type == "VueComponent") {
+        params.push("referencecolumn");
+      }
+      if (input.type == "VueLink") {
+        params.push("icon");
+      }
+      //params.push('visible')
+      return params;
+    },
+    rmInput(key) {
+      this.$confirm.require({
+        message: "Seguro ?",
+        header: "Eliminar",
+        icon: "pi pi-exclamation-triangle",
+        acceptClass: "p-button-danger",
+        acceptLabel: "Sí",
+        rejectLabel: "No",
+        accept: () => {
+          //callback to execute when user confirms the action
+          this.inputs.splice(key, 1);
+          this.selectedInputKey = null
+          this.checkMigrate = 1;
         },
-        components: {},
-        data(){
-            return{
-                checkMigrate: 0,
-                menues: null,
-                tables: null,
-                languages: {},
-                submitted: false,
-                validationErrors: {},
-                table: {
-                    icon: 'pi pi-angle-double-right',
-                    singlepage: false,
-                    id: 1,
-                    uuid: 0,
-                    tablename: '',
-                    name: { es: '', en: '' },
-                    timestamps: 1,
-                    softDeletes: 1,
-                    menu_show: 1,
-                    slug: 0,
-                    slug_global: 0
-                },
-                jsonfiles: [],
-                inputs: [],
-                loaded: 0,
-                groups: [],
-                seltypes: [ 'table', 'values' ],
-                itypes: [
-                            'text',                            
-                            'textarea',
-                            'boolean',
-                            'select',                            
-                            'radio',
-                            'checkbox',
-                            'file',
-                            'icon',
-                            'email',
-                            'url',
-                            'tel',
-                            'number',
-                            'money',
-                            'password',
-                            'date',
-                            'time',
-                            'datetime',
-                            'VueComponent',
-                            'VueLink',
-                            'bigInteger',
-                            'subForm',
-                            'color',
-                            'youTube'
-
-                        ],
-                icons: [
-                        { icon: 'pi pi-align-center' },
-                        { icon: 'pi pi-align-justify' },
-                        { icon: 'pi pi-align-left' },
-                        { icon: 'pi pi-align-right' },
-                        { icon: 'pi pi-android' },
-                        { icon: 'pi pi-angle-double-down' },
-                        { icon: 'pi pi-angle-double-left' },
-                        { icon: 'pi pi-angle-double-right' },
-                        { icon: 'pi pi-angle-double-up' },
-                        { icon: 'pi pi-angle-down' },
-                        { icon: 'pi pi-angle-left' },
-                        { icon: 'pi pi-angle-right' },
-                        { icon: 'pi pi-angle-up' },
-                        { icon: 'pi pi-apple' },
-                        { icon: 'pi pi-arrow-circle-down' },
-                        { icon: 'pi pi-arrow-circle-left' },
-                        { icon: 'pi pi-arrow-circle-right' },
-                        { icon: 'pi pi-arrow-circle-up' },
-                        { icon: 'pi pi-arrow-down' },
-                        { icon: 'pi pi-arrow-left' },
-                        { icon: 'pi pi-arrow-right' },
-                        { icon: 'pi pi-arrow-up' },
-                        { icon: 'pi pi-backward' },
-                        { icon: 'pi pi-ban' },
-                        { icon: 'pi pi-bars' },
-                        { icon: 'pi pi-bell' },
-                        { icon: 'pi pi-bookmark' },
-                        { icon: 'pi pi-briefcase' },
-                        { icon: 'pi pi-calendar' },
-                        { icon: 'pi pi-calendar-minus' },
-                        { icon: 'pi pi-calendar-plus' },
-                        { icon: 'pi pi-calendar-times' },
-                        { icon: 'pi pi-camera' },
-                        { icon: 'pi pi-caret-down' },
-                        { icon: 'pi pi-caret-left' },
-                        { icon: 'pi pi-caret-right' },
-                        { icon: 'pi pi-caret-up' },
-                        { icon: 'pi pi-chart-bar' },
-                        { icon: 'pi pi-chart-line' },
-                        { icon: 'pi pi-check' },
-                        { icon: 'pi pi-check-circle' },
-                        { icon: 'pi pi-check-square' },
-                        { icon: 'pi pi-chevron-circle-down' },
-                        { icon: 'pi pi-chevron-circle-left' },
-                        { icon: 'pi pi-chevron-circle-right' },
-                        { icon: 'pi pi-chevron-circle-up' },
-                        { icon: 'pi pi-chevron-down' },
-                        { icon: 'pi pi-chevron-left' },
-                        { icon: 'pi pi-chevron-right' },
-                        { icon: 'pi pi-chevron-up' },
-                        { icon: 'pi pi-circle-off' },
-                        { icon: 'pi pi-circle-on' },
-                        { icon: 'pi pi-clock' },
-                        { icon: 'pi pi-clone' },
-                        { icon: 'pi pi-cloud' },
-                        { icon: 'pi pi-cloud-download' },
-                        { icon: 'pi pi-cloud-upload' },
-                        { icon: 'pi pi-cog' },
-                        { icon: 'pi pi-comment' },
-                        { icon: 'pi pi-comments' },
-                        { icon: 'pi pi-compass' },
-                        { icon: 'pi pi-copy' },
-                        { icon: 'pi pi-desktop' },
-                        { icon: 'pi pi-directions' },
-                        { icon: 'pi pi-directions-alt' },
-                        { icon: 'pi pi-dollar' },
-                        { icon: 'pi pi-download' },
-                        { icon: 'pi pi-eject' },
-                        { icon: 'pi pi-ellipsis-h' },
-                        { icon: 'pi pi-ellipsis-v' },
-                        { icon: 'pi pi-envelope' },
-                        { icon: 'pi pi-exclamation-circle' },
-                        { icon: 'pi pi-exclamation-triangle' },
-                        { icon: 'pi pi-external-link' },
-                        { icon: 'pi pi-eye' },
-                        { icon: 'pi pi-eye-slash' },
-                        { icon: 'pi pi-facebook' },
-                        { icon: 'pi pi-fast-backward' },
-                        { icon: 'pi pi-fast-forward' },
-                        { icon: 'pi pi-file' },
-                        { icon: 'pi pi-file-excel' },
-                        { icon: 'pi pi-file-o' },
-                        { icon: 'pi pi-file-pdf' },
-                        { icon: 'pi pi-filter' },
-                        { icon: 'pi pi-folder' },
-                        { icon: 'pi pi-folder-open' },
-                        { icon: 'pi pi-forward' },
-                        { icon: 'pi pi-github' },
-                        { icon: 'pi pi-globe' },
-                        { icon: 'pi pi-google' },
-                        { icon: 'pi pi-heart' },
-                        { icon: 'pi pi-home' },
-                        { icon: 'pi pi-id-card' },
-                        { icon: 'pi pi-image' },
-                        { icon: 'pi pi-images' },
-                        { icon: 'pi pi-inbox' },
-                        { icon: 'pi pi-info' },
-                        { icon: 'pi pi-info-circle' },
-                        { icon: 'pi pi-key' },
-                        { icon: 'pi pi-list' },
-                        { icon: 'pi pi-lock' },
-                        { icon: 'pi pi-lock-open' },
-                        { icon: 'pi pi-map-marker' },
-                        { icon: 'pi pi-microsoft' },
-                        { icon: 'pi pi-minus' },
-                        { icon: 'pi pi-minus-circle' },
-                        { icon: 'pi pi-mobile' },
-                        { icon: 'pi pi-money-bill' },
-                        { icon: 'pi pi-palette' },
-                        { icon: 'pi pi-paperclip' },
-                        { icon: 'pi pi-pause' },
-                        { icon: 'pi pi-pencil' },
-                        { icon: 'pi pi-play' },
-                        { icon: 'pi pi-plus' },
-                        { icon: 'pi pi-plus-circle' },
-                        { icon: 'pi pi-power-off' },
-                        { icon: 'pi pi-print' },
-                        { icon: 'pi pi-question' },
-                        { icon: 'pi pi-question-circle' },
-                        { icon: 'pi pi-refresh' },
-                        { icon: 'pi pi-replay' },
-                        { icon: 'pi pi-reply' },
-                        { icon: 'pi pi-save' },
-                        { icon: 'pi pi-search' },
-                        { icon: 'pi pi-search-minus' },
-                        { icon: 'pi pi-search-plus' },
-                        { icon: 'pi pi-share-alt' },
-                        { icon: 'pi pi-shopping-cart' },
-                        { icon: 'pi pi-sign-in' },
-                        { icon: 'pi pi-sign-out' },
-                        { icon: 'pi pi-sitemap' },
-                        { icon: 'pi pi-sliders-h' },
-                        { icon: 'pi pi-sliders-v' },
-                        { icon: 'pi pi-sort' },
-                        { icon: 'pi pi-sort-alpha-down' },
-                        { icon: 'pi pi-sort-alpha-down-alt' },
-                        { icon: 'pi pi-sort-alpha-up' },
-                        { icon: 'pi pi-sort-alpha-up-alt' },
-                        { icon: 'pi pi-sort-alt' },
-                        { icon: 'pi pi-sort-amount-down' },
-                        { icon: 'pi pi-sort-amount-down-alt' },
-                        { icon: 'pi pi-sort-amount-up' },
-                        { icon: 'pi pi-sort-amount-up-alt' },
-                        { icon: 'pi pi-sort-down' },
-                        { icon: 'pi pi-sort-numeric-down' },
-                        { icon: 'pi pi-sort-numeric-down-alt' },
-                        { icon: 'pi pi-sort-numeric-up' },
-                        { icon: 'pi pi-sort-numeric-up-alt' },
-                        { icon: 'pi pi-sort-up' },
-                        { icon: 'pi pi-spinner' },
-                        { icon: 'pi pi-star' },
-                        { icon: 'pi pi-star-o' },
-                        { icon: 'pi pi-step-backward' },
-                        { icon: 'pi pi-step-backward-alt' },
-                        { icon: 'pi pi-step-forward' },
-                        { icon: 'pi pi-step-forward-alt' },
-                        { icon: 'pi pi-table' },
-                        { icon: 'pi pi-tablet' },
-                        { icon: 'pi pi-tag' },
-                        { icon: 'pi pi-tags' },
-                        { icon: 'pi pi-th-large' },
-                        { icon: 'pi pi-thumbs-down' },
-                        { icon: 'pi pi-thumbs-up' },
-                        { icon: 'pi pi-ticket' },
-                        { icon: 'pi pi-times' },
-                        { icon: 'pi pi-times-circle' },
-                        { icon: 'pi pi-trash' },
-                        { icon: 'pi pi-twitter' },
-                        { icon: 'pi pi-undo' },
-                        { icon: 'pi pi-unlock' },
-                        { icon: 'pi pi-upload' },
-                        { icon: 'pi pi-user' },
-                        { icon: 'pi pi-user-edit' },
-                        { icon: 'pi pi-user-minus' },
-                        { icon: 'pi pi-user-plus' },
-                        { icon: 'pi pi-users' },
-                        { icon: 'pi pi-video' },
-                        { icon: 'pi pi-volume-down' },
-                        { icon: 'pi pi-volume-off' },
-                        { icon: 'pi pi-volume-up' },
-                        { icon: 'pi pi-wifi' },
-                        { icon: 'pi pi-window-maximize' },
-                                                    { icon: "fa fa-500px" },
-                            { icon: "fa fa-adjust" },
-                            { icon: "fa fa-adn" },
-                            { icon: "fa fa-align-center" },
-                            { icon: "fa fa-align-justify" },
-                            { icon: "fa fa-align-left" },
-                            { icon: "fa fa-align-right" },
-                            { icon: "fa fa-amazon" },
-                            { icon: "fa fa-ambulance" },
-                            { icon: "fa fa-anchor" },
-                            { icon: "fa fa-android" },
-                            { icon: "fa fa-angellist" },
-                            { icon: "fa fa-angle-double-down" },
-                            { icon: "fa fa-angle-double-left" },
-                            { icon: "fa fa-angle-double-right" },
-                            { icon: "fa fa-angle-double-up" },
-                            { icon: "fa fa-angle-down" },
-                            { icon: "fa fa-angle-left" },
-                            { icon: "fa fa-angle-right" },
-                            { icon: "fa fa-angle-up" },
-                            { icon: "fa fa-apple" },
-                            { icon: "fa fa-archive" },
-                            { icon: "fa fa-area-chart" },
-                            { icon: "fa fa-arrow-circle-down" },
-                            { icon: "fa fa-arrow-circle-left" },
-                            { icon: "fa fa-arrow-circle-o-down" },
-                            { icon: "fa fa-arrow-circle-o-left" },
-                            { icon: "fa fa-arrow-circle-o-right" },
-                            { icon: "fa fa-arrow-circle-o-up" },
-                            { icon: "fa fa-arrow-circle-right" },
-                            { icon: "fa fa-arrow-circle-up" },
-                            { icon: "fa fa-arrow-down" },
-                            { icon: "fa fa-arrow-left" },
-                            { icon: "fa fa-arrow-right" },
-                            { icon: "fa fa-arrow-up" },
-                            { icon: "fa fa-arrows" },
-                            { icon: "fa fa-arrows-alt" },
-                            { icon: "fa fa-arrows-h" },
-                            { icon: "fa fa-arrows-v" },
-                            { icon: "fa fa-asterisk" },
-                            { icon: "fa fa-at" },
-                            { icon: "fa fa-backward" },
-                            { icon: "fa fa-balance-scale" },
-                            { icon: "fa fa-ban" },
-                            { icon: "fa fa-bar-chart" },
-                            { icon: "fa fa-barcode" },
-                            { icon: "fa fa-bars" },
-                            { icon: "fa fa-battery-empty" },
-                            { icon: "fa fa-battery-full" },
-                            { icon: "fa fa-battery-half" },
-                            { icon: "fa fa-battery-quarter" },
-                            { icon: "fa fa-battery-three-quarters" },
-                            { icon: "fa fa-bed" },
-                            { icon: "fa fa-beer" },
-                            { icon: "fa fa-behance" },
-                            { icon: "fa fa-behance-square" },
-                            { icon: "fa fa-bell" },
-                            { icon: "fa fa-bell-o" },
-                            { icon: "fa fa-bell-slash" },
-                            { icon: "fa fa-bell-slash-o" },
-                            { icon: "fa fa-bicycle" },
-                            { icon: "fa fa-binoculars" },
-                            { icon: "fa fa-birthday-cake" },
-                            { icon: "fa fa-bitbucket" },
-                            { icon: "fa fa-bitbucket-square" },
-                            { icon: "fa fa-black-tie" },
-                            { icon: "fa fa-bold" },
-                            { icon: "fa fa-bolt" },
-                            { icon: "fa fa-bomb" },
-                            { icon: "fa fa-book" },
-                            { icon: "fa fa-bookmark" },
-                            { icon: "fa fa-bookmark-o" },
-                            { icon: "fa fa-briefcase" },
-                            { icon: "fa fa-btc" },
-                            { icon: "fa fa-bug" },
-                            { icon: "fa fa-building" },
-                            { icon: "fa fa-building-o" },
-                            { icon: "fa fa-bullhorn" },
-                            { icon: "fa fa-bullseye" },
-                            { icon: "fa fa-bus" },
-                            { icon: "fa fa-buysellads" },
-                            { icon: "fa fa-calculator" },
-                            { icon: "fa fa-calendar" },
-                            { icon: "fa fa-calendar-check-o" },
-                            { icon: "fa fa-calendar-minus-o" },
-                            { icon: "fa fa-calendar-o" },
-                            { icon: "fa fa-calendar-plus-o" },
-                            { icon: "fa fa-calendar-times-o" },
-                            { icon: "fa fa-camera" },
-                            { icon: "fa fa-camera-retro" },
-                            { icon: "fa fa-car" },
-                            { icon: "fa fa-caret-down" },
-                            { icon: "fa fa-caret-left" },
-                            { icon: "fa fa-caret-right" },
-                            { icon: "fa fa-caret-square-o-down" },
-                            { icon: "fa fa-caret-square-o-left" },
-                            { icon: "fa fa-caret-square-o-right" },
-                            { icon: "fa fa-caret-square-o-up" },
-                            { icon: "fa fa-caret-up" },
-                            { icon: "fa fa-cart-arrow-down" },
-                            { icon: "fa fa-cart-plus" },
-                            { icon: "fa fa-cc" },
-                            { icon: "fa fa-cc-amex" },
-                            { icon: "fa fa-cc-diners-club" },
-                            { icon: "fa fa-cc-discover" },
-                            { icon: "fa fa-cc-jcb" },
-                            { icon: "fa fa-cc-mastercard" },
-                            { icon: "fa fa-cc-paypal" },
-                            { icon: "fa fa-cc-stripe" },
-                            { icon: "fa fa-cc-visa" },
-                            { icon: "fa fa-certificate" },
-                            { icon: "fa fa-chain-broken" },
-                            { icon: "fa fa-check" },
-                            { icon: "fa fa-check-circle" },
-                            { icon: "fa fa-check-circle-o" },
-                            { icon: "fa fa-check-square" },
-                            { icon: "fa fa-check-square-o" },
-                            { icon: "fa fa-chevron-circle-down" },
-                            { icon: "fa fa-chevron-circle-left" },
-                            { icon: "fa fa-chevron-circle-right" },
-                            { icon: "fa fa-chevron-circle-up" },
-                            { icon: "fa fa-chevron-down" },
-                            { icon: "fa fa-chevron-left" },
-                            { icon: "fa fa-chevron-right" },
-                            { icon: "fa fa-chevron-up" },
-                            { icon: "fa fa-child" },
-                            { icon: "fa fa-chrome" },
-                            { icon: "fa fa-circle" },
-                            { icon: "fa fa-circle-o" },
-                            { icon: "fa fa-circle-o-notch" },
-                            { icon: "fa fa-circle-thin" },
-                            { icon: "fa fa-clipboard" },
-                            { icon: "fa fa-clock-o" },
-                            { icon: "fa fa-clone" },
-                            { icon: "fa fa-cloud" },
-                            { icon: "fa fa-cloud-download" },
-                            { icon: "fa fa-cloud-upload" },
-                            { icon: "fa fa-code" },
-                            { icon: "fa fa-code-fork" },
-                            { icon: "fa fa-codepen" },
-                            { icon: "fa fa-coffee" },
-                            { icon: "fa fa-cog" },
-                            { icon: "fa fa-cogs" },
-                            { icon: "fa fa-columns" },
-                            { icon: "fa fa-comment" },
-                            { icon: "fa fa-comment-o" },
-                            { icon: "fa fa-commenting" },
-                            { icon: "fa fa-commenting-o" },
-                            { icon: "fa fa-comments" },
-                            { icon: "fa fa-comments-o" },
-                            { icon: "fa fa-compass" },
-                            { icon: "fa fa-compress" },
-                            { icon: "fa fa-connectdevelop" },
-                            { icon: "fa fa-contao" },
-                            { icon: "fa fa-copyright" },
-                            { icon: "fa fa-creative-commons" },
-                            { icon: "fa fa-credit-card" },
-                            { icon: "fa fa-crop" },
-                            { icon: "fa fa-crosshairs" },
-                            { icon: "fa fa-css3" },
-                            { icon: "fa fa-cube" },
-                            { icon: "fa fa-cubes" },
-                            { icon: "fa fa-cutlery" },
-                            { icon: "fa fa-dashcube" },
-                            { icon: "fa fa-database" },
-                            { icon: "fa fa-delicious" },
-                            { icon: "fa fa-desktop" },
-                            { icon: "fa fa-deviantart" },
-                            { icon: "fa fa-diamond" },
-                            { icon: "fa fa-digg" },
-                            { icon: "fa fa-dot-circle-o" },
-                            { icon: "fa fa-download" },
-                            { icon: "fa fa-dribbble" },
-                            { icon: "fa fa-dropbox" },
-                            { icon: "fa fa-drupal" },
-                            { icon: "fa fa-eject" },
-                            { icon: "fa fa-ellipsis-h" },
-                            { icon: "fa fa-ellipsis-v" },
-                            { icon: "fa fa-empire" },
-                            { icon: "fa fa-envelope" },
-                            { icon: "fa fa-envelope-o" },
-                            { icon: "fa fa-envelope-square" },
-                            { icon: "fa fa-eraser" },
-                            { icon: "fa fa-eur" },
-                            { icon: "fa fa-exchange" },
-                            { icon: "fa fa-exclamation" },
-                            { icon: "fa fa-exclamation-circle" },
-                            { icon: "fa fa-exclamation-triangle" },
-                            { icon: "fa fa-expand" },
-                            { icon: "fa fa-expeditedssl" },
-                            { icon: "fa fa-external-link" },
-                            { icon: "fa fa-external-link-square" },
-                            { icon: "fa fa-eye" },
-                            { icon: "fa fa-eye-slash" },
-                            { icon: "fa fa-eyedropper" },
-                            { icon: "fa fa-facebook" },
-                            { icon: "fa fa-facebook-official" },
-                            { icon: "fa fa-facebook-square" },
-                            { icon: "fa fa-fast-backward" },
-                            { icon: "fa fa-fast-forward" },
-                            { icon: "fa fa-fax" },
-                            { icon: "fa fa-female" },
-                            { icon: "fa fa-fighter-jet" },
-                            { icon: "fa fa-file" },
-                            { icon: "fa fa-file-archive-o" },
-                            { icon: "fa fa-file-audio-o" },
-                            { icon: "fa fa-file-code-o" },
-                            { icon: "fa fa-file-excel-o" },
-                            { icon: "fa fa-file-image-o" },
-                            { icon: "fa fa-file-o" },
-                            { icon: "fa fa-file-pdf-o" },
-                            { icon: "fa fa-file-powerpoint-o" },
-                            { icon: "fa fa-file-text" },
-                            { icon: "fa fa-file-text-o" },
-                            { icon: "fa fa-file-video-o" },
-                            { icon: "fa fa-file-word-o" },
-                            { icon: "fa fa-files-o" },
-                            { icon: "fa fa-film" },
-                            { icon: "fa fa-filter" },
-                            { icon: "fa fa-fire" },
-                            { icon: "fa fa-fire-extinguisher" },
-                            { icon: "fa fa-firefox" },
-                            { icon: "fa fa-flag" },
-                            { icon: "fa fa-flag-checkered" },
-                            { icon: "fa fa-flag-o" },
-                            { icon: "fa fa-flask" },
-                            { icon: "fa fa-flickr" },
-                            { icon: "fa fa-floppy-o" },
-                            { icon: "fa fa-folder" },
-                            { icon: "fa fa-folder-o" },
-                            { icon: "fa fa-folder-open" },
-                            { icon: "fa fa-folder-open-o" },
-                            { icon: "fa fa-font" },
-                            { icon: "fa fa-fonticons" },
-                            { icon: "fa fa-forumbee" },
-                            { icon: "fa fa-forward" },
-                            { icon: "fa fa-foursquare" },
-                            { icon: "fa fa-frown-o" },
-                            { icon: "fa fa-futbol-o" },
-                            { icon: "fa fa-gamepad" },
-                            { icon: "fa fa-gavel" },
-                            { icon: "fa fa-gbp" },
-                            { icon: "fa fa-genderless" },
-                            { icon: "fa fa-get-pocket" },
-                            { icon: "fa fa-gg" },
-                            { icon: "fa fa-gg-circle" },
-                            { icon: "fa fa-gift" },
-                            { icon: "fa fa-git" },
-                            { icon: "fa fa-git-square" },
-                            { icon: "fa fa-github" },
-                            { icon: "fa fa-github-alt" },
-                            { icon: "fa fa-github-square" },
-                            { icon: "fa fa-glass" },
-                            { icon: "fa fa-globe" },
-                            { icon: "fa fa-google" },
-                            { icon: "fa fa-google-plus" },
-                            { icon: "fa fa-google-plus-square" },
-                            { icon: "fa fa-google-wallet" },
-                            { icon: "fa fa-graduation-cap" },
-                            { icon: "fa fa-gratipay" },
-                            { icon: "fa fa-h-square" },
-                            { icon: "fa fa-hacker-news" },
-                            { icon: "fa fa-hand-lizard-o" },
-                            { icon: "fa fa-hand-o-down" },
-                            { icon: "fa fa-hand-o-left" },
-                            { icon: "fa fa-hand-o-right" },
-                            { icon: "fa fa-hand-o-up" },
-                            { icon: "fa fa-hand-paper-o" },
-                            { icon: "fa fa-hand-peace-o" },
-                            { icon: "fa fa-hand-pointer-o" },
-                            { icon: "fa fa-hand-rock-o" },
-                            { icon: "fa fa-hand-scissors-o" },
-                            { icon: "fa fa-hand-spock-o" },
-                            { icon: "fa fa-hdd-o" },
-                            { icon: "fa fa-header" },
-                            { icon: "fa fa-headphones" },
-                            { icon: "fa fa-heart" },
-                            { icon: "fa fa-heart-o" },
-                            { icon: "fa fa-heartbeat" },
-                            { icon: "fa fa-history" },
-                            { icon: "fa fa-home" },
-                            { icon: "fa fa-hospital-o" },
-                            { icon: "fa fa-hourglass" },
-                            { icon: "fa fa-hourglass-end" },
-                            { icon: "fa fa-hourglass-half" },
-                            { icon: "fa fa-hourglass-o" },
-                            { icon: "fa fa-hourglass-start" },
-                            { icon: "fa fa-houzz" },
-                            { icon: "fa fa-html5" },
-                            { icon: "fa fa-i-cursor" },
-                            { icon: "fa fa-ils" },
-                            { icon: "fa fa-inbox" },
-                            { icon: "fa fa-indent" },
-                            { icon: "fa fa-industry" },
-                            { icon: "fa fa-info" },
-                            { icon: "fa fa-info-circle" },
-                            { icon: "fa fa-inr" },
-                            { icon: "fa fa-instagram" },
-                            { icon: "fa fa-internet-explorer" },
-                            { icon: "fa fa-ioxhost" },
-                            { icon: "fa fa-italic" },
-                            { icon: "fa fa-joomla" },
-                            { icon: "fa fa-jpy" },
-                            { icon: "fa fa-jsfiddle" },
-                            { icon: "fa fa-key" },
-                            { icon: "fa fa-keyboard-o" },
-                            { icon: "fa fa-krw" },
-                            { icon: "fa fa-language" },
-                            { icon: "fa fa-laptop" },
-                            { icon: "fa fa-lastfm" },
-                            { icon: "fa fa-lastfm-square" },
-                            { icon: "fa fa-leaf" },
-                            { icon: "fa fa-leanpub" },
-                            { icon: "fa fa-lemon-o" },
-                            { icon: "fa fa-level-down" },
-                            { icon: "fa fa-level-up" },
-                            { icon: "fa fa-life-ring" },
-                            { icon: "fa fa-lightbulb-o" },
-                            { icon: "fa fa-line-chart" },
-                            { icon: "fa fa-link" },
-                            { icon: "fa fa-linkedin" },
-                            { icon: "fa fa-linkedin-square" },
-                            { icon: "fa fa-linux" },
-                            { icon: "fa fa-list" },
-                            { icon: "fa fa-list-alt" },
-                            { icon: "fa fa-list-ol" },
-                            { icon: "fa fa-list-ul" },
-                            { icon: "fa fa-location-arrow" },
-                            { icon: "fa fa-lock" },
-                            { icon: "fa fa-long-arrow-down" },
-                            { icon: "fa fa-long-arrow-left" },
-                            { icon: "fa fa-long-arrow-right" },
-                            { icon: "fa fa-long-arrow-up" },
-                            { icon: "fa fa-magic" },
-                            { icon: "fa fa-magnet" },
-                            { icon: "fa fa-male" },
-                            { icon: "fa fa-map" },
-                            { icon: "fa fa-map-marker" },
-                            { icon: "fa fa-map-o" },
-                            { icon: "fa fa-map-pin" },
-                            { icon: "fa fa-map-signs" },
-                            { icon: "fa fa-mars" },
-                            { icon: "fa fa-mars-double" },
-                            { icon: "fa fa-mars-stroke" },
-                            { icon: "fa fa-mars-stroke-h" },
-                            { icon: "fa fa-mars-stroke-v" },
-                            { icon: "fa fa-maxcdn" },
-                            { icon: "fa fa-meanpath" },
-                            { icon: "fa fa-medium" },
-                            { icon: "fa fa-medkit" },
-                            { icon: "fa fa-meh-o" },
-                            { icon: "fa fa-mercury" },
-                            { icon: "fa fa-microphone" },
-                            { icon: "fa fa-microphone-slash" },
-                            { icon: "fa fa-minus" },
-                            { icon: "fa fa-minus-circle" },
-                            { icon: "fa fa-minus-square" },
-                            { icon: "fa fa-minus-square-o" },
-                            { icon: "fa fa-mobile" },
-                            { icon: "fa fa-money" },
-                            { icon: "fa fa-moon-o" },
-                            { icon: "fa fa-motorcycle" },
-                            { icon: "fa fa-mouse-pointer" },
-                            { icon: "fa fa-music" },
-                            { icon: "fa fa-neuter" },
-                            { icon: "fa fa-newspaper-o" },
-                            { icon: "fa fa-object-group" },
-                            { icon: "fa fa-object-ungroup" },
-                            { icon: "fa fa-odnoklassniki" },
-                            { icon: "fa fa-odnoklassniki-square" },
-                            { icon: "fa fa-opencart" },
-                            { icon: "fa fa-openid" },
-                            { icon: "fa fa-opera" },
-                            { icon: "fa fa-optin-monster" },
-                            { icon: "fa fa-outdent" },
-                            { icon: "fa fa-pagelines" },
-                            { icon: "fa fa-paint-brush" },
-                            { icon: "fa fa-paper-plane" },
-                            { icon: "fa fa-paper-plane-o" },
-                            { icon: "fa fa-paperclip" },
-                            { icon: "fa fa-paragraph" },
-                            { icon: "fa fa-pause" },
-                            { icon: "fa fa-paw" },
-                            { icon: "fa fa-paypal" },
-                            { icon: "fa fa-pencil" },
-                            { icon: "fa fa-pencil-square" },
-                            { icon: "fa fa-pencil-square-o" },
-                            { icon: "fa fa-phone" },
-                            { icon: "fa fa-phone-square" },
-                            { icon: "fa fa-picture-o" },
-                            { icon: "fa fa-pie-chart" },
-                            { icon: "fa fa-pied-piper" },
-                            { icon: "fa fa-pied-piper-alt" },
-                            { icon: "fa fa-pinterest" },
-                            { icon: "fa fa-pinterest-p" },
-                            { icon: "fa fa-pinterest-square" },
-                            { icon: "fa fa-plane" },
-                            { icon: "fa fa-play" },
-                            { icon: "fa fa-play-circle" },
-                            { icon: "fa fa-play-circle-o" },
-                            { icon: "fa fa-plug" },
-                            { icon: "fa fa-plus" },
-                            { icon: "fa fa-plus-circle" },
-                            { icon: "fa fa-plus-square" },
-                            { icon: "fa fa-plus-square-o" },
-                            { icon: "fa fa-power-off" },
-                            { icon: "fa fa-print" },
-                            { icon: "fa fa-puzzle-piece" },
-                            { icon: "fa fa-qq" },
-                            { icon: "fa fa-qrcode" },
-                            { icon: "fa fa-question" },
-                            { icon: "fa fa-question-circle" },
-                            { icon: "fa fa-quote-left" },
-                            { icon: "fa fa-quote-right" },
-                            { icon: "fa fa-random" },
-                            { icon: "fa fa-rebel" },
-                            { icon: "fa fa-recycle" },
-                            { icon: "fa fa-reddit" },
-                            { icon: "fa fa-reddit-square" },
-                            { icon: "fa fa-refresh" },
-                            { icon: "fa fa-registered" },
-                            { icon: "fa fa-renren" },
-                            { icon: "fa fa-repeat" },
-                            { icon: "fa fa-reply" },
-                            { icon: "fa fa-reply-all" },
-                            { icon: "fa fa-retweet" },
-                            { icon: "fa fa-road" },
-                            { icon: "fa fa-rocket" },
-                            { icon: "fa fa-rss" },
-                            { icon: "fa fa-rss-square" },
-                            { icon: "fa fa-rub" },
-                            { icon: "fa fa-safari" },
-                            { icon: "fa fa-scissors" },
-                            { icon: "fa fa-search" },
-                            { icon: "fa fa-search-minus" },
-                            { icon: "fa fa-search-plus" },
-                            { icon: "fa fa-sellsy" },
-                            { icon: "fa fa-server" },
-                            { icon: "fa fa-share" },
-                            { icon: "fa fa-share-alt" },
-                            { icon: "fa fa-share-alt-square" },
-                            { icon: "fa fa-share-square" },
-                            { icon: "fa fa-share-square-o" },
-                            { icon: "fa fa-shield" },
-                            { icon: "fa fa-ship" },
-                            { icon: "fa fa-shirtsinbulk" },
-                            { icon: "fa fa-shopping-cart" },
-                            { icon: "fa fa-sign-in" },
-                            { icon: "fa fa-sign-out" },
-                            { icon: "fa fa-signal" },
-                            { icon: "fa fa-simplybuilt" },
-                            { icon: "fa fa-sitemap" },
-                            { icon: "fa fa-skyatlas" },
-                            { icon: "fa fa-skype" },
-                            { icon: "fa fa-slack" },
-                            { icon: "fa fa-sliders" },
-                            { icon: "fa fa-slideshare" },
-                            { icon: "fa fa-smile-o" },
-                            { icon: "fa fa-sort" },
-                            { icon: "fa fa-sort-alpha-asc" },
-                            { icon: "fa fa-sort-alpha-desc" },
-                            { icon: "fa fa-sort-amount-asc" },
-                            { icon: "fa fa-sort-amount-desc" },
-                            { icon: "fa fa-sort-asc" },
-                            { icon: "fa fa-sort-desc" },
-                            { icon: "fa fa-sort-numeric-asc" },
-                            { icon: "fa fa-sort-numeric-desc" },
-                            { icon: "fa fa-soundcloud" },
-                            { icon: "fa fa-space-shuttle" },
-                            { icon: "fa fa-spinner" },
-                            { icon: "fa fa-spoon" },
-                            { icon: "fa fa-spotify" },
-                            { icon: "fa fa-square" },
-                            { icon: "fa fa-square-o" },
-                            { icon: "fa fa-stack-exchange" },
-                            { icon: "fa fa-stack-overflow" },
-                            { icon: "fa fa-star" },
-                            { icon: "fa fa-star-half" },
-                            { icon: "fa fa-star-half-o" },
-                            { icon: "fa fa-star-o" },
-                            { icon: "fa fa-steam" },
-                            { icon: "fa fa-steam-square" },
-                            { icon: "fa fa-step-backward" },
-                            { icon: "fa fa-step-forward" },
-                            { icon: "fa fa-stethoscope" },
-                            { icon: "fa fa-sticky-note" },
-                            { icon: "fa fa-sticky-note-o" },
-                            { icon: "fa fa-stop" },
-                            { icon: "fa fa-street-view" },
-                            { icon: "fa fa-strikethrough" },
-                            { icon: "fa fa-stumbleupon" },
-                            { icon: "fa fa-stumbleupon-circle" },
-                            { icon: "fa fa-subscript" },
-                            { icon: "fa fa-subway" },
-                            { icon: "fa fa-suitcase" },
-                            { icon: "fa fa-sun-o" },
-                            { icon: "fa fa-superscript" },
-                            { icon: "fa fa-table" },
-                            { icon: "fa fa-tablet" },
-                            { icon: "fa fa-tachometer" },
-                            { icon: "fa fa-tag" },
-                            { icon: "fa fa-tags" },
-                            { icon: "fa fa-tasks" },
-                            { icon: "fa fa-taxi" },
-                            { icon: "fa fa-television" },
-                            { icon: "fa fa-tencent-weibo" },
-                            { icon: "fa fa-terminal" },
-                            { icon: "fa fa-text-height" },
-                            { icon: "fa fa-text-width" },
-                            { icon: "fa fa-th" },
-                            { icon: "fa fa-th-large" },
-                            { icon: "fa fa-th-list" },
-                            { icon: "fa fa-thumb-tack" },
-                            { icon: "fa fa-thumbs-down" },
-                            { icon: "fa fa-thumbs-o-down" },
-                            { icon: "fa fa-thumbs-o-up" },
-                            { icon: "fa fa-thumbs-up" },
-                            { icon: "fa fa-ticket" },
-                            { icon: "fa fa-times" },
-                            { icon: "fa fa-times-circle" },
-                            { icon: "fa fa-times-circle-o" },
-                            { icon: "fa fa-tint" },
-                            { icon: "fa fa-toggle-off" },
-                            { icon: "fa fa-toggle-on" },
-                            { icon: "fa fa-trademark" },
-                            { icon: "fa fa-train" },
-                            { icon: "fa fa-transgender" },
-                            { icon: "fa fa-transgender-alt" },
-                            { icon: "fa fa-trash" },
-                            { icon: "fa fa-trash-o" },
-                            { icon: "fa fa-tree" },
-                            { icon: "fa fa-trello" },
-                            { icon: "fa fa-tripadvisor" },
-                            { icon: "fa fa-trophy" },
-                            { icon: "fa fa-truck" },
-                            { icon: "fa fa-try" },
-                            { icon: "fa fa-tty" },
-                            { icon: "fa fa-tumblr" },
-                            { icon: "fa fa-tumblr-square" },
-                            { icon: "fa fa-twitch" },
-                            { icon: "fa fa-twitter" },
-                            { icon: "fa fa-twitter-square" },
-                            { icon: "fa fa-umbrella" },
-                            { icon: "fa fa-underline" },
-                            { icon: "fa fa-undo" },
-                            { icon: "fa fa-university" },
-                            { icon: "fa fa-unlock" },
-                            { icon: "fa fa-unlock-alt" },
-                            { icon: "fa fa-upload" },
-                            { icon: "fa fa-usd" },
-                            { icon: "fa fa-user" },
-                            { icon: "fa fa-user-md" },
-                            { icon: "fa fa-user-plus" },
-                            { icon: "fa fa-user-secret" },
-                            { icon: "fa fa-user-times" },
-                            { icon: "fa fa-users" },
-                            { icon: "fa fa-venus" },
-                            { icon: "fa fa-venus-double" },
-                            { icon: "fa fa-venus-mars" },
-                            { icon: "fa fa-viacoin" },
-                            { icon: "fa fa-video-camera" },
-                            { icon: "fa fa-vimeo" },
-                            { icon: "fa fa-vimeo-square" },
-                            { icon: "fa fa-vine" },
-                            { icon: "fa fa-vk" },
-                            { icon: "fa fa-volume-down" },
-                            { icon: "fa fa-volume-off" },
-                            { icon: "fa fa-volume-up" },
-                            { icon: "fa fa-weibo" },
-                            { icon: "fa fa-weixin" },
-                            { icon: "fa fa-whatsapp" },
-                            { icon: "fa fa-wheelchair" },
-                            { icon: "fa fa-wifi" },
-                            { icon: "fa fa-wikipedia-w" },
-                            { icon: "fa fa-windows" },
-                            { icon: "fa fa-wordpress" },
-                            { icon: "fa fa-wrench" },
-                            { icon: "fa fa-xing" },
-                            { icon: "fa fa-xing-square" },
-                            { icon: "fa fa-y-combinator" },
-                            { icon: "fa fa-yahoo" },
-                            { icon: "fa fa-yelp" },
-                            { icon: "fa fa-youtube" },
-                            { icon: "fa fa-youtube-play" },
-                            { icon: "fa fa-youtube-square" }
-                        ]
-            }
+        reject: () => {
+          //callback to execute when user rejects the action
         },
-        created() {
+      });
+    },
 
-            console.log('Loading tables...')
-        
-            axios.get('/adm/dbtables').then((response) => {
-                        
-                    if(response.data.status == 'success') {
-                            
-                            this.tables    = Object.values(response.data.tables)
-                            this.jsonfiles = Object.values(response.data.jsonfiles)
-                    }
+    fillColumn(column) {
+      console.log(column.columnname);
+      let tn = column.columnname;
+      //console.log(this.input)
+      column["label"]["es"] = tn.trim().charAt(0).toUpperCase() + tn.slice(1);
+      column["label"]["en"] = tn.trim().charAt(0).toUpperCase() + tn.slice(1);
 
-            });
+      column.columnname = this.slugify(column.columnname, "_");
 
-
-            this.$nextTick(() => {
-                axios.get('/adm/crud-generator/api/data/'+this.$route.params.file).then((response) => {
-                    this.languages = response.data.languages
-                    this.groups  = response.data.groups
-                    if(response.data.content) {
-                        this.table   = response.data.content.table
-                        this.inputs  = response.data.content.inputs
-                    }
-                    this.loaded = 1
-
-                    let menues = this.jsonfiles//this.$parent.cm
-                    
-                    
-
-
-                    this.menues = menues//menues.flatMap(x => x.label)
-                });
-            });
-        },
-        mounted () {
-
-            
-        },
-        watch: {
-
-            'table.generateUser'(value) {
-                console.log(value)
-                    let index = this.inputs.findIndex(function(asd) {
-                    return asd.columnname == "username"
-                    });
-
-                    console.log(index)
-
-                if(value == true && index == -1){
-                let newInputs = [];
-                let oldInputs = this.inputs
-                
-                // push username, password, email
-                this.inputs.unshift({
-                    isCollapsed: false,
-                    columnname: 'username',
-                    icon: '',
-                    type: 'text',
-                    visible: 1,
-                    gridcols: 6,
-                    visible_edit: 1,
-                    translatable: 0,
-                    label: { es: 'User', en: '' },
-                    unique: 1,
-                    default: '',
-                    nullable: 0,
-                    validate: 1,
-
-                },{
-                    isCollapsed: false,
-                    columnname: 'password',
-                    icon: '',
-                    type: 'password',
-                    visible: 1,
-                    gridcols: 6,
-                    visible_edit: 1,
-                    translatable: 0,
-                    label: { es: 'Contraseña', en: 'Password', pt: 'Senha' },
-                    unique: 1,
-                    default: '',
-                    nullable: 0,
-                    validate: 1,
-
-                },{
-                    isCollapsed: false,
-                    columnname: 'email',
-                    icon: '',
-                    type: 'text',
-                    visible: 1,
-                    gridcols: 6,
-                    visible_edit: 1,
-                    translatable: 0,
-                    label: { es: 'Correo', en: 'Email', pt: 'Email' },
-                    unique: 1,
-                    default: '',
-                    nullable: 0,
-                    validate: 1,
-
-                }
-                
-                )
-
-                // set 
-
-
-
-                }
-
-                if(value == false && index >= 0){
-
-                    this.inputs.splice(0, 3)
-                    //console.log(this.inputs)
-                }
-
-            }
-        },
-        methods: {
-            addOption(input) {
-                if (!Array.isArray(input.options)) {
-                    this.$set(input, 'options', [])
-                    // input.options = Vue.observable([])
-                }
-                input.options.push({
-                    key: '',
-                    text: ''
-                })
-            },
-            removeOption(input, key) {
-                input.options.splice(key,1)
-            },
-            languagesKeys() {
-                this.languages.keys
-            },
-            addInput() {
-                this.inputs.push({
-                    isCollapsed: true,
-                    columnname: '',
-                    icon: '',
-                    type: 'text',
-                    visible: 1,
-                    gridcols: 12,
-                    visible_edit: 1,
-                    label: { es: '', en: '' },
-                    unique: 0,
-                    default: '',
-                    nullable: 1,
-                    validate: 1,
-                    max: '',
-                    min: '',
-                    tabledata: '',
-                    tablekeycolumn: '',
-                    tabletextcolumn: '',
-                    translatable: 0,
-                    multiple: false
-                })
-
-
-            },
-            inputParams(input) {
-                let params = []
-                if (input.type == 'text') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min', 'translatable')
-                }
-                if (input.type == 'icon') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min', 'translatable')
-                }
-                if (input.type == 'textarea') {
-                    params.push('validate', 'label', 'default', 'nullable', 'validate', 'translatable')
-                }
-                if (input.type == 'email') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'url') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'tel') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'number') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'money') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'password') {
-                    params.push('validate', 'label', 'unique', 'default', 'nullable', 'validate', 'max', 'min')
-                }
-                if (input.type == 'boolean') {
-                    params.push('label', 'default')
-                }
-                if (input.type == 'multimedia_file') {
-                    params.push('listable', 'validate', 'label', 'nullable')
-                }
-                if (input.type == 'file') {
-                    params.push('listable', 'validate', 'label', 'nullable')
-                }
-                if (input.type == 'gallery') {
-                    params.push('listable', 'validate', 'label', 'nullable')
-                }
-                if (input.type == 'date') {
-                    params.push('validate', 'label', 'nullable', 'validate')
-                }
-                if (input.type == 'time') {
-                    params.push('validate', 'label', 'nullable', 'validate')
-                }
-                if (input.type == 'datetime') {
-                    params.push('validate', 'label', 'nullable', 'validate')
-                }
-                if (input.type == 'week') {
-                    params.push('validate', 'label', 'nullable', 'validate')
-                }
-                
-                if (input.type == 'select') {
-                    params.push('validate', 'label', 'default', 'nullable', 'validate', 'valueoriginselector', 'multiple')
-                }
-                if (input.type == 'radio') {
-                    params.push('validate', 'label', 'default', 'nullable', 'validate', 'valueoriginselector')
-                }
-                if (input.type == 'checkbox') {
-                    params.push('validate', 'label', 'default', 'nullable', 'validate', 'valueoriginselector')
-                }
-                if (input.type == 'subForm') {
-                    params.push('listable', 'settable', 'validate', 'label', 'default', 'gridcols', 'nullable', 'tabledata', 'tablekeycolumn')
-                }
-                if (input.type == 'VueComponent') {
-                    params.push('referencecolumn')
-                }
-                if (input.type == 'VueLink') {
-                    params.push('icon')
-                }
-                //params.push('visible')
-                return params;
-            },
-            rmInput(key) {
-
-
-                this.$confirm.require({
-                    message: 'Seguro ?',
-                    header: 'Eliminar',
-                    icon: 'pi pi-exclamation-triangle',
-                    acceptClass: 'p-button-danger',
-                    acceptLabel: 'Sí',
-                    rejectLabel: 'No',
-                    accept: () => {
-                        //callback to execute when user confirms the action
-                        this.inputs.splice(key,1)
-
-
-                    },
-                    reject: () => {
-                        //callback to execute when user rejects the action
-                    }
-                });
-
-
-
-
-            },
-            
-            fillColumn(column){
-                console.log(column.columnname)
-                let tn =column.columnname
-                //console.log(this.input)
-                column['label']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
-                column['label']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
-                
-                column.columnname = this.slugify(column.columnname, '_')
-
-                /*let tn = this.table.tablename
+      /*let tn = this.table.tablename
                 this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
                 this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)*/
+    },
+    collapseAll() {
+      this.inputs.forEach((element) => {
+        return (element.isCollapsed = false);
+      });
+    },
+    setAllNull() {
+      this.inputs.forEach((element) => {
+        return (element.nullable = 1);
+      });
+    },
+    setList() {
+      this.inputs.forEach((element) => {
+        return (element.visible = 0);
+      });
+    },
+    fillTable() {
+      let tn = this.table.tablename;
+      this.table["name"]["es"] =
+        tn.trim().charAt(0).toUpperCase() + tn.slice(1);
+      this.table["name"]["en"] =
+        tn.trim().charAt(0).toUpperCase() + tn.slice(1);
+    },
+    slugify(text, divider = "-") {
+      text = text
+        .toString() // Cast to string
+        .toLowerCase() // Convert the string to lowercase letters
+        .normalize("NFD") // The normalize() method returns the Unicode Normalization Form of a given string.
+        .trim(); // Remove whitespace from both sides of a string
 
-            },
-            collapseAll(){
+      if (divider == "-") {
+        text = text
+          .replace(/\s+/g, "-") // Replace spaces with -
+          .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+          .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+      }
+      if (divider == "_") {
+        text = text
+          .replace(/\s+/g, "_") // Replace spaces with _
+          .replace(/[^\w\-]+/g, "") // Remove all non_word chars
+          .replace(/\-+/g, "_") // Replace multiple - with single -
+          .replace(/\_\_+/g, "_"); // Replace multiple - with single -
+      }
+      return text;
+    },
+    inputUp(key) {
+      this.inputs.splice(key - 1, 0, this.inputs.splice(key, 1)[0]);
+    },
+    inputDown(key) {
+      this.inputs.splice(key + 1, 0, this.inputs.splice(key, 1)[0]);
+    },
+    validateForm() {
+      if (!this.table.tablename.trim())
+        this.validationErrors["tablename"] = true;
+      else delete this.validationErrors["tablename"];
 
-                this.inputs.forEach(element => {
-                    
-                    return element.isCollapsed = false
-                    
-                });
+      return !Object.keys(this.validationErrors).length;
+      nul;
+    },
+    sendForm() {
+      this.submitted = true;
+      if (this.validateForm()) {
+        console.log("?");
 
-            },
-            setAllNull(){
+        this.$confirm.require({
+          message: "Seguro ?",
+          header: "Generar / Actualizar CRUD",
+          icon: "pi pi-exclamation-triangle",
+          acceptClass: "p-button-success",
+          acceptLabel: "Sí",
+          rejectLabel: "No",
+          accept: () => {
+            //callback to execute when user confirms the action
+            this.postForm();
+          },
+          reject: () => {
+            //callback to execute when user rejects the action
+          },
+        });
+      } else {
+        return false;
+      }
+    },
+    postForm() {
+      this.loaded = 0;
 
-                this.inputs.forEach(element => {
-                    
-                    return element.nullable = 1
-                    
-                });
+      let formData = new FormData();
+      //let migrar = this.nomigrate
 
-            },
-            setList(){
-                this.inputs.forEach(element => {
-                    
-                    return element.visible = 0
-                    
-                });
+      formData.append(
+        "data",
+        JSON.stringify({
+          table: this.table,
+          inputs: this.inputs,
+          migrate: this.checkMigrate,
+        })
+      );
 
-            },
-            fillTable(){
-                let tn = this.table.tablename
-                this.table['name']['es'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
-                this.table['name']['en'] = tn.trim().charAt(0).toUpperCase()  + tn.slice(1)
+      axios
+        .post("/adm/crud-generator", formData)
+        .then((response) => {
+          //setTimeout(() => {
+          this.loaded = 1;
+          if (response.data.status == "success") {
+            this.loaded = 1;
+            this.$toast.add({
+              severity: "success",
+              summary: "Success",
+              detail: response.data.message,
+              life: 3000,
+            });
+            EventBus.$emit("reloadMenu");
+          }
 
-            },
-            slugify(text, divider = '-'){
-                text = text
-                    .toString()       // Cast to string
-                    .toLowerCase()    // Convert the string to lowercase letters
-                    .normalize('NFD') // The normalize() method returns the Unicode Normalization Form of a given string.
-                    .trim()           // Remove whitespace from both sides of a string
-
-                if (divider == '-') {
-                    text = text
-                        .replace(/\s+/g, '-')     // Replace spaces with -
-                        .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-                        .replace(/\-\-+/g, '-');  // Replace multiple - with single -
+          //}, 1000);
+        })
+        .catch((error) => {
+          if (error.response.data.message == "CSRF token mismatch.") {
+            csrf
+              .refresh()
+              .then(() => {
+                //this.enviarPresupuesto()
+              })
+              .catch((err) => {
+                if (err.message == "Unauthenticated.") {
+                  this.openLoginFormModal();
                 }
-                if (divider == '_') {
-                    text = text
-                        .replace(/\s+/g, '_')     // Replace spaces with _
-                        .replace(/[^\w\-]+/g, '') // Remove all non_word chars
-                        .replace(/\-+/g, '_')  // Replace multiple - with single -
-                        .replace(/\_\_+/g, '_');  // Replace multiple - with single -
-                }
-                return text
-            },
-            inputUp(key) {
-                this.inputs.splice(key - 1,0,this.inputs.splice(key,1)[0]);
-            },
-            inputDown(key) {
-                this.inputs.splice(key + 1,0,this.inputs.splice(key,1)[0]);
-            },
-            validateForm(){
+              });
+            return true;
+          }
+          if (error.response.data.message == "Unauthenticated.") {
+            this.openLoginFormModal();
+            return true;
+          }
+          //console.log(error.response.data)
+          this.$toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: error.response.data.message,
+            life: 5000,
+          });
 
-                if (!this.table.tablename.trim())              
-                    this.validationErrors['tablename'] = true;
-                else
-                    delete this.validationErrors['tablename'];
-                
-                return !Object.keys(this.validationErrors).length;
-nul
-            },
-            sendForm() {
-                this.submitted = true
-                if(this.validateForm()){
-                    console.log('?')
-
-                    this.$confirm.require({
-                        message: 'Seguro ?',
-                        header: 'Generar / Actualizar CRUD',
-                        icon: 'pi pi-exclamation-triangle',
-                        acceptClass: 'p-button-success',
-                        acceptLabel: 'Sí',
-                        rejectLabel: 'No',
-                        accept: () => {
-                            //callback to execute when user confirms the action
-                            this.postForm()
-
-
-                        },
-                        reject: () => {
-                            //callback to execute when user rejects the action
-                        }
-                    });
-                }else{
-                    return false
-                }
-
-            },
-            postForm() {
-
-                this.loaded = 0
-
-                let formData = new FormData()
-                //let migrar = this.nomigrate
-
-
-                formData.append('data', JSON.stringify({
-                    table: this.table,
-                    inputs: this.inputs,
-                    migrate: this.checkMigrate
-                })); 
-
-                axios.post('/adm/crud-generator', formData).then((response) => {
-                    
-                    //setTimeout(() => {
-                        this.loaded = 1
-                        if(response.data.status == 'success'){
-                                    this.loaded = 1
-                                    this.$toast.add({severity:'success', summary: 'Success', detail: response.data.message, life: 3000})
-                                    EventBus.$emit('reloadMenu');
-                        }
-                        
-                    //}, 1000);
-                }).catch((error) => {
-                    if (error.response.data.message == 'CSRF token mismatch.') {
-                        csrf.refresh()
-                        .then(() => {
-                               //this.enviarPresupuesto()
-                        })
-                        .catch((err) => {
-                            if (err.message == 'Unauthenticated.') {
-                                this.openLoginFormModal()
-                            }
-                        });
-                        return true
-                    }
-                    if (error.response.data.message == 'Unauthenticated.') {
-                        this.openLoginFormModal()
-                        return true
-                    }
-                    //console.log(error.response.data)
-                    this.$toast.add({severity:'error', summary: 'Error', detail: error.response.data.message, life: 5000})
-
-
-                    this.loaded = 1
-                })
-            }
-        },
-        computed: {
-        }
-    }
+          this.loaded = 1;
+        });
+    },
+  },
+  computed: {},
+};
 </script>
 <style lang="scss" scoped>
-    .card-header {
-        position: relative;
-        color: red;
+.form_preview_over {
+  small {
+    color: rgb(56 54 54 / 48%);
+  }
+}
+.form_preview_over:hover {
+  cursor: pointer;
 
+  .p-skeleton {
+    background: darkgrey;
+    color: white;
+    & .active {
+      background: darkgrey;
     }
-    .card-header-btns {
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        display: flex;
-    }
+  }
+}
+.card-header {
+  position: relative;
+  color: red;
+}
+.card-header-btns {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+}
 
-    .p-toast-message-content {
-        max-width: 500px;
-    }
+.p-toast-message-content {
+  max-width: 500px;
+}
 .p-multiselect {
-    display: flex;
-
-    
+  display: flex;
 }
 ::v-deep .p-panel.p-panel-toggleable .p-panel-header {
-    padding: 5px;
+  padding: 5px;
 }
 
-    ::v-deep .p-panel-header, .p-panel-header p{
+::v-deep .p-panel-header,
+.p-panel-header p {
+  padding: 2px;
+  line-height: 1rem;
+  margin-bottom: 0px;
+}
 
-        padding: 2px;
-        line-height: 1rem;
-        margin-bottom: 0px;
-    }
+.drop-zone {
+  background-color: #eee;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.drag-el {
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding: 5px;
+}
 </style>

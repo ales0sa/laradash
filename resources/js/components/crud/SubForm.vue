@@ -1,8 +1,5 @@
 <template>
     <Fieldset class="" :legend="input.label[this.lang()]" :key="componentKey">
-
-
-
         <div :class="'p-grid ' + colorize(key)" v-for="(item, key) in items" :id="'sf'+key" :key="key" >
                 <div class="p-col-1">
                   <span class="p-buttonset p-py-3" style="">
@@ -22,27 +19,20 @@
                   </span>
                 </div>
                 <div class="p-field p-col-11 p-col-lg-11 p-col-md-11">
-
-                    <InputLayout :relations="relations" :subForm="subForm"
-                     :value="item.content[input.columnname]" :input="input" 
-                     v-for="(input, inputk) in subForm[input.columnname].inputs" :key="'subform'+inputk">
-                    </InputLayout>
-
+                    <div class="p-grid">
+                        <InputLayout :relations="relations" :subForm="subForm"
+                        :value="item.content[input.columnname]" :input="input" 
+                        v-for="(input, inputk) in subForm[input.columnname].inputs" :key="'subform'+inputk">
+                        </InputLayout>
+                    </div>
 
                 </div>
-
-<!---------
-
----->
-                
-
         </div>
         
              <div class="d-sm-flex align-items-center justify-content-center p-mt-3">
                 <Button type="button" @click="addItem()" class="p-button p-button-success p-mr-2 p-button p-component p-text-center" icon="pi pi-plus" label="Añadir">
                 </Button>
             </div>
-
     </Fieldset>
 </template>
 <script>

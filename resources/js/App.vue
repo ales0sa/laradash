@@ -24,9 +24,10 @@
             </div>
         </transition>
 
-		<div class="layout-main">
+
+		<div class="layout-main" >
             <transition name="fade" mode="out-in">
-			    <router-view />
+			    <router-view :value="authGroup" />
             </transition>
 		</div>
 
@@ -53,6 +54,7 @@ export default {
             logo: window.logo,
             transitionName: null,
             auth: 1,
+            isAuth: false,
             imgError: false,
             authUser: window.authUser,
             authPermissions: window.authPermissions,
@@ -106,6 +108,7 @@ export default {
             this.authRoot = response.data.user.root
             this.authGroup = response.data.user.roles
             console.log(response.data)
+            this.isAuth = true
 
         });
                     

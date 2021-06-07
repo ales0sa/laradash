@@ -26,7 +26,7 @@
                         style="height: 30px;margin-right: 10px;" />
                 
                         <router-link :to="{ name: 'crudcreate', params: { table:  $route.params.table }}" > 
-                            <Button icon="pi pi-plus-circle" label="Nuevo" class=" p-button-primary p-button p-component" style="height: 30px;"/>
+                            <Button icon="pi pi-plus-circle" label="New" class=" p-button-primary p-button p-component" style="height: 30px;"/>
                         </router-link>
 
                 </div>
@@ -67,8 +67,6 @@
                     </div>
 
                 </template>
-
-                <!--- COLUMNS --->
 
                 <template  #body="slotProps" v-if="col.type == 'number'">
                     <div class="" v-if="slotProps.data[col.field] >= 1">
@@ -239,10 +237,9 @@
 
             },
 
-
             inputs(val) {
                for (var index = 0; index < this.inputs.length; index++) {
-                    //console.log(index)
+
                     if(this.inputs[index]['visible'] == 1 || this.inputs[index]['visible'] == "1" ){
                         this.columns.push({ 
 
@@ -276,17 +273,13 @@
 
         },
         created() {
-        this.CrudService = new CrudService();
 
-        //console.log(this.data)
+            this.CrudService = new CrudService();
+
 
         },
         mounted() {
 
-
-            //this.tablename = this.$route.params.table
-            //this.CrudService.getTable(this.tablename).then(data => this.inputs = data.inputs);
-           // this.CrudService.getData(this.tablename).then(data => this.data = data);
            this.load()
 
     },
@@ -372,7 +365,17 @@
             this.CrudService.getTable(this.tablename).then(data => { 
                 this.title   = data.table.name.es
                 this.table   = data.table
-                this.inputs  = data.inputs
+
+                let removeFromList = data.inputs
+
+                removeFromList = removeFromList.map((v,k) => {
+
+                    if(v['type'] !== 'subForm'){
+
+                        this.inputs.push(v)
+                    }
+                })
+
                 this.rels    = data.relations
                 this.data    = data.data
                 this.loading = false;

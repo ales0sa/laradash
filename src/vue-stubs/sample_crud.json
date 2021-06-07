@@ -1,0 +1,135 @@
+{
+    "table": {
+        "icon": "pi pi-info-circle",
+        "singlepage": false,
+        "id": 1,
+        "uuid": 0,
+        "tablename": "sample_crud",
+        "name": {
+            "es": "Example",
+            "en": ""
+        },
+        "timestamps": 1,
+        "softDeletes": 1,
+        "menu_show": 1,
+        "slug": 0,
+        "slug_global": 0,
+        "whoCan": [
+            "developer"
+        ]
+    },
+    "inputs": [
+        {
+            "isCollapsed": true,
+            "columnname": "text_field",
+            "icon": "",
+            "type": "text",
+            "visible": 1,
+            "gridcols": 12,
+            "visible_edit": 1,
+            "label": {
+                "es": "Text Field",
+                "en": ""
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false
+        },
+        {
+            "isCollapsed": true,
+            "columnname": "textarea_field",
+            "icon": "",
+            "type": "textarea",
+            "visible": 1,
+            "gridcols": 12,
+            "visible_edit": 1,
+            "label": {
+                "es": "Textarea Field",
+                "en": "Textarea_field"
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false
+        },
+        {
+            "isCollapsed": true,
+            "columnname": "boolean_field",
+            "icon": "",
+            "type": "boolean",
+            "visible": 1,
+            "gridcols": 12,
+            "visible_edit": 1,
+            "label": {
+                "es": "Boolean Field",
+                "en": "Boolean_field"
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false
+        },
+        {
+            "isCollapsed": true,
+            "columnname": "select_field",
+            "icon": "",
+            "type": "select",
+            "visible": 1,
+            "gridcols": 12,
+            "visible_edit": 1,
+            "label": {
+                "es": "Select Field",
+                "en": "Select_field"
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false,
+            "valueoriginselector": "values",
+            "options": [
+                {
+                    "key": "0",
+                    "text": "Option A"
+                },
+                {
+                    "key": "1",
+                    "text": "Option B"
+                },
+                {
+                    "key": "2",
+                    "text": "Option C"
+                }
+            ]
+        }
+    ],
+    "migrate": 0
+}

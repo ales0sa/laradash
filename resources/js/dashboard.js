@@ -8,7 +8,7 @@ window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-import './assets/layout/layout.scss';
+//import './assets/layout/layout.scss';
 
 
 import PrimeVue from 'primevue/config';
@@ -65,6 +65,8 @@ window.Vue.use(ToastService);
 window.Vue.use(PrimeVue)
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
+
+
 
 window.Vue.component('ColorPicker', ColorPicker );
 window.Vue.component('Message', Message );

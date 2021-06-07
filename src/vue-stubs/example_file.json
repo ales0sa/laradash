@@ -1,0 +1,72 @@
+{
+    "table": {
+        "icon": "fa fa-file-image-o",
+        "singlepage": true,
+        "id": 1,
+        "uuid": 0,
+        "tablename": "example_file",
+        "name": {
+            "es": "Single Page Files",
+            "en": ""
+        },
+        "timestamps": 1,
+        "softDeletes": 1,
+        "menu_show": 1,
+        "slug": 0,
+        "slug_global": 0,
+        "whoCan": [
+            "developer"
+        ]
+    },
+    "inputs": [
+        {
+            "isCollapsed": true,
+            "columnname": "image_field",
+            "icon": "",
+            "type": "file",
+            "visible": 1,
+            "gridcols": 4,
+            "visible_edit": 1,
+            "label": {
+                "es": "Image",
+                "en": ""
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false
+        },
+        {
+            "isCollapsed": true,
+            "columnname": "pdf_field",
+            "icon": "",
+            "type": "file",
+            "visible": 1,
+            "gridcols": 4,
+            "visible_edit": 1,
+            "label": {
+                "es": "PDF",
+                "en": ""
+            },
+            "unique": 0,
+            "default": "",
+            "nullable": 1,
+            "validate": 1,
+            "max": "",
+            "min": "",
+            "tabledata": "",
+            "tablekeycolumn": "",
+            "tabletextcolumn": "",
+            "translatable": 0,
+            "multiple": false
+        }
+    ],
+    "migrate": 0
+}

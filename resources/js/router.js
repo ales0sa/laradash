@@ -22,6 +22,7 @@ import error500 from './components/errors/500.vue';
 
 import axios from './plugins/axios';
 
+
 Vue.use(Router, axios);
 
 

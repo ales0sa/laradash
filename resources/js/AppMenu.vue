@@ -11,7 +11,7 @@ import AppSubmenu from './AppSubmenu';
 export default {
 	props: {
 		model: {
-			type: Object,
+			type: [Array, Object],
 			default: []
 		},
 	},

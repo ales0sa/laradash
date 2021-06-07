@@ -1,4 +1,4 @@
-@extends('Dashboard::layouts.app')
+@extends('Dashboard::layouts.dashboard')
 
 @section('content')
 <style type="text/css">* {
@@ -258,8 +258,11 @@ input:focus {
   height: auto;
   min-height: 100%;
   position: relative;
-  background-image: url("https://images.pexels.com/photos/114979/pexels-photo-114979.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
-  background-size: cover;
+  background-color: #fff;
+  background-image: url('/logo.png');
+  background-size: 170px;
+  background-repeat: no-repeat;
+  background-position: center;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
 }

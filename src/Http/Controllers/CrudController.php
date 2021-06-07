@@ -47,7 +47,7 @@ class CrudController extends Controller
                 $content      = json_decode(file_get_contents($filePath));
                 $this->table  = $content->table;
 
-
+                //dd($content->inputs);
                 $this->inputs = $content->inputs;
 
 
@@ -345,7 +345,6 @@ public function data($tablename, $id = false)
             $item
         );
 
-
         $input     = $results['input'];
         $content   = $results['content'];
         $relations = $results['relations'];
@@ -356,29 +355,19 @@ public function data($tablename, $id = false)
     }
 
 
-    /*foreach ($this->inputs as $inputKey => $input) {
-        
-        if ( $input->type == 'select' && $input->valueoriginselector == 'table' 
-              || $input->type == 'checkbox' && $input->valueoriginselector == 'table' 
-            )                
-            {
-
-            $relations[$input->tabledata] = DB::table($input->tabledata)
-                            ->whereNull('deleted_at')
-                            ->pluck($input->tabletextcolumn, $input->tablekeycolumn);
-            }
-
-    }*/
-
     $data = $this->model::get()->toArray();
 
     $newData = array();
 
     $textareas = array();
+    $remove = array();
     
     foreach ($this->inputs as $inputKey => $input) {
         
-       
+        if ($input->type == 'subForm' ){
+            $remove[] = $input->columnname;
+        }
+
         if ($input->type == 'textarea' ){ //|| $input->type == 'text'
             $textareas[] = $input->columnname;
         }
@@ -402,15 +391,19 @@ public function data($tablename, $id = false)
     foreach($data as $key => $val) {
 
         foreach($val as $k => $v){
+
             if (in_array($k, $textareas)) {
 
                 $data[$key][$k] = Str::limit($v, 30);
             }
 
+
+
         }
 
     }
 
+    
     return response()->json([
         'languages' => $languages,
         'locale'    => App::getLocale(),
@@ -455,23 +448,6 @@ public function data($tablename, $id = false)
 
         }
 
-
-        //dd($clean);
-        
-
-        /*if(Cache::has($tablename)){
-            
-            $data = Cache::get($tablename);
-
-        }else{
-
-            $data = $this->model::get()->toArray();
-
-        }*/
-
-
-        //dd($user->getRoleNames());
-        //dd($user->getPermissionsViaRoles());
         if(isset($this->table->whoCan) && 
            !$user->hasAnyRole([$this->table->whoCan]
            //|| ( $user->root !== 1)
@@ -493,64 +469,9 @@ public function data($tablename, $id = false)
 
         $newData = array();
 
-        //dd($this->table);
-        //dd($this->inputs['textarea']->type);
-/*
-        foreach ($data->toArray() as $key => $record) {    
-            echo $key;
-            echo "<hr>";
-            $found_key = null;
-            //dd($key);
-            //$record['content'] = $this->getFirstParagraph($record['content']);
-           //dd($this->inputs);
-           // echo($key);
-           // echo '-';
-           // echo($this->inputs[$key]->type);
-            foreach ($record as $wa => $value) {
-                dd($wa);
-
-                //dd($wa);
-               // echo($this->inputs[$key]->type);
-                # code...
-               // echo $key;
-               //dd($this->inputs[$key]);
-               $found_key = array_search('textarea', array_column($this->inputs, 'type'));
-               $index = $this->inputs[$found_key]->columnname;
-               //dd($wa);
-               if($wa == $index && $this->inputs[$found_key]->type == 'textarea'){
-                   
-                   echo $wa.' * '.$index. '  - '.$this->inputs[$found_key]->columnname;
-                  // $newData[$key][$wa] = $value; //Str::limit($value, 50);
-                    $newData[$key][$wa] = Str::limit($value, 30);
-                   
-                }else{
-
-                    echo $wa;
-                }
-                
-            }
-
-        }
-     die();
-        //dd($newData);
-        $data = $newData;*/
-
-        /*foreach (LaravelLocalization::getLocalesOrder() as $key => $value) {
-
-            $flag = 'es';
-            if($key == 'pt'){
-                $flag = 'br';
-            }
-            if($key == 'en') {
-                $flag = 'us';
-            }
-        }*/
-        //$languages[] = [ 'key' => $value['name'], 'value' => $key, 'flag' => $flag];
         $languages = [ 'es' => 'Español' ];
         $textareas = array();
-        
-        
-//        dd($this->table);
+
 
         foreach ($this->inputs as $inputKey => $input) {
             
@@ -600,7 +521,6 @@ public function data($tablename, $id = false)
 
         foreach ($this->inputs as $inputKey => $input) {
 
-
             $results = $this->getInput(
                 null,
                 $input,
@@ -619,6 +539,7 @@ public function data($tablename, $id = false)
 
         }
 
+        
         return response()->json([
             'data'           => $data,
             'tablename'      => $this->tablename,
