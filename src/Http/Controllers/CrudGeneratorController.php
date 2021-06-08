@@ -224,8 +224,19 @@ class CrudGeneratorController extends Controller
         ], ['slug'], ['name', 'description']);*/
 
        // dd($data->inputs);
+       
+       
 
-        (new Generator($data->table, $data->inputs))->crud();
+       // Check if model exists.
+       $className = str_replace(['_', '-', '.'], ' ',  $data->table->tablename);
+       $className = ucwords($className);
+       $filePath = app_path('Models/' . $className . '.php');
+       $isExists = File::exists($filePath);
+
+       if(!$isExists){
+           (new Generator($data->table, $data->inputs))->crud();
+       }
+
         $stream = fopen("php://output", "w");
         
         if($data->migrate == 0){
@@ -286,14 +297,6 @@ class CrudGeneratorController extends Controller
         return redirect()->route('Dashboard::admin.crud-generator')->with('success', 'Se añadio un <strong>Groupo</strong> con éxito.');*/
     }
 
-    public function edit($table)
-    {
-        return view('Dashboard::admin.crud-generator.edit', [
-            'table'          => $table,
-            '__admin_active' => 'Dashboard::admin.crud-generator'
-        ]);
-    }
-
     public function destroy($id)
     {
         $dirPath = __crudFolder();
@@ -305,7 +308,17 @@ class CrudGeneratorController extends Controller
 
         \File::delete($filePath);
 
-        return response()->json([
+       // Check if model exists.
+       $className = str_replace(['_', '-', '.'], ' ',  $tablename);
+       $className = ucwords($className);
+       $modelPath = app_path('Models/' . $className . '.php');
+       $isExists = File::exists($modelPath);
+
+       if($isExists){
+            \File::delete($modelPath);
+       }
+
+       return response()->json([
             'status'   => 'success',
             'data'     => $this::index()
         ]);
@@ -315,17 +328,13 @@ class CrudGeneratorController extends Controller
     public function trash()
     {
         $data = Group::onlyTrashed()->get();
-        return view('Dashboard::admin.crud-generator.index', [
-            'data'           => $data,
-            'trash'          => true,
-            '__admin_active' => 'Dashboard::admin.crud-generator'
-        ]);
+        return $data;
     }
     public function restore($id)
     {
         $item = Group::withTrashed()->find($id);
         $item->deleted_at = null;
         $item->save();
-        return redirect()->route('Dashboard::admin.crud-generator.trash')->with('success', 'Se ha restaurado un <strong>Groupo</strong> con éxito.');
+        return $item;
     }
 }

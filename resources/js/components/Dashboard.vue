@@ -1,10 +1,8 @@
 <template>
     <div class="container">
 
- 
   <CustomDash :value="getCustomDash()"
-   />
-
+  />
 
     </div>
 </template>
@@ -15,7 +13,7 @@
     export default {
         props: {
             value: {
-                type: String,
+                type: Array,
                 default: ''
             },
 
@@ -28,14 +26,18 @@
         components: { CustomDash },
         created(){
             
+            this.getCustomDash()
         },
         mounted() {
-            console.log('Component mounted.')
-            this.getCustomDash()
+            console.log('Dashboard mounted.')
         },
         methods: {
             getCustomDash(){
-               return this.value[0]['name'].charAt(0).toUpperCase() + this.value[0]['name'].slice(1)
+                if(this.value[0]['name'] == 'developer'){
+                    return 'SampleDash'
+                }else{
+                    return this.value[0]['name'].charAt(0).toUpperCase() + this.value[0]['name'].slice(1)
+                }
             }
 
 

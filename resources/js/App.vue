@@ -26,7 +26,7 @@
 
 
 		<div class="layout-main" >
-            <transition name="fade" mode="out-in">
+            <transition name="fade" mode="out-in"  v-if="authGroup">
 			    <router-view :value="authGroup" />
             </transition>
 		</div>
@@ -51,6 +51,7 @@ import EventBus from './service/event-bus';
 export default {
     data() {
         return {
+            isMounted: false,
             logo: window.logo,
             transitionName: null,
             auth: 1,
@@ -58,7 +59,7 @@ export default {
             imgError: false,
             authUser: window.authUser,
             authPermissions: window.authPermissions,
-            authGroup: window.authGroup,
+            authGroup: null,
             authRoot: 0,
             layoutMode: 'static',
             layoutColorMode: 'light',
@@ -107,10 +108,9 @@ export default {
 
             this.authRoot = response.data.user.root
             this.authGroup = response.data.user.roles
-            console.log(response.data)
-            this.isAuth = true
 
-        });
+
+        })
                     
 
         

@@ -44,222 +44,282 @@
         </div>
       </div>
     </div>
-    
-    <div class="p-grid">
+    <!--<div class="p-grid">
       <div class="p-col-6" v-if="loaded == 1">
-      <div class="card">
-        <h5 class="p-mb-5">CRUD: {{ table.tablename }}</h5>
-        <div class="card-body pb-0">
-          <div class="p-grid p-formgrid">
-            <div class="p-col-3 p-mb-5">
-              <span class="p-float-label">
-                <Dropdown
-                  v-model="table.icon"
-                  :options="icons"
-                  :filter="true"
-                  optionLabel="icon"
-                  optionValue="icon"
-                  dataKey="icon"
-                  placeholder="Icon for adm menu"
-                >
-                  <template #value="slotProps">
-                    <div
-                      class="country-item country-item-value"
-                      v-if="slotProps.value"
-                    >
-                      <i :class="slotProps.value" /> {{ slotProps.value }}
-                    </div>
-                    <span v-else> </span>
-                  </template>
-                  <template #option="slotProps">
-                    <i :class="slotProps.option.icon" />
-                    {{ slotProps.option.icon }}
-                  </template>
-                </Dropdown>
-                <label for="">Menu Icon</label>
-              </span>
-            </div>
-            <div class="p-col-12 p-md-4">
-              <div class="p-float-label">
-                <InputText
-                  type="text"
-                  v-model="table.tablename"
-                  :class="{
-                    'p-invalid': validationErrors.tablename && submitted,
-                  }"
-                />
-                <label for=""
-                  >Table name {{ this.validationErrors["tablename"] }}
-                </label>
+        <div class="card">
+          <h5 class="p-mb-5">CRUD: {{ table.tablename }}</h5>
+          <div class="card-body pb-0">
+            <div class="p-grid p-formgrid">
+  
+              <div class="p-col-12 p-md-4">
+                <Button label="Fill labels" @click="fillTable()" />
+                <Button label="Set All Null/Not Null" @click="setAllNull()" />
+                <Button label="List/Unlist" @click="setList()" />
+                <Button label="Collapse" @click="collapseAll()" />
               </div>
             </div>
-            <div class="p-col-12 p-md-4">
-              <Button label="Fill labels" @click="fillTable()" />
-              <Button label="Set All Null/Not Null" @click="setAllNull()" />
-              <Button label="List/Unlist" @click="setList()" />
-              <Button label="Collapse" @click="collapseAll()" />
-            </div>
-            <div
-              class="p-col-3 p-mb-3"
-              v-for="langkey in Object.keys(languages)"
-              :key="'Name' + langkey"
-            >
-              <div class="p-float-label">
-                <InputText type="text" class="" v-model="table.name[langkey]" />
-                <label for="floatingInput"
-                  >Name: {{ languages[langkey] }}</label
-                >
-              </div>
-            </div>
-
-            <div class="p-col-4 p-mb-3">
-              <div class="p-field p-float-label">
-                <MultiSelect
-                  v-model="table.whoCan"
-                  id="multiselect"
-                  :options="groups"
-                  optionLabel="name"
-                  optionValue="name"
-                />
-                <label for="multiselect"> Who can see: </label>
-              </div>
-            </div>
-          </div>
-          <div class="p-formgroup-inline">
-            <div class="p-field-checkbox">
-              <Checkbox v-model="checkMigrate" :binary="true" id="migrate" />
-              <label for="migrate"> MIGRATE </label>
-            </div>
-            <div class="p-field-checkbox">
-              <Checkbox
-                v-model="table.generateUser"
-                :binary="true"
-                id="generateUser"
-              />
-              <label for="generateUser"> GENERATE USER </label>
-            </div>
-
-            <div class="p-field-checkbox">
-              <Checkbox
-                v-model="table.noActions"
-                :binary="true"
-                id="nobuttons"
-              />
-              <label for="nobuttons"> NO CRUD BUTTONS </label>
-            </div>
-            <div class="p-field-checkbox">
-              <Checkbox
-                v-model="table.onlyForUser"
-                :binary="true"
-                id="created_by"
-              />
-              <label for="created_by"> SHOW ONLY FOR CREATOR </label>
-            </div>
-            <div class="p-field-checkbox">
-              <Checkbox
-                v-model="table.pdfButton"
-                :binary="true"
-                id="pdfbutton"
-              />
-              <label for="pdfbutton"> PDF BUTTON </label>
-            </div>
-          </div>
-
-          <div class="p-col">
             <div class="p-formgroup-inline">
               <div class="p-field-checkbox">
-                <Checkbox v-model="table.id" :binary="true" id="rowid" />
-                <label for="rowid"> ID </label>
+                <Checkbox v-model="checkMigrate" :binary="true" id="migrate" />
+                <label for="migrate"> MIGRATE </label>
               </div>
-              <div class="p-field-checkbox">
-                <Checkbox
-                  v-model="table.singlepage"
-                  :binary="true"
-                  id="singlepage"
-                />
-                <label for="singlepage"> SINGLE PAGE </label>
+              
+            </div>
+
+            <div class="p-col">
+              <div class="p-formgroup-inline">
+
+                <!---
+                <div class="p-field-checkbox">
+                  <Checkbox v-model="table.slug" :binary="true" id="slug" />
+                  <label for="slug"> SLUG </label>
+                </div>
+
+                <div class="p-field p-col" v-if="table.slug == 1">
+                  <div class="p-float-label">
+                    <select
+                      class="form-select"
+                      id="slug_global"
+                      v-model="table.slug_global"
+                    >
+                      <option value="1">Yes</option>
+                      <option value="0">No</option>
+                    </select>
+                    <label for="slug_global">SLUG GLOBAL</label>
+                  </div>
+                </div> 
               </div>
-              <div class="p-field-checkbox">
-                <Checkbox v-model="table.uuid" :binary="true" id="uuid" />
-                <label for="uuid"> UUID </label>
-              </div>
-              <div class="p-field-checkbox">
-                <Checkbox
-                  v-model="table.timestamps"
-                  :binary="true"
-                  id="timestamps"
-                />
-                <label for="timestamps"> TIMESTAMPS </label>
-              </div>
-              <div class="p-field-checkbox">
-                <Checkbox
-                  v-model="table.softDeletes"
-                  :binary="true"
-                  id="softdel"
-                />
-                <label for="softdel"> SOFTDELETES </label>
-              </div>
-              <div class="p-field-checkbox">
-                <Checkbox v-model="table.slug" :binary="true" id="slug" />
-                <label for="slug"> SLUG </label>
+            </div>
+
+           
+          </div>
+        </div>
+      </div>
+    </div> --->
+    <div class="p-grid">
+
+
+      <div class="p-field p-col-4 p-md-4 p-pr-0">
+        <div class="card p-fluid" style="height: 100%">
+          <h5>CRUD</h5>
+
+<div class="p-field p-float-label p-mb-5">
+                  <InputText
+                    type="text"
+                    v-model="table.tablename"
+                    :class="{
+                      'p-invalid': validationErrors.tablename && submitted,
+                    }"
+                  />
+                  <label for=""
+                    >Table name {{ this.validationErrors["tablename"] }}
+                  </label>
+                </div>
+
+<div class="p-field  p-mb-5">
+
+          <div class="p-d-flex p-jc-between">
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="table.menu_show" :binary="true" id="menu" />
+                    <label for="menu"> MENU </label>
+                  </div>
+
+                  <div class="p-field  p-float-label" v-if="table.menu_show">
+                    <Dropdown
+                      v-model="table.menu_parent"
+                      :options="menues" 
+                      :showClear="true"
+                      id="menu_parent"
+                    />
+
+                    <label for="menu_parent"> MENU PARENT </label>
+                  </div>
+           </div>
+
+                <span class=" p-float-label   p-mt-3" v-if="table.menu_show">
+                  <Dropdown
+                    v-model="table.icon"
+                    :options="icons"
+                    :filter="true"
+                    optionLabel="icon"
+                    optionValue="icon"
+                    dataKey="icon"
+                    placeholder="Icon for adm menu"
+                  >
+                    <template #value="slotProps">
+                      <div
+                        class="country-item country-item-value"
+                        v-if="slotProps.value"
+                      >
+                        <i :class="slotProps.value" /> {{ slotProps.value }}
+                      </div>
+                      <span v-else> </span>
+                    </template>
+                    <template #option="slotProps">
+                      <i :class="slotProps.option.icon" />
+                      {{ slotProps.option.icon }}
+                    </template>
+                  </Dropdown>
+                  <label for="">Menu Icon</label>
+                </span>
               </div>
 
-              <div class="p-field p-col" v-if="table.slug == 1">
-                <div class="p-float-label">
-                  <select
-                    class="form-select"
-                    id="slug_global"
-                    v-model="table.slug_global"
+              <div 
+                class=""
+                v-for="langkey in Object.keys(languages)"
+                :key="'Name' + langkey"
+              >
+                <div class="p-field p-float-label p-mb-5" v-if="table.menu_show">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="table.name[langkey]"
+                  />
+                  <label for="floatingInput"
+                    >Name: {{ languages[langkey] }}</label
                   >
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
-                  </select>
-                  <label for="slug_global">SLUG GLOBAL</label>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div class="p-col-12">
-            <div class="p-field-checkbox">
-              <Checkbox v-model="table.menu_show" :binary="true" id="menu" />
-              <label for="menu"> MENU </label>
-            </div>
+                <div class="p-field p-float-label">
+                  <MultiSelect
+                    v-model="table.whoCan"
+                    id="multiselect"
+                    :options="groups"
+                    optionLabel="name"
+                    optionValue="name"
+                  />
+                  <label for="multiselect"> Who can see: </label>
+                </div>
+           
 
-            <div class="p-field" v-if="table.menu_show">
-              <Dropdown
-                v-model="table.menu_parent"
-                :options="menues"
-                id="menu_parent"
-              />
-
-              <label for="menu"> MENU PARENT </label>
-            </div>
-          </div>
         </div>
       </div>
-    </div>
-      
-      <div class="p-field p-col-6 p-md-6 p-pr-0">
+
+      <div class="p-field p-col-2 p-md-2 p-pr-0">
         <div class="card p-fluid" style="height: 100%">
-	          <h5> INPUT / COLUMN EDITOR </h5>
+            <h5> OPTIONS </h5> 
+
+            <div>
+
+
+<div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.noActions"
+                  :binary="true"
+                  id="nobuttons"
+                />
+                <label for="nobuttons"> NO CRUD BUTTONS </label>
+              </div>
+             
+              <div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.pdfButton"
+                  :binary="true"
+                  id="pdfbutton"
+                />
+                <label for="pdfbutton"> PDF BUTTON </label>
+              </div>
+           
+                
+                <div class="p-field-checkbox">
+                  <Checkbox
+                    v-model="table.singlepage"
+                    :binary="true"
+                    id="singlepage"
+                  />
+                  <label for="singlepage"> SINGLE PAGE </label>
+                </div>
+
+            </div>
+          <div class="p-d-inline">
+            
+                <div class="p-field-checkbox">
+                  <Checkbox v-model="table.id" :binary="true" id="rowid" />
+                  <label for="rowid"> ID </label>
+                </div>
+                <div class="p-field-checkbox">
+                  <Checkbox v-model="table.uuid" :binary="true" id="uuid" />
+                  <label for="uuid"> UUID </label>
+                </div>
+                <div class="p-field-checkbox">
+                  <Checkbox
+                    v-model="table.timestamps"
+                    :binary="true"
+                    id="timestamps"
+                  />
+                  <label for="timestamps"> TIMESTAMPS </label>
+                </div>
+                <div class="p-field-checkbox">
+                  <Checkbox
+                    v-model="table.softDeletes"
+                    :binary="true"
+                    id="softdel"
+                  />
+                  <label for="softdel"> SOFTDELETES </label>
+                </div>
+                 <div class="p-field-checkbox">
+                <Checkbox
+                  v-model="table.onlyForUser"
+                  :binary="true"
+                  id="created_by"
+                />
+                <label for="created_by"> CREATED BY</label>
+              </div>
+
+                <div class="p-field-checkbox">
+                  <Checkbox
+                    v-model="table.generateUser"
+                    :binary="true"
+                    id="generateUser"
+                  />
+                  <label for="generateUser"> AUTH MODEL </label>
+                </div>
+
+          </div>
+
+          
         </div>
       </div>
-<div class="p-field p-col-6 p-md-6 p-pr-0">
+
+      <div class="p-field p-col-2 p-md-2 p-pr-0">
+        <div class="card p-fluid" style="height: 100%">
+          <h5>COLUMNS</h5>
+
+
+            <Listbox :value="selectedInputKey" :options="inputs" optionLabel="columnname"  />
+                    
+
+
+        </div>
+      </div>
+
+      <div class="p-field p-col-4 p-md-4 p-pr-0">
+        <div class="card p-fluid" style="height: 100%">
+          <h5>INPUT EDITOR</h5>
+        </div>
+      </div>
+
+
+      <div class="p-field p-col-6 p-md-6 p-pr-0">
         <div class="card p-fluid">
-	<h5>LIST PREVIEW</h5>
-	<DataTable :value="inputs">
-		<Column :field="input.columnname" :header="input.label.es" v-for="(input, inputKey) in inputs.filter(
+          <h5>LIST PREVIEW</h5>
+          <DataTable :value="inputs">
+            <Column
+              :field="input.columnname"
+              :header="input.label.es"
+              v-for="(input, inputKey) in inputs.filter(
                 (item) => !(item.visible !== 1)
-              )" :key="inputKey">
-			<template #body>
-				<Skeleton></Skeleton>
-			</template>
-		</Column>
-	</DataTable>
- </div> </div>
-
-
+              )"
+              :key="inputKey"
+            >
+              <template #body>
+                <Skeleton></Skeleton>
+              </template>
+            </Column>
+          </DataTable>
+        </div>
+      </div>
 
       <div class="p-field p-col-12 p-md-6 p-pr-0">
         <div class="card p-fluid">
@@ -276,36 +336,33 @@
 
           <div class="p-grid">
             <div
-             :class="'form_preview_over p-col-' + input.gridcols"
+              :class="'form_preview_over p-col-' + input.gridcols"
               v-for="(input, inputKey) in inputs.filter(
                 (item) => !(item.visible_edit !== 1)
               )"
               :key="input.columnname"
               @click="selectedInputKey = inputKey"
-            ><div class="p-d-flex p-jc-around"
-             :class="''"
-             >
-              <Button
+            >
+              <div class="p-d-flex p-jc-around" :class="''">
+                <Button
                   icon="pi pi-arrow-left"
                   class="p-button-secondary"
-                  style=" height: 1.9rem;"
+                  style="height: 1.9rem"
                   @click="inputUp(inputKey)"
                   v-if="inputKey > 0"
                 ></Button>
                 <Button
                   icon="pi pi-minus"
                   class="p-button-info"
-                  style=" height: 1.9rem;"
-                  @click="inputs[inputKey].gridcols -=1"
+                  style="height: 1.9rem"
+                  @click="inputs[inputKey].gridcols -= 1"
                   v-if="inputs[inputKey].gridcols > 1"
                 ></Button>
                 <div
                   class="p-mb-1 p-skeleton p-component p-text-center"
-                  style="width: 100%; height: 2rem; line-height:2rem"
+                  style="width: 100%; height: 2rem; line-height: 2rem"
                 >
-                  
-                
-                <small
+                  <small
                     style="
                       font-size: 0.85rem;
                       text-transform: uppercase;
@@ -313,28 +370,27 @@
                     "
                   >
                     {{ input.columnname }}
-
                   </small>
-                     
-
                 </div>
                 <Button
                   icon="pi pi-plus"
                   class="p-button-info"
-                  style=" height: 1.9rem;"
-                  @click="inputs[inputKey].gridcols +=1"
+                  style="height: 1.9rem"
+                  @click="inputs[inputKey].gridcols += 1"
                   v-if="inputs[inputKey].gridcols < 12"
                 ></Button>
-               <Button
+                <Button
                   icon="pi pi-arrow-right"
                   class="p-button-secondary"
-                  style=" height: 1.9rem;"
+                  style="height: 1.9rem"
                   @click="inputDown(inputKey)"
-                  v-if="inputKey !== (inputs.filter(
-                (item) => !(item.visible_edit !== 1)
-              ).length - 1) "
+                  v-if="
+                    inputKey !==
+                    inputs.filter((item) => !(item.visible_edit !== 1)).length -
+                      1
+                  "
                 ></Button>
-            </div>
+              </div>
 
               <!---
             <div :id="'dgHover'+inputKey" :ref="'dgHover'+inputKey"> 
@@ -389,7 +445,9 @@
       <div class="p-field p-col-12 p-md-6 p-pr-0">
         <div class="card p-shadow-3 p-fluid">
           <div class="p-d-flex">
-            <h5 v-if="selectedInputKey">INPUT: {{ inputs[selectedInputKey].columnname}}</h5>
+            <h5 v-if="selectedInputKey">
+              INPUT: {{ inputs[selectedInputKey].columnname }}
+            </h5>
             <Button
               class="p-button-rounded p-button-danger"
               icon="pi pi-times"
@@ -1647,7 +1705,7 @@ export default {
             columnname: "username",
             icon: "",
             type: "text",
-            visible: 1,
+            visible: 0,
             gridcols: 6,
             visible_edit: 1,
             translatable: 0,
@@ -1662,7 +1720,7 @@ export default {
             columnname: "password",
             icon: "",
             type: "password",
-            visible: 1,
+            visible: 0,
             gridcols: 6,
             visible_edit: 1,
             translatable: 0,
@@ -1677,7 +1735,7 @@ export default {
             columnname: "name",
             icon: "",
             type: "text",
-            visible: 1,
+            visible: 0,
             gridcols: 6,
             visible_edit: 1,
             translatable: 0,
@@ -1692,7 +1750,7 @@ export default {
             columnname: "email",
             icon: "",
             type: "text",
-            visible: 1,
+            visible: 0,
             gridcols: 6,
             visible_edit: 1,
             translatable: 0,
@@ -1779,7 +1837,7 @@ export default {
         visible: 1,
         gridcols: 3,
         visible_edit: 1,
-        label: { es:  "input_" + getlenght, en: "input_" + getlenght },
+        label: { es: "input_" + getlenght, en: "input_" + getlenght },
         unique: 0,
         default: "",
         nullable: 1,
@@ -1992,7 +2050,7 @@ export default {
         accept: () => {
           //callback to execute when user confirms the action
           this.inputs.splice(key, 1);
-          this.selectedInputKey = null
+          this.selectedInputKey = null;
           this.checkMigrate = 1;
         },
         reject: () => {
