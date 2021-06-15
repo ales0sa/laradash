@@ -1,8 +1,13 @@
 # laradash
-composer require ales0sa/laradash
 
-php artisan dashboard:init
+- composer require laravel/ui
 
-yarn
+- php artisan migrate
 
-yarn prod
+- composer require ales0sa/laradash
+
+- php artisan dashboard:init
+
+- yarn
+
+- yarn dev
