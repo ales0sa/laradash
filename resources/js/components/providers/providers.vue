@@ -173,16 +173,16 @@
                 
         </Column>
 
-        <Column v-if="columns.length >= 1 && !table.noActions" headerStyle="width: 8em;">
+        <Column v-if="columns.length >= 1 " headerStyle="width: 8em;">
             <template #body="slotProps">
                 <span class="p-buttonset">
-                <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
+                <Button   v-if="!table.noActions" icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data.id)" />
 
                 <!---
                 <Button icon="pi pi-copy" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="dupe(slotProps.data.id)" />
                 -->
 
-                <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
+                <Button  v-if="!table.noActions"  icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm  p-button-danger" @click="del(slotProps.data.id)" />
                 
                 <Button class="p-button-outlined p-button-raised p-button-sm
                 "

@@ -4,11 +4,11 @@ namespace Ales0sa\Laradash\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Translatable\HasTranslations;
+//use Spatie\Translatable\HasTranslations;
 
 class Seo extends Model
 {
-    use HasTranslations, SoftDeletes;
+  //  use HasTranslations, SoftDeletes;
 
     protected $table = 'seo';
 	protected $fillable = [

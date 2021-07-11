@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Ales0sa\Laradash\Models\User;
 use Ales0sa\Laradash\Models\Translation;
 use Illuminate\Support\Str;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class TranslationController extends Controller
 {

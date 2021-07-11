@@ -26,7 +26,7 @@
             :input="input" v-if="layout[input.type] == 'textarea'"
             editorStyle="height: 320px; margin-bottom: 20px;"> 
             	<template #toolbar>
-                    <span style="font-weight: bolder; text-transform: uppercase;"> {{ input.label[labellang()] }}</span>
+                    <span style="font-weight: bolder; text-transform: uppercase;"> {{ input.label.es }}</span>
                     <span class="ql-formats">
                         <button class="ql-bold"></button>
                         <button class="ql-italic"></button>
@@ -145,6 +145,7 @@
                 //event.files == files to upload
                 console.log(event, colnam,'rec. en layout')
                 this.$emit('myUploader', event, colnam);
+                //this.value = event
             },
             setValue(data){
                 console.log('get in input layout')

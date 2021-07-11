@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Ales0sa\Laradash\Models\User;
 use Ales0sa\Laradash\Models\Seo;
 use Illuminate\Support\Str;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+
 
 class SeoController extends Controller
 {

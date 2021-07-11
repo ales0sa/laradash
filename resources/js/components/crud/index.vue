@@ -161,10 +161,10 @@
 
                     url = url + '/data/' + this.edit
                 }
-                console.log('mmm')
+                
                 this.CrudService.getTable(url).then((response) => {
 
-                    console.log(response)
+                    
                     this.languages = response.languages
                     this.tablename = response.tablename
                     this.table     = response.table
@@ -237,8 +237,8 @@
                 var key = colname;
                 var xas =  {[colname]:event};
                 this.files.push(xas)
-                
-                console.log(this.files)
+                //this.content[colname].value = event
+                //console.log(this.files)
             },
             sendForm() {
 

@@ -2,26 +2,30 @@
 
 namespace Ales0sa\Laradash\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Ales0sa\Laradash\Requests\GroupCreateRequest;
-use Ales0sa\Laradash\Requests\GroupEditRequest;
 use App\Http\Controllers\Controller;
+
+
+//use Ales0sa\Laradash\Requests\GroupCreateRequest;
+//use Ales0sa\Laradash\Requests\GroupEditRequest;
+
 use Ales0sa\Laradash\Models\User;
-/*use Junges\ACL\Http\Models\Group;
-use Junges\ACL\Http\Models\Permission;*/
+
+use Ales0sa\Laradash\Generators\Generator;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
-//use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Ales0sa\Laradash\Generators\Generator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
+
 use Symfony\Component\Console\Output\StreamOutput;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-use Illuminate\Support\Facades\Auth;
 
 class CrudGeneratorController extends Controller
 {
@@ -43,23 +47,6 @@ class CrudGeneratorController extends Controller
 
         });
 
-       // $this->middleware('auth');
-        //$userId = auth()->guard('web');
-        //dd($userId);
-
-        //$user = User::find($request->user->id);
-        //$user = User::find(Auth::user()->id);
-        //dd($user);
-        //dd(auth()->user());
-        //dd(auth()->user());
-
-        //$user = Auth::guard('web');
-        //dd(Auth::guard('web')->user()->name);
-        //$user = auth()->guard('root')->user();//user();
-        //dd($user);
-      //$this->middleware(['role_or_permission:root|edit crud-generator']);
-       //$this->middleware('role:root');
-      // $this->middleware(['role:developer']);
     }
 
     public function index()
@@ -246,10 +233,10 @@ class CrudGeneratorController extends Controller
 
         }else{
         
-            Artisan::call('migrate:refresh', [
+/*            Artisan::call('migrate:refresh', [
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
                 '--force' => true            
-            ]);
+            ]);*/
             return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
 
         }

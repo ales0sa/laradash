@@ -172,11 +172,12 @@ class CrudController extends Controller
         try {
 
             if ($input->type == 'file') {
+                
                 if(isset($data[$input->columnname])){
 
-                    $path = $data[$input->columnname]->store($this->tablename, 'public');
+                    //$path = $data[$input->columnname]->store($this->tablename, 'public');
                     // dd($path);
-                    $item->{$input->columnname} = '/storage/'.$path;
+                    $item->{$input->columnname} = '/storage/'.$data[$input->columnname];
 
                 }else{
                     
@@ -211,7 +212,7 @@ class CrudController extends Controller
             $className = str_replace(' ', '', $className);
             $subModel = "\\App\\Models\\" . $className;
             //dd($subModel);
-            $subModel::where(''.$input->tablekeycolumn.'', $item->id)->delete();
+            //$subModel::where(''.$input->tablekeycolumn.'', $item->id)->delete();
 
             try {
                 if (array_key_exists($input->columnname, $data)) {
@@ -627,16 +628,26 @@ public function data($tablename, $id = false)
 
     public function upload($tablename, $id, $column, Request $request)
     {
-        $item = $this->model::find($id);
+
         
-        $path = $request->{$column}->store($this->tablename, 'public');
-        // dd($path);
-        $item->{$column} = '/storage/'.$path;
+        if($id == 'undefined'){
 
-        $item->save();
+            //$item = new $this->model;
+            $path = $request->{$column}->store($this->tablename, 'public');
 
+        }else{
+
+            $item = $this->model::find($id);
+            $path = $request->{$column}->store($this->tablename, 'public');
+            $item->{$column} = '/storage/'.$path;
+            $item->save();
+
+        }
+        
+             
+      
         return response()->json(['status' => 'success', 'message' => 'Upload correct.',
-        'file' => $item->{$column} ]);
+        'file' => $path, 'column' => $column ]);
         
 
         //dd($request->all());

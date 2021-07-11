@@ -17,12 +17,14 @@
 </Toolbar>
 
         <div class="p-md-3">
-            
+             <div class="p-field-checkbox">
+                    <Checkbox v-model="onMenu" :binary="true" label="" />                    
+                    <label for="binary">ONLY MENU DISPLAY</label>
+            </div>
         </div>
         <div class="p-md-3">
            
         </div>
-
 
         <DataTable 
         :value="data2"  
@@ -38,10 +40,24 @@
             <Column v-for="col of columns" :field="col.field" :header="col.header" :key="col.field">
             </Column>
 
+
             <Column headerStyle="width: 20%;" bodyStyle="text-align: center; overflow: visible">
             <template #body="slotProps">          
-                <router-link :to="{ name: 'cre', params: { file: slotProps.data.header }}">  <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" /> </router-link>
-                <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="del(slotProps.data.header)" />
+                <span class="p-buttonset">
+                    <router-link :to="{ name: 'cre', params: { file: slotProps.data.header }}">
+                    <Button icon="pi pi-pencil"
+                            class="p-button-outlined p-button-raised p-button-sm p-button-success"
+                             />
+                    </router-link>
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-danger" @click="del(slotProps.data.header)" /> 
+
+                <!-- 
+                  <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" /> </router-link>
+                
+                --->
+
+
+                </span>
             </template>
             </Column>
 
@@ -56,13 +72,13 @@
         data(){
             return{
 
-
+                onMenu: false,
                 languages: {},
-        columns: [
+                columns: [
 
-            {field: 'value', header: 'File'}           
-            
-        ],
+                    {field: 'model', header: 'Model'},          
+                    {field: 'value', header: 'File'}    
+                ],
                 data: [],
                 data2: [],
                 inputs: [],

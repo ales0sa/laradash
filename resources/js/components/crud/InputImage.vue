@@ -2,10 +2,11 @@
 <template>
 <!--<div class="p-fileupload p-fileupload-advanced p-component">--->
 <div class="">
-   
+    {{ value }}
         <label style="left: 0.429rem;
     color: #383636;
-    text-transform: uppercase; font-weight: bolder; margin-bottom: 5px; margin-left: 5px;"> {{ input.label.es }}</label>
+    text-transform: uppercase; font-weight: bolder;
+     margin-bottom: 5px; margin-left: 5px;"> {{ input.label.es }}</label>
 
     <FilePond
         name="test"
@@ -17,8 +18,6 @@
         :instant-upload="false"
         :accepted-file-types="this.fileTypes"
         v-bind:files="myFiles"
-        image-crop-aspect-ratio="1"
-        :allowImageCrop="true"
         v-on:init="loadFiles"
         @removefile="remove()"
         :allowRemove="checkRemove"
@@ -160,8 +159,9 @@ const FilePond = vueFilePond(
                                 progress(e.lengthComputable, e.loaded, e.total)
                             }
                         }).then(response => {
+                            console.log(response)
                             // passing the file id to FilePond
-                            load(response.file)
+                            this.load(response.data.file)
                         }).catch((thrown) => {
                             if (axios.isCancel(thrown)) {
                                 console.log('Request canceled', thrown.message)
@@ -173,8 +173,12 @@ const FilePond = vueFilePond(
             },
             load(uniqueFileId, load, error) {
             // error();
-            //console.log('delete?')
-            console.log('load')
+            
+            console.log('load to new file')
+            console.log(uniqueFileId, this.input.columnname)
+            this.value = uniqueFileId
+            this.$emit('myUploader', uniqueFileId, this.input.columnname)
+
             },
 
             fetch(url, load, error, progress, abort, headers) {
@@ -194,9 +198,6 @@ const FilePond = vueFilePond(
             console.log('revert')
             // Can call the error method if something is wrong, should exit after
             //error('oh my goodness');
-
-            // Should call the load method when done, no parameters required
-            load();
             },
             loadFiles(){
                 console.log('loading files')
@@ -247,9 +248,7 @@ const FilePond = vueFilePond(
 
                 },
                 reject: () => {
-                    console.log('cancelo borrado')
-                    //callback to execute when user rejects the action
-                    //this.myFiles = this.value
+
                     if(this.value){
 
                         this.$refs.pond.addFile(this.value)
