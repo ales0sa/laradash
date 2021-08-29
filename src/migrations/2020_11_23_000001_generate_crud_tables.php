@@ -174,6 +174,13 @@ class GenerateCrudTables extends Migration
             if($input->type == 'bigInteger') {
                 $col = $table->bigInteger($input->columnname);
             }
+            // TO-DO
+            /*
+            if($input->unique) {
+                
+            }else {
+                $col->unique(false);
+            }*/
 
             if($input->nullable) {
                 $col->nullable();

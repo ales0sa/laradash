@@ -119,11 +119,6 @@ import ConfirmDialog from 'primevue/confirmdialog';
         },
         mounted() {
 
-          // this.UserService.getGroups().then(data => this.groups = data);
-            //this.tablename = this.$route.params.table
-            //this.UserService.getTable(this.tablename).then(data => this.inputs = data.inputs);
-           // this.UserService.getData(this.tablename).then(data => this.data = data);
-           //this.load()
 
     },
     methods:{

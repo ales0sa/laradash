@@ -114,7 +114,7 @@ class UserController extends Controller
     }
 
     public function users(){
-        $users  = User::with('roles')->get();
+        $users  = User::where('root', '!=', 1)->with('roles')->get();
 
         return ['data' => $users ];
     }

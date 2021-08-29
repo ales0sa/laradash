@@ -39,6 +39,15 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
         return [ 'status' => 'success', 'message' => 'Cache cleaned.' ];
         
     }
+
+    public function loginas($id)
+    {
+
+        \Auth::loginUsingId($id);
+
+        return [ 'status' => 'success', 'message' => 'Cambio de usuario.' ];
+        
+    }
     
 
     public function symlinkgenerator()
@@ -148,7 +157,7 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
 
         
 
-        if($user->hasAnyRole(['developer'])  || $user->root == 1 ){
+        if($user->hasAnyRole(['developer', 'Gerencia'])  || $user->root == 1 ){
             $menu['users'] = ['label' => 'Usuarios', 'icon' => 'pi pi-user', 'to' => '/users'];
             
         }
@@ -158,7 +167,10 @@ class HomeController extends \Ales0sa\Laradash\Http\Controllers\Controller
             $customMenu      = json_decode(file_get_contents($cmPath));
             //$this->table  = $content->table;
             //dd($customMenu);
-            $menu[] = $customMenu;
+            foreach ($customMenu as $value) {
+                # code...
+                $menu[] = $value;
+            }
 
             //$this->inputs = $content->inputs;
 

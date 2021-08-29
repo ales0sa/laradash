@@ -359,7 +359,8 @@ class DashboardServiceProvider extends ServiceProvider
                 base_path('package.json'),
                 json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
             );
-
+            $this->info(__DIR__.'/vue-stubs/dashboard.scss');
+            copy(__DIR__.'/vue-stubs/dashboard.scss', resource_path('css/dashboard.scss'));
             copy(__DIR__.'/vue-stubs/webpack.mix.js', base_path('webpack.mix.js'));
             copy(__DIR__.'/vue-stubs/dashboard.js', resource_path('js/dashboard.js'));
             //copy(__DIR__.'/vue-stubs/dashboard.js', public_path('js/dashboard.js'));

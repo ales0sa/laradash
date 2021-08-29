@@ -69,7 +69,6 @@
             <div class="p-col">
               <div class="p-formgroup-inline">
 
-                <!---
                 <div class="p-field-checkbox">
                   <Checkbox v-model="table.slug" :binary="true" id="slug" />
                   <label for="slug"> SLUG </label>
@@ -287,7 +286,7 @@
           <h5>COLUMNS</h5>
 
 
-            <Listbox :value="selectedInputKey" :options="inputs" optionLabel="columnname"  />
+            <Listbox v-model="selectedInput" :options="inputs" optionLabel="columnname"  />
                     
 
 
@@ -296,7 +295,333 @@
 
       <div class="p-field p-col-4 p-md-4 p-pr-0">
         <div class="card p-fluid" style="height: 100%">
-          <h5>INPUT EDITOR</h5>
+      <div
+        
+        v-for="(input, inputKey) in inputs"
+        :key="inputKey"
+      >
+        <div v-if="selectedInput && selectedInput.columnname == input.columnname" >
+
+          
+        <div class="p-d-flex p-jc-between">
+            <div v-if="input.columnname"><h5 style="text-transform: uppercase"> {{ input.columnname }} </h5> </div>
+            <div v-else></div>
+
+            <div>
+              <span class="p-buttonset p-jc-around">
+                  <Button
+                    icon="pi pi-arrow-up"
+                    class="p-button-outlined p-button-raised p-button-sm p-button-secondary p-button p-component p-button-icon-only"
+                    @click="inputUp(inputKey)"
+                    v-if="inputKey > 0"
+                  ></Button>
+                  <Button
+                    icon="pi pi-arrow-down"
+                    class="p-button-outlined p-button-raised p-button-sm p-button-secondary p-button p-component p-button-icon-only"
+                    @click="inputDown(inputKey)"
+                    v-if="inputKey < inputs.length - 1 && inputs.length > 1"
+                  ></Button>
+              </span>
+            </div>
+
+
+
+          </div> 
+
+          <div class="" >
+            <div class="p-fluid p-formgrid p-grid">
+              <div class="p-field p-col-4 p-mt-3 p-mb-3">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.columnname" />
+                  <label for="floatingInput">Column Name</label>
+                </div>
+                <!-- <Button label="Fill" @click="fillColumn(input)" /> -->
+              </div>
+              <div class="p-field p-col-4 p-mb-3 p-mt-3">
+                <div class="p-float-label">
+                  <Dropdown v-model="input.type" :options="itypes"></Dropdown>
+                  <label for="floatingInput">Type</label>
+                </div>
+              </div>
+
+              <div class="p-field p-col-4 p-mb-3 p-mt-3">
+                <div class="p-float-label">
+                  <InputNumber
+                    :id="'gcld_' + input.columnname"
+                    v-model="input.gridcols"
+                    mode="decimal"
+                    showButtons
+                    :min="1"
+                    :max="12"
+                  />
+                  <label :for="'gcld_' + input.columnname">GRID COLS</label>
+                </div>
+              </div>
+
+              <div
+                class="p-field p-col-4 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('label')"
+              >
+                <div
+                  v-for="langkey in Object.keys(languages)"
+                  :key="'Label' + langkey"
+                >
+                  <div class="p-float-label mb-3">
+                    <InputText
+                      type="text"
+                      class=""
+                      v-model="input.label[langkey]"
+                    />
+                    <label for="floatingInput"
+                      >Label: {{ languages[langkey] }}</label
+                    >
+                  </div>
+                </div>
+              </div>
+              <div
+                class="p-field p-col-4 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('valuefrom')"
+              >
+                <div class="p-float-label mb-3">
+                  <InputText type="text" class="" v-model="input.valuefrom" />
+                  <label for="floatingInput"> VALUE FROM </label>
+                </div>
+              </div>
+              <div
+                class="p-field p-col-4 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('valueoriginselector')"
+              >
+              
+              <div class="mb-3">
+                <SelectButton
+                  v-model="input.valueoriginselector"
+                  :options="seltypes"
+                />
+                
+              </div>
+              </div>
+              <div
+                class="p-field p-col-4 p-mb-3 p-mt-3"
+                v-if="inputParams(input).includes('default')"
+              >
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.default" />
+                  <label for="floatingInput">DEFAULT VALUE</label>
+                </div>
+              </div>
+
+              <div class="p-col-12">
+                <div class="p-formgroup-inline">
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.visible" :binary="true" />
+                    <label for="binary">LIST</label>
+                  </div>
+
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.visible_edit" :binary="true" />
+                    <label for="binary">EDIT</label>
+                  </div>
+<!-- 
+                  <div class="p-field-checkbox">
+                    <Checkbox v-model="input.validate" :binary="true" />
+                    <label for="binary">VALID</label>
+                  </div> -->
+
+                  <div class="p-field-checkbox"  v-if="inputParams(input).includes('unique')">
+                    <Checkbox v-model="input.unique" :binary="true" />
+                    <label for="binary">UNIQUE</label>
+                  </div>
+
+                  <div class="" v-if="inputParams(input).includes('multiple')">
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.multiple" :binary="true" />
+                      <label for="binary">MULTIPLE</label>
+                    </div>
+                  </div>
+
+                  <div
+                    class=""
+                    v-if="inputParams(input).includes('translatable')"
+                  >
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.translatable" :binary="true" />
+                      <label for="binary">TRANSLATABLE</label>
+                    </div>
+                  </div>
+                  <div v-if="inputParams(input).includes('nullable')">
+                    <div class="p-field-checkbox">
+                      <Checkbox v-model="input.nullable" :binary="true" />
+                      <label for="binary">NULL</label>
+                    </div>
+                  </div>
+                  <hr>
+                </div>
+              </div>
+              <div class="p-col-12"
+              v-if="(inputParams(input).includes('valueoriginselector') && input.valueoriginselector == 'table') || input.type == 'subForm'"
+              >
+                <div class="p-field   p-mb-4 p-mt-3 p-float-label">
+                  <Dropdown v-model="input.tabledata" :options="menues"></Dropdown>
+                  <label for="floatingInput">TABLE DATA</label>
+                </div>
+                <div class="p-field  p-mb-4 p-mt-3 p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.tablekeycolumn"
+                  />
+                  <label for="floatingInput">TABLE KEY COlUMN</label>
+                </div>
+                <div class="p-field  p-mb-4 p-mt-3 p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.tabletextcolumn"
+                  />
+                  <label for="floatingInput">TABLE TEXT COlUMN</label>
+                </div>
+
+              </div>
+
+
+              <div class="p-col-3" v-if="inputParams(input).includes('max')">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.max" />
+                  <label for="floatingInput">MAX</label>
+                </div>
+              </div>
+              <div class="p-col-3" v-if="inputParams(input).includes('min')">
+                <div class="p-float-label">
+                  <InputText type="text" class="" v-model="input.min" />
+                  <label for="floatingInput">MIN</label>
+                </div>
+              </div>
+
+              <div
+                class="p-col-12"
+                v-if="
+                  inputParams(input).includes('valueoriginselector') &&
+                  input.valueoriginselector == 'values'
+                "
+              >
+              
+                <div v-if="Array.isArray(input.options)">
+                  <div
+                    class="p-grid"
+                    v-for="(option, optionKey) in input.options"
+                    :key="input.columnname + optionKey"
+                  >
+                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                      <div class="p-float-label">
+                        <InputText type="text" class="" v-model="option.key" />
+                        <label for="floatingInput">KEY</label>
+                      </div>
+                    </div>
+                    <div class="p-field p-col-8 p-mb-3 p-mt-3">
+                      <div class="p-float-label">
+                        <InputText type="text" class="" v-model="option.text" />
+                        <label for="floatingInput">TEXT</label>
+                      </div>
+                    </div>
+                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
+                      <Button
+                        class="p-button-outlined p-button-raised p-button-sm p-button-danger p-button-icon-only"
+                        icon="pi pi-times"
+                        @click="removeOption(input, optionKey)"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="
+                    d-sm-flex
+                    align-items-center
+                    justify-content-center
+                    mt-3
+                  "
+                >
+                  <Button
+                    icon="pi pi-plus"
+                    class="p-button-outlined p-button-raised p-button-sm p-button-success"
+                    label="Add new option"
+                    @click="addOption(input)"
+                  />
+                </div>
+              </div>
+              <div
+                class="p-col-12"
+                v-if="inputParams(input).includes('referencecolumn')"
+              >
+                <div class="p-float-label">
+                  <InputText
+                    type="text"
+                    class=""
+                    v-model="input.referencecolumn"
+                  />
+                  <label for="floatingInput">REFERENCE COLUMN</label>
+                </div>
+              </div>
+              <div class="p-col-12" v-if="inputParams(input).includes('icon')">
+                <div class="p-float-label">
+                  <Dropdown
+                    v-model="input.icon"
+                    :options="icons"
+                    :filter="true"
+                    optionLabel="icon"
+                    optionValue="icon"
+                    dataKey="icon"
+                    placeholder="Icon for adm menu"
+                  >
+                    <template #value="slotProps">
+                      <div
+                        class="country-item country-item-value"
+                        v-if="slotProps.value"
+                      >
+                        <i :class="slotProps.value" /> {{ slotProps.value }}
+                      </div>
+                      <span v-else> </span>
+                    </template>
+                    <template #option="slotProps">
+                      <i :class="slotProps.option.icon" />
+                      {{ slotProps.option.icon }}
+                    </template>
+                  </Dropdown>
+
+                  <label for="floatingInput">ICON</label>
+                </div>
+              </div>
+              <div class="p-col-12">
+                <hr>
+                <Button
+                  class="p-button-outlined p-button-raised p-button-sm p-button-danger"
+                  icon="pi pi-times"
+                  @click="rmInput(inputKey)"
+                  label="Remove column"
+                ></Button>
+              </div>
+
+            </div>
+          
+          </div>
+        </div>
+      </div>
+
+          <!-- {{ selectedInput }} -->
+          <!-- <div v-if="selectedInput">
+                <div class="p-float-label">
+                  <InputText type="text" v-bind:class="getValidity('columnname')" 
+                  v-model="selectedInput.columnname" />                  
+                  <label for="dbcolumn">DB Column</label>
+                </div>
+                <div class="p-float-label">
+                  <Dropdown id="itype" v-model="selectedInput.type" :options="itypes" placeholder="Type" > </Dropdown>
+                  <label for="itype">Dropdown</label>
+                </div>
+
+
+          </div> -->
+                
+
         </div>
       </div>
 
@@ -309,7 +634,7 @@
               :field="input.columnname"
               :header="input.label.es"
               v-for="(input, inputKey) in inputs.filter(
-                (item) => !(item.visible !== 1)
+                (item) => !(item.visible !== 0) || !(item.visible == false)
               )"
               :key="inputKey"
             >
@@ -338,7 +663,7 @@
             <div
               :class="'form_preview_over p-col-' + input.gridcols"
               v-for="(input, inputKey) in inputs.filter(
-                (item) => !(item.visible_edit !== 1)
+                (item) =>  !(item.visible_edit !== 0) || !(item.visible_edit == false)
               )"
               :key="input.columnname"
               @click="selectedInputKey = inputKey"
@@ -386,7 +711,7 @@
                   @click="inputDown(inputKey)"
                   v-if="
                     inputKey !==
-                    inputs.filter((item) => !(item.visible_edit !== 1)).length -
+                    inputs.filter((item) => !(item.visible_edit !== false)).length -
                       1
                   "
                 ></Button>
@@ -442,351 +767,10 @@
           </div>
         </div>
       </div>
-      <div class="p-field p-col-12 p-md-6 p-pr-0">
-        <div class="card p-shadow-3 p-fluid">
-          <div class="p-d-flex">
-            <h5 v-if="selectedInputKey">
-              INPUT: {{ inputs[selectedInputKey].columnname }}
-            </h5>
-            <Button
-              class="p-button-rounded p-button-danger"
-              icon="pi pi-times"
-              @click="rmInput(selectedInputKey)"
-            ></Button>
-          </div>
-          <div v-if="!selectedInputJson">TO DO...</div>
-          <div v-if="selectedInputJson">
-            <textarea
-              @input="updateInput($event.target.value, selectedInputKey)"
-              v-html="selectedInput"
-              style="width: 100%; height: 350px"
-              disabled
-            />
-          </div>
-        </div>
-      </div>
+      
     </div>
 
-    <div class="card p-fluid">
-      <div
-        :class="'p-mt-2 ' + input.gridcols"
-        v-for="(input, inputKey) in inputs"
-        :key="inputKey"
-      >
-        <Panel :toggleable="true" :collapsed="!input['isCollapsed']">
-          <template #header class="p-d-flex">
-            <div v-if="input.columnname">{{ input.columnname }}</div>
-            <div v-else></div>
 
-            <!--- <div class=" " style="width: 32%;">   
-                <InputNumber id="minmax-buttons" v-model="input.gridcols" mode="decimal" showButtons 
-                :min="1" :max="12"
-                 />
-           </div> ------>
-          </template>
-
-          <template #icons>
-            <Button
-              icon="pi pi-arrow-up"
-              class="p-button-rounded p-button-secondary"
-              @click="inputUp(inputKey)"
-              v-if="inputKey > 0"
-            ></Button>
-            <Button
-              icon="pi pi-arrow-down"
-              class="p-button-rounded p-button-secondary"
-              @click="inputDown(inputKey)"
-              v-if="inputKey < inputs.length - 1 && inputs.length > 1"
-            ></Button>
-            <Button
-              class="p-button-rounded p-button-danger"
-              icon="pi pi-times"
-              @click="rmInput(inputKey)"
-            ></Button>
-          </template>
-
-          <div class="">
-            <div class="p-fluid p-formgrid p-grid">
-              <div class="p-field p-col-5 p-mt-3 p-mb-3">
-                <div class="p-float-label">
-                  <InputText type="text" class="" v-model="input.columnname" />
-                  <label for="floatingInput">Column name</label>
-                </div>
-                <Button label="Fill" @click="fillColumn(input)" />
-              </div>
-              <div class="p-field p-col-5 p-mb-3 p-mt-3">
-                <div class="p-float-label">
-                  <Dropdown v-model="input.type" :options="itypes"> </Dropdown>
-                </div>
-              </div>
-
-              <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                <div class="p-float-label">
-                  <InputNumber
-                    :id="'gcld_' + input.columnname"
-                    v-model="input.gridcols"
-                    mode="decimal"
-                    showButtons
-                    :min="1"
-                    :max="12"
-                  />
-                  <label :for="'gcld_' + input.columnname">GRID COLS</label>
-                </div>
-              </div>
-
-              <div
-                class="p-field p-col-2 p-mb-3 p-mt-3"
-                v-if="inputParams(input).includes('label')"
-              >
-                <div
-                  v-for="langkey in Object.keys(languages)"
-                  :key="'Label' + langkey"
-                >
-                  <div class="p-float-label mb-3">
-                    <InputText
-                      type="text"
-                      class=""
-                      v-model="input.label[langkey]"
-                    />
-                    <label for="floatingInput"
-                      >Label: {{ languages[langkey] }}</label
-                    >
-                  </div>
-                </div>
-              </div>
-              <div
-                class="p-field p-col-2 p-mb-3 p-mt-3"
-                v-if="inputParams(input).includes('valuefrom')"
-              >
-                <div class="p-float-label mb-3">
-                  <InputText type="text" class="" v-model="input.valuefrom" />
-                  <label for="floatingInput"> VALUE FROM </label>
-                </div>
-              </div>
-              <div
-                class="p-field p-col-2 p-mb-3 p-mt-3"
-                v-if="inputParams(input).includes('valueoriginselector')"
-              >
-                <SelectButton
-                  v-model="input.valueoriginselector"
-                  :options="seltypes"
-                />
-              </div>
-              <div
-                class="p-field p-col-2 p-mb-3 p-mt-3"
-                v-if="inputParams(input).includes('default')"
-              >
-                <div class="p-float-label">
-                  <InputText type="text" class="" v-model="input.default" />
-                  <label for="floatingInput">DEFAULT VALUE</label>
-                </div>
-              </div>
-              <div class="p-col-12">
-                <div class="p-formgroup-inline">
-                  <div class="p-field-checkbox">
-                    <Checkbox v-model="input.visible" :binary="true" />
-                    <label for="binary">LIST</label>
-                  </div>
-
-                  <div class="p-field-checkbox">
-                    <Checkbox v-model="input.visible_edit" :binary="true" />
-                    <label for="binary">EDIT</label>
-                  </div>
-
-                  <div class="p-field-checkbox">
-                    <Checkbox v-model="input.validate" :binary="true" />
-                    <label for="binary">VALID</label>
-                  </div>
-
-                  <div class="p-field-checkbox">
-                    <Checkbox v-model="input.unique" :binary="true" />
-                    <label for="binary">UNIQUE</label>
-                  </div>
-
-                  <div class="" v-if="inputParams(input).includes('multiple')">
-                    <div class="p-field-checkbox">
-                      <Checkbox v-model="input.multiple" :binary="true" />
-                      <label for="binary">MULTIPLE</label>
-                    </div>
-                  </div>
-
-                  <div
-                    class=""
-                    v-if="inputParams(input).includes('translatable')"
-                  >
-                    <div class="p-field-checkbox">
-                      <Checkbox v-model="input.translatable" :binary="true" />
-                      <label for="binary">TRANSLATABLE</label>
-                    </div>
-                  </div>
-                  <div v-if="inputParams(input).includes('nullable')">
-                    <div class="p-field-checkbox">
-                      <Checkbox v-model="input.nullable" :binary="true" />
-                      <label for="binary">NULL</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="p-col-3" v-if="inputParams(input).includes('max')">
-                <div class="p-float-label">
-                  <InputText type="text" class="" v-model="input.max" />
-                  <label for="floatingInput">MAX</label>
-                </div>
-              </div>
-              <div class="p-col-3" v-if="inputParams(input).includes('min')">
-                <div class="p-float-label">
-                  <InputText type="text" class="" v-model="input.min" />
-                  <label for="floatingInput">MIN</label>
-                </div>
-              </div>
-
-              <div
-                class="p-col-12"
-                v-if="
-                  inputParams(input).includes('valueoriginselector') &&
-                  input.valueoriginselector == 'values'
-                "
-              >
-                <div v-if="Array.isArray(input.options)">
-                  <div
-                    class="p-grid"
-                    v-for="(option, optionKey) in input.options"
-                    :key="input.columnname + optionKey"
-                  >
-                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                      <div class="p-float-label">
-                        <InputText type="text" class="" v-model="option.key" />
-                        <label for="floatingInput">KEY</label>
-                      </div>
-                    </div>
-                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                      <div class="p-float-label">
-                        <InputText type="text" class="" v-model="option.text" />
-                        <label for="floatingInput">TEXT</label>
-                      </div>
-                    </div>
-                    <div class="p-field p-col-2 p-mb-3 p-mt-3">
-                      <Button
-                        class="p-button-rounded p-button-danger"
-                        icon="pi pi-times"
-                        @click="removeOption(input, optionKey)"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="
-                    d-sm-flex
-                    align-items-center
-                    justify-content-center
-                    mt-3
-                  "
-                >
-                  <Button
-                    icon="pi pi-plus"
-                    class="p-button-rounded p-button-success"
-                    @click="addOption(input)"
-                  />
-                </div>
-              </div>
-              <div
-                class="col-md"
-                v-if="
-                  (inputParams(input).includes('valueoriginselector') &&
-                    input.valueoriginselector == 'table') ||
-                  input.type == 'subForm'
-                "
-              >
-                <div class="p-float-label">
-                  <InputText type="text" class="" v-model="input.tabledata" />
-                  <label for="floatingInput">TABLE DATA</label>
-                </div>
-              </div>
-              <div
-                class="col-md"
-                v-if="
-                  (inputParams(input).includes('valueoriginselector') &&
-                    input.valueoriginselector == 'table') ||
-                  input.type == 'subForm'
-                "
-              >
-                <div class="p-float-label">
-                  <InputText
-                    type="text"
-                    class=""
-                    v-model="input.tablekeycolumn"
-                  />
-                  <label for="floatingInput">TABLE KEY COlUMN</label>
-                </div>
-              </div>
-
-              <div
-                class="col-md"
-                v-if="
-                  inputParams(input).includes('valueoriginselector') &&
-                  input.valueoriginselector == 'table'
-                "
-              >
-                <div class="p-float-label">
-                  <InputText
-                    type="text"
-                    class=""
-                    v-model="input.tabletextcolumn"
-                  />
-                  <label for="floatingInput">TABLE TEXT COlUMN</label>
-                </div>
-              </div>
-              <div
-                class="col-md"
-                v-if="inputParams(input).includes('referencecolumn')"
-              >
-                <div class="p-float-label">
-                  <InputText
-                    type="text"
-                    class=""
-                    v-model="input.referencecolumn"
-                  />
-                  <label for="floatingInput">REFERENCE COLUMN</label>
-                </div>
-              </div>
-              <div class="col-md" v-if="inputParams(input).includes('icon')">
-                <div class="p-float-label">
-                  <Dropdown
-                    v-model="input.icon"
-                    :options="icons"
-                    :filter="true"
-                    optionLabel="icon"
-                    optionValue="icon"
-                    dataKey="icon"
-                    placeholder="Icon for adm menu"
-                  >
-                    <template #value="slotProps">
-                      <div
-                        class="country-item country-item-value"
-                        v-if="slotProps.value"
-                      >
-                        <i :class="slotProps.value" /> {{ slotProps.value }}
-                      </div>
-                      <span v-else> </span>
-                    </template>
-                    <template #option="slotProps">
-                      <i :class="slotProps.option.icon" />
-                      {{ slotProps.option.icon }}
-                    </template>
-                  </Dropdown>
-
-                  <label for="floatingInput">ICON</label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Panel>
-      </div>
-      <div
-        class="d-sm-flex align-items-center justify-content-center mt-3"
-      ></div>
-    </div>
     <div class="d-sm-flex align-items-center justify-content-between mt-4">
       <Button
         type="button"
@@ -1772,6 +1756,22 @@ export default {
     },
   },
   methods: {
+    
+    getValidity(input){
+      console.log(this.inputs)
+
+      /*if(!this.inputs.some(data => data[input] === this.selectedInput[input])){
+          //don't exists       
+      }else{
+          return 'p-invalid';
+      }*/
+
+      if(this.selectedInput[input] == ''){
+        return 'p-invalid';
+      }
+
+
+    },
     onDragHover(evt, index) {
       console.log(index);
 
@@ -2205,12 +2205,12 @@ export default {
             this.openLoginFormModal();
             return true;
           }
-          //console.log(error.response.data)
+          console.log(error.response.data)
           this.$toast.add({
             severity: "error",
             summary: "Error",
             detail: error.response.data.message,
-            life: 5000,
+            life: 15000,
           });
 
           this.loaded = 1;

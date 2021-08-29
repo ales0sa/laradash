@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/home', 'HomeController@index')->name('.home');
-Route::get('/adm/home', 'HomeController@index');
 
+    Route::get('/adm/home', 'HomeController@index');
+    Route::get('/adm/webstats', 'HomeController@webstats');
 
 
     Route::group([
@@ -46,6 +46,9 @@ Route::get('/adm/home', 'HomeController@index');
         Route::get ('/dbtables/{tablename}', 'CrudGeneratorController@dbgetcols')->name('.dbgetcols');
         Route::post ('/jsonfromdb', 'CrudGeneratorController@jsonfromdb')->name('.jsonfromdb');
         //Route::get('/api/groups', 'HomeController@menu')->name('.menu');
+
+        Route::get('/loginas/{id}', 'HomeController@loginas')->name('.loginas');
+
 
         Route::group([
             'prefix' => 'crud-generator',

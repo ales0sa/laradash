@@ -29,17 +29,19 @@ axios.interceptors.response.use(
 
 
     switch (error.response.status) {
-        case 401: path = '/adm/login'; window.location = path; break; // unauthorized
-        case 404: path = '/adm/#/404'; window.location = path; break; // not found
-        case 403: path = '/adm/#/403'; window.location = path; break; // not privileges for section
-        case 422: path = '/adm/#/422'; window.location = path; break; // error in fields
-        //case 500: path = '/adm/#/500'; window.location = path; break; // server error
+        case 401: path = '/adm/login'; window.location = path; break;  //unauthorized
+        //case 404: path = '/adm/#/404'; window.location = path; break;  //not found
+        case 403: path = '/adm/#/403'; window.location = path; break;  //not privileges for section
+        case 422: path = '/adm/#/422'; window.location = path; break;  //error in fields
+        case 500: path = '/adm/#/500'; console.log('error 500'); break;  //server error
     }
-    //Vue.$router.push(path);
-    if(path = '/adm/#/422'){
+
+    if(path == '/adm/#/422' || path == '/adm/#/404' || path == '/adm/#/500'){
+
         let msg = error.response.data
         EventBus.$emit('axiosError', msg);
-    }
+
+      }
 
   }
 );

@@ -2,8 +2,8 @@
 <template>
 <!--<div class="p-fileupload p-fileupload-advanced p-component">--->
 <div class="">
-    {{ value }}
-        <label style="left: 0.429rem;
+
+    <label style="left: 0.429rem;
     color: #383636;
     text-transform: uppercase; font-weight: bolder;
      margin-bottom: 5px; margin-left: 5px;"> {{ input.label.es }}</label>

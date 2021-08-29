@@ -39,7 +39,7 @@ import Dropdown from 'primevue/dropdown';
 import Card from 'primevue/card';
 import Dialog from 'primevue/dialog';
 import Toolbar from 'primevue/toolbar';
-import ProgressBar from 'primevue/progressbar';
+
 import RadioButton from 'primevue/radiobutton';
 import FileUpload from 'primevue/fileupload';
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions';
@@ -66,7 +66,43 @@ window.Vue.use(PrimeVue)
 window.Vue.use(moment)
 window.Vue.use(Vuelidate)
 
+import Sidebar from 'primevue/sidebar';
 
+window.Vue.component('Sidebar', Sidebar );
+
+
+import Chart from 'primevue/chart';
+
+window.Vue.component('Chart', Chart);
+
+
+import ProgressBar from 'primevue/progressbar';
+import ScrollPanel from 'primevue/scrollpanel';
+
+window.Vue.component('ScrollPanel', ScrollPanel );
+window.Vue.component('ProgressBar', ProgressBar );
+
+
+import VueHtmlToPaper from 'vue-html-to-paper';
+
+const optionsprint = {
+    name: '_blank',
+    specs: [
+      'fullscreen=yes',
+      'titlebar=yes',
+      'scrollbars=yes'
+    ],
+    styles: [
+      '/css/layout.css',
+      '/css/prints.css'
+      //''
+    ],
+    timeout: 300, // default timeout before the print window appears
+    autoClose: true, // if false, the window will not close after printing
+    windowTitle: window.document.title, // override the window title
+  }
+  
+  Vue.use(VueHtmlToPaper, optionsprint);
 
 window.Vue.component('ColorPicker', ColorPicker );
 window.Vue.component('Message', Message );
@@ -97,6 +133,11 @@ window.Vue.component('Toolbar', Toolbar);
 window.Vue.component('Toolbar', Toolbar);
 window.Vue.component('Dialog', Dialog);
 window.Vue.component('Button', Button);
+
+// los odio a todos
+
+
+
 
 window.Vue.component('Calendar', Calendar);
 window.Vue.component('Dropdown', Dropdown);

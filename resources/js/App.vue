@@ -98,7 +98,8 @@ export default {
             //this.$toast.add({severity:'success', summary: 'Success', detail: payload.message, life: 3000})
         });
         EventBus.$on('axiosError', (payload) => {
-            this.$toast.add({severity:'error', summary: 'Error', detail: payload.message, life: 3000})
+            console.log('wololo')
+            this.$toast.add({severity:'error', summary: 'Error', detail: payload.message, life: 15000})
         });
     },
     created(){

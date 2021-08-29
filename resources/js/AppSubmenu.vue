@@ -43,6 +43,7 @@ export default {
 	},
 	methods: {
 		onMenuItemClick(event, item, index) {
+			console.log(item)
 			if (item.disabled) {
 				event.preventDefault();
 				return;

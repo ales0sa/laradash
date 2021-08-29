@@ -220,9 +220,11 @@ class CrudGeneratorController extends Controller
        $filePath = app_path('Models/' . $className . '.php');
        $isExists = File::exists($filePath);
 
-       if(!$isExists){
+        if(!$isExists){
            (new Generator($data->table, $data->inputs))->crud();
-       }
+        }else{
+            
+        }
 
         $stream = fopen("php://output", "w");
         
@@ -232,12 +234,17 @@ class CrudGeneratorController extends Controller
             return response()->json([ 'status' => 'success', 'message' => 'Se guardo sin migrar.']);// 
 
         }else{
-        
-/*            Artisan::call('migrate:refresh', [
+            
+           Artisan::call('migrate:refresh', [
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
-                '--force' => true            
-            ]);*/
-            return response()->json([ 'status' => 'success', 'message' => 'Migraciones ejecutadas.']);// 
+                '--force' => true                
+            ]);
+            //$output = Artisan::output();
+            //dd($output);*/
+
+            
+
+            return response()->json([ 'status' => 'success', 'message' => 'JSON & DB Updated.']);// 
 
         }
 

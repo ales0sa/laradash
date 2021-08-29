@@ -421,6 +421,7 @@ public function data($tablename, $id = false)
 
     public function index($tablename)
     {
+        //dd($tablename);
         $userId = auth()->user()->id;
         $user   = User::find($userId);
 
@@ -444,8 +445,17 @@ public function data($tablename, $id = false)
             $data = $this->model::where('created_by', $userId)->get($plucked->all(), 'id')->toArray();
 
         }else{
+            
+            $orderByDate = in_array('created_at', $plucked->all()); 
+            
+            if($orderByDate){
+                $data = $this->model::orderBy('created_at', 'DESC')->get($plucked->all(), 'id')->toArray();
+                
+            }else{
+                $data = $this->model::get($plucked->all(), 'id')->toArray();
+            }
 
-            $data = $this->model::get($plucked->all(), 'id')->toArray();
+            
 
         }
 

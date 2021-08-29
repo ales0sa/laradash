@@ -54,4 +54,24 @@ class Generator
         $this->model();
         // $this->controller();
     }
+
+    public function migrate()
+    {
+        $path = realpath(__DIR__ . '/templates/migration.php');
+
+        $migName = str_replace(['_', '-', '.'], ' ', $this->table->tablename);
+        $migName = str_replace(' ', '', $migName);
+
+        ob_start();
+        include($path);
+        $body = ob_get_clean();
+        $filePath = database_path('migrations/'.date('Y_m_d_His').'_'.$migName  . '_table.php');
+
+        file_put_contents($filePath, $body);
+
+        return true;
+
+
+    }
+
 }

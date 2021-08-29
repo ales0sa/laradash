@@ -49,7 +49,7 @@
 </template>
 </Dialog>
 
-
+<div class="p-grid card card-w-title">
 
     <DataTable :value="data" dataKey="id" :paginator="true" :rows="10" :filters="filters"
                 
@@ -60,7 +60,7 @@
 
         <template #header>
 
-            <div class="p-d-flex p-jc-between p-mx-auto">
+            <div class="p-d-flex p-jc-between p-mx-auto card-header">
                 <div style=""> 
                     <h3> Usuarios </h3>
                 </div>
@@ -77,7 +77,9 @@
        </template>
 
        <Column field="name" header="Nombre"></Column>
-       <Column field="grupito" header="Rol">
+       <Column field="email" header="E-mail"></Column>
+       <Column field="username" header="Usuario"></Column>
+       <Column field="grupito" header="Roles">
 
             <template #body="slotProps">
                 
@@ -94,26 +96,29 @@
 
             
             <span class="p-buttonset">
+                
+
                 <Button icon="pi pi-pencil" class="p-button-outlined p-button-raised p-button-sm p-button-success" @click="edit(slotProps.data)" />
                 <Button icon="pi pi-trash" class="p-button-outlined p-button-raised p-button-sm p-button-danger" @click="del(slotProps.data.id)" />
+                <Button icon="pi pi-sign-in" class="p-button-outlined p-button-raised p-button-sm p-button-secondary" @click="login(slotProps.data.id)" />
             </span>
         </template>
     </Column>
 
 </DataTable>
-
+</div>
 </div>
 </template>
 
 <script>
 
-import UserService from './../../service/UserService';
+import UserService from '../../service/UserService';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
     export default {
 
 
-
+        //props: [ '' ],
         data() {
             return {
             uform: {
@@ -162,7 +167,7 @@ import Toast from 'primevue/toast';
         },
         mounted() {
 
-           this.UserService.getGroups().then(data => this.sectores = data);
+           //this.UserService.getGroups().then(data => this.sectores = data);
             //this.tablename = this.$route.params.table
             //this.UserService.getTable(this.tablename).then(data => this.inputs = data.inputs);
            // this.UserService.getData(this.tablename).then(data => this.data = data);
@@ -170,6 +175,21 @@ import Toast from 'primevue/toast';
 
     },
     methods:{
+        login(id){
+                console.log(id)
+                axios.get('/adm/loginas/' + id).then((response) => {
+                
+                    if(response.data.status == 'success'){
+                        window.location.href = '/adm/'
+                    }
+
+                }).catch((error) => {
+
+                    console.log(error)
+
+                });
+
+        },
         openNew() {
             this.uform = {};
             this.selectedRoles = null
