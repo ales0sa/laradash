@@ -85,24 +85,7 @@ window.Vue.component('ProgressBar', ProgressBar );
 
 import VueHtmlToPaper from 'vue-html-to-paper';
 
-const optionsprint = {
-    name: '_blank',
-    specs: [
-      'fullscreen=yes',
-      'titlebar=yes',
-      'scrollbars=yes'
-    ],
-    styles: [
-      '/css/layout.css',
-      '/css/prints.css'
-      //''
-    ],
-    timeout: 300, // default timeout before the print window appears
-    autoClose: true, // if false, the window will not close after printing
-    windowTitle: window.document.title, // override the window title
-  }
-  
-  Vue.use(VueHtmlToPaper, optionsprint);
+Vue.use(VueHtmlToPaper);
 
 window.Vue.component('ColorPicker', ColorPicker );
 window.Vue.component('Message', Message );

@@ -67,12 +67,20 @@ class GenerateCrudTables extends Migration
             $table->bigIncrements('id');
         }
 
+        $sm = \Schema::getConnection()->getDoctrineSchemaManager();
+        $ltd = $sm->listTableDetails($content->table->tablename);
 
+        $intablecolumns = array_keys($ltd->getColumns());
+
+        
 
         foreach ($content->inputs as $inputKey => $input) {
             $change = false;
-            $delete = false;
-
+            /*$delete = false;
+            if(!in_array($input->columnname, $intablecolumns)){
+                
+                continue;
+            }*/
 
             $cols[]  = $input->columnname;
 
@@ -260,7 +268,7 @@ class GenerateCrudTables extends Migration
         if ($content->table->timestamps) {
 
             if(!Schema::hasColumn($content->table->tablename, 'created_at')){
-                $table->timestamps();
+               // $table->timestamps();
             }
 
         }else{

@@ -122,7 +122,7 @@ class CrudGeneratorController extends Controller
 
             $data[$column->getName()]  = [ 'type' => $column->getType()->getName(), 'props' => $column->toArray()];
 
-        }
+        }   
 
         return ['status' => 'success', 'columns' => $data];
     }
@@ -235,16 +235,33 @@ class CrudGeneratorController extends Controller
 
         }else{
             
-           Artisan::call('migrate:refresh', [
+           // $migfile = (new Generator($data->table, $data->inputs))->migrate();
+
+
+            //Artisan::call('migrate');
+            // while (true) {
+            //     if (database_path($migfile)) {
+                 /* Artisan::call('migrate:refresh', [
+                      '--path' => 'database/'.$migfile,
+                      '--force' => true                
+                  ]);*/
+             //     break;
+            //     }
+            // }
+
+
+            //$make
+
+            Artisan::call('migrate:refresh', [
                 '--path' => 'vendor/ales0sa/laradash/src/migrations/2020_11_23_000001_generate_crud_tables.php',
                 '--force' => true                
             ]);
-            //$output = Artisan::output();
-            //dd($output);*/
+            $output = Artisan::output();
+            //dd($output);
 
             
-
-            return response()->json([ 'status' => 'success', 'message' => 'JSON & DB Updated.']);// 
+            //Artisan::call('migrate');
+            return response()->json([ 'status' => 'success', 'message' => 'JSON & DB Updated. ', 'output' => $output ]);// 
 
         }
 

@@ -29,6 +29,6 @@ class CreateConfigVarsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('config_vars');
+		//Schema::dropIfExists('config_vars');
 	}
 }

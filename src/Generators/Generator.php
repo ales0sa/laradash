@@ -65,11 +65,17 @@ class Generator
         ob_start();
         include($path);
         $body = ob_get_clean();
-        $filePath = database_path('migrations/'.date('Y_m_d_His').'_'.$migName  . '_table.php');
+
+        $filename = date('Y_m_d_His').'_'.$migName  . '_table.php';
+
+        $filePath = database_path($filename);
 
         file_put_contents($filePath, $body);
 
-        return true;
+        //dd($filename);
+
+
+        return $filename;
 
 
     }
